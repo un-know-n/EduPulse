@@ -2,6 +2,9 @@
   "name": "@edu-platform/source",
   "version": "0.0.0",
   "license": "MIT",
+  "prisma": {
+    "schema": "apps/server/prisma/schema.prisma"
+  },
   "scripts": {
     "server:dev": "npx nx serve server",
     "client:dev": "npx nx serve client",
@@ -9,20 +12,34 @@
     "client:production": "npx nx build client && npx nx serve client --prod",
     "server:production": "npx nx build server && npx nx serve server --prod",
     "build:production": "npx nx run-many --target=build --projects=client,server --prod",
-    "start:production": "npx nx run-many --target=serve --projects=client,server --prod"
+    "start:production": "npx nx run-many --target=serve --projects=client,server --prod",
+    "migrate:dev": "npx prisma migrate dev",
+    "husky:prepare": "npx husky install",
+    "commit:prompt": "git-cz",
+    "setup:all": "npm i && npm run husky:prepare && migrate:dev"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
   },
   "private": true,
   "dependencies": {
+    "@auth/prisma-adapter": "^1.0.3",
     "@chakra-ui/next-js": "^2.1.5",
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@nestjs/common": "^10.0.2",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.2",
+    "@nestjs/mapped-types": "^2.0.2",
     "@nestjs/platform-express": "^10.0.2",
-    "@nestjs/typeorm": "^10.0.0",
+    "@prisma/client": "^5.4.2",
     "@reduxjs/toolkit": "^1.9.6",
     "axios": "^1.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "formik": "^2.4.5",
     "framer-motion": "^10.16.4",
     "next": "13.4.1",
@@ -35,10 +52,12 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
-    "typeorm": "^0.3.17",
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.8.0",
+    "@commitlint/config-conventional": "^17.8.0",
+    "@commitlint/cz-commitlint": "^17.8.0",
     "@nestjs/schematics": "^10.0.1",
     "@nestjs/testing": "^10.0.2",
     "@nx/cypress": "16.9.1",
@@ -70,13 +89,16 @@
     "eslint-plugin-jsx-a11y": "6.7.1",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
+    "husky": "^8.0.3",
     "jest": "^29.4.1",
     "jest-environment-jsdom": "^29.4.1",
     "jest-environment-node": "^29.4.1",
+    "lint-staged": "^15.0.1",
     "nx": "16.9.1",
     "nx-cloud": "latest",
     "postcss": "^8.4.31",
     "prettier": "^2.6.2",
+    "prisma": "^5.4.2",
     "sass": "1.62.1",
     "tailwindcss": "^3.3.3",
     "ts-jest": "^29.1.0",

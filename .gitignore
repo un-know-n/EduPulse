@@ -8,6 +8,9 @@ tmp
 # dependencies
 node_modules
 
+# environment variables
+.env
+
 # IDEs and editors
 /.idea
 .project
