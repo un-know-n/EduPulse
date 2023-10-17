@@ -2,27 +2,36 @@
 
 import { FC } from 'react';
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Checkbox,
   Container,
-  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
-  FormLabel,
   Heading,
   Input,
+  Select,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { Field, Formik } from 'formik';
 import { Link } from '@chakra-ui/next-js';
-import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa';
+import { ThirdPartyButtons } from '../shared/ThirdPartyButtons';
+import { Routes } from '../config/routes';
 
 export const SignUp: FC = () => {
+  const baseRoles = ['student', 'teacher'] as const;
+
+  const initialValues = {
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
+    role: baseRoles[0],
+    rememberMe: false,
+  };
+
   return (
     <Box
       p={5}
@@ -36,24 +45,19 @@ export const SignUp: FC = () => {
           Already have an account?{' '}
           <Link
             color='blue.500'
-            href='/'>
+            href={Routes.SignIn}>
             Sign in
           </Link>
         </Text>
       </Container>
       <Box>
         <Formik
-          initialValues={{
-            name: '',
-            surname: '',
-            email: '',
-            password: '',
-            rememberMe: false,
-          }}
+          validateOnBlur={false}
+          initialValues={initialValues}
           onSubmit={(values) => {
             alert(JSON.stringify(values, null, 2));
           }}>
-          {({ handleSubmit, errors, touched }) => (
+          {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
               <VStack
                 spacing={4}
@@ -61,14 +65,14 @@ export const SignUp: FC = () => {
                 <Flex
                   gap='3'
                   w='full'>
-                  <FormControl isInvalid={!!errors.name && touched.password}>
-                    <FormLabel htmlFor='name'>Name</FormLabel>
+                  <FormControl isInvalid={!!errors.name && touched.name}>
                     <Field
                       as={Input}
                       id='name'
                       name='name'
                       type='text'
-                      variant='filled'
+                      variant='outline'
+                      placeholder='Name'
                       validate={(value: string) => {
                         let error;
 
@@ -82,14 +86,14 @@ export const SignUp: FC = () => {
                     <FormErrorMessage>{errors.name}</FormErrorMessage>
                   </FormControl>
 
-                  <FormControl isInvalid={!!errors.surname && touched.password}>
-                    <FormLabel htmlFor='surname'>Surname</FormLabel>
+                  <FormControl isInvalid={!!errors.surname && touched.surname}>
                     <Field
                       as={Input}
                       id='surname'
                       name='surname'
                       type='text'
-                      variant='filled'
+                      variant='outline'
+                      placeholder='Surname'
                       validate={(value: string) => {
                         let error;
 
@@ -103,24 +107,51 @@ export const SignUp: FC = () => {
                     <FormErrorMessage>{errors.surname}</FormErrorMessage>
                   </FormControl>
                 </Flex>
-                <FormControl>
-                  <FormLabel htmlFor='email'>Email Address</FormLabel>
+                <FormControl isInvalid={!!errors.email && touched.email}>
                   <Field
                     as={Input}
                     id='email'
                     name='email'
                     type='email'
-                    variant='filled'
+                    variant='outline'
+                    placeholder='Email Address'
+                    validate={(value: string) => {
+                      let error;
+
+                      if (!value.length) {
+                        error = 'You need to enter the email';
+                      }
+
+                      return error;
+                    }}
                   />
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
+                </FormControl>
+                <FormControl>
+                  <Field
+                    as={Select}
+                    id='role'
+                    name='role'
+                    value={values.role}
+                    onChange={handleChange}
+                    variant='outline'>
+                    {baseRoles.map((role) => (
+                      <option
+                        key={role}
+                        value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </Field>
                 </FormControl>
                 <FormControl isInvalid={!!errors.password && touched.password}>
-                  <FormLabel htmlFor='password'>Password</FormLabel>
                   <Field
                     as={Input}
                     id='password'
                     name='password'
                     type='password'
-                    variant='filled'
+                    variant='outline'
+                    placeholder='Password'
                     validate={(value: string) => {
                       let error;
 
@@ -165,31 +196,7 @@ export const SignUp: FC = () => {
           )}
         </Formik>
       </Box>
-      <Box
-        position='relative'
-        padding='8'>
-        <Divider />
-        <AbsoluteCenter
-          bg='white'
-          px='4'>
-          Or
-        </AbsoluteCenter>
-      </Box>
-      <Flex
-        w='full'
-        flexDirection='column'
-        gap='2'>
-        <Button
-          leftIcon={<FcGoogle />}
-          variant='outline'>
-          Continue with Google
-        </Button>
-        <Button
-          leftIcon={<FaGithub />}
-          variant='outline'>
-          Continue with GitHub
-        </Button>
-      </Flex>
+      <ThirdPartyButtons includeDivider />
     </Box>
   );
 };
