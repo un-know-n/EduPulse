@@ -1,8 +1,13 @@
-'use client';
-
 import './global.css';
-import { Button } from '@chakra-ui/react';
+import { AuthLayout } from './components/auth/AuthLayout';
+import { SignUp } from './components/auth/forms/SignUp';
 
 export default async function Index() {
-  return <Button>Hello</Button>;
+  return (
+    <>
+      <AuthLayout>
+        <SignUp />
+      </AuthLayout>
+    </>
+  );
 }
