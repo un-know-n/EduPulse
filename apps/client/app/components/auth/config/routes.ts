@@ -1,4 +1,4 @@
-const prefix = 'auth';
+const prefix = '/auth';
 
 export enum Routes {
   SignUp = `${prefix}/signup`,

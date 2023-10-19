@@ -14,7 +14,7 @@ import {
 import { Link } from '@chakra-ui/next-js';
 import { Routes } from '../config/routes';
 import { Field, Formik } from 'formik';
-import { ThirdPartyButtons } from '../shared/ThirdPartyButtons';
+import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { FC } from 'react';
 
 export const SignIn: FC = () => {
@@ -94,6 +94,15 @@ export const SignIn: FC = () => {
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>
+                <Container
+                  textAlign='end'
+                  p={0}>
+                  <Link
+                    href={Routes.ResetPassword}
+                    color='blue.500'>
+                    Forgot password?
+                  </Link>
+                </Container>
                 <Button
                   type='submit'
                   colorScheme='blue'

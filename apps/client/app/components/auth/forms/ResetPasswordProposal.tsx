@@ -14,14 +14,9 @@ import {
 import { Field, Formik } from 'formik';
 import { ResetButtons } from '../shared/buttons/ResetButtons';
 
-type TProps = {
-  changeHandler: () => void;
-};
-
-export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
+export const ResetPasswordProposal: FC = () => {
   const initialValues = {
-    password: '',
-    confirmPassword: '',
+    email: '',
   };
 
   return (
@@ -52,48 +47,25 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
               <VStack
                 spacing={4}
                 align='flex-start'>
-                <FormControl isInvalid={!!errors.password && touched.password}>
+                <FormControl isInvalid={!!errors.email && touched.email}>
                   <Field
                     as={Input}
-                    id='password'
-                    name='password'
-                    type='password'
+                    id='email'
+                    name='email'
+                    type='email'
                     variant='outline'
-                    placeholder='Password'
+                    placeholder='Email Address'
                     validate={(value: string) => {
                       let error;
 
                       if (!value.length) {
-                        error = 'You need to enter password';
+                        error = 'You need to enter the email';
                       }
 
                       return error;
                     }}
                   />
-                  <FormErrorMessage>{errors.password}</FormErrorMessage>
-                </FormControl>
-                <FormControl
-                  isInvalid={
-                    !!errors.confirmPassword && touched.confirmPassword
-                  }>
-                  <Field
-                    as={Input}
-                    id='confirmPassword'
-                    name='confirmPassword'
-                    type='text'
-                    variant='outline'
-                    placeholder='Confirm Password'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (value !== values.password) {
-                        error = 'Passwords are not equal';
-                      }
-
-                      return error;
-                    }}
-                  />
-                  <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
                 <ResetButtons />
               </VStack>

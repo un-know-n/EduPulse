@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { Field, Formik } from 'formik';
 import { Link } from '@chakra-ui/next-js';
-import { ThirdPartyButtons } from '../shared/ThirdPartyButtons';
+import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { Routes } from '../config/routes';
 
 export const SignUp: FC = () => {
