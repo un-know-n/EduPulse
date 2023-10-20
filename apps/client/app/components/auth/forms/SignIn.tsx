@@ -16,6 +16,15 @@ import { Routes } from '../config/routes';
 import { Field, Formik } from 'formik';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { FC } from 'react';
+import { object, TypeOf } from 'zod';
+import { emailValidator, passwordValidator } from '../config/validationSchemas';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+
+const signInSchema = object({
+  email: emailValidator,
+  password: passwordValidator,
+});
+type TSignInFormInputs = TypeOf<typeof signInSchema>;
 
 export const SignIn: FC = () => {
   const initialValues = {
@@ -27,7 +36,7 @@ export const SignIn: FC = () => {
     <Box
       p={5}
       w='80%'
-      maxW={500}
+      maxW={450}
       my='auto'
       mx='auto'>
       <Container
@@ -44,11 +53,13 @@ export const SignIn: FC = () => {
         </Text>
       </Container>
       <Box>
-        <Formik
+        <Formik<TSignInFormInputs>
           validateOnBlur={false}
           initialValues={initialValues}
+          validationSchema={toFormikValidationSchema(signInSchema)}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            const validatedForm = signInSchema.parse(values);
+            alert(JSON.stringify(validatedForm, null, 2));
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
@@ -63,15 +74,6 @@ export const SignIn: FC = () => {
                     type='email'
                     variant='outline'
                     placeholder='Email Address'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (!value.length) {
-                        error = 'You need to enter the email';
-                      }
-
-                      return error;
-                    }}
                   />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
@@ -83,15 +85,6 @@ export const SignIn: FC = () => {
                     type='password'
                     variant='outline'
                     placeholder='Password'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (value.length < 6) {
-                        error = 'Password must contain at least 6 characters';
-                      }
-
-                      return error;
-                    }}
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>

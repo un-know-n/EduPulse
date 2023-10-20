@@ -13,10 +13,19 @@ import {
 } from '@chakra-ui/react';
 import { Field, Formik } from 'formik';
 import { ResetButtons } from '../shared/buttons/ResetButtons';
+import { object, string, TypeOf } from 'zod';
+import { passwordValidator } from '../config/validationSchemas';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 type TProps = {
   changeHandler: () => void;
 };
+
+const resetSchema = object({
+  password: passwordValidator,
+  confirmPassword: string(),
+});
+type TResetFormInputs = TypeOf<typeof resetSchema>;
 
 export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
   const initialValues = {
@@ -39,11 +48,13 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
         </Text>
       </Container>
       <Box>
-        <Formik
+        <Formik<TResetFormInputs>
           validateOnBlur={false}
           initialValues={initialValues}
+          validationSchema={toFormikValidationSchema(resetSchema)}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            const validatedForm = resetSchema.parse(values);
+            alert(JSON.stringify(validatedForm, null, 2));
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
@@ -58,15 +69,6 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
                     type='password'
                     variant='outline'
                     placeholder='Password'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (!value.length) {
-                        error = 'You need to enter password';
-                      }
-
-                      return error;
-                    }}
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>
@@ -78,14 +80,14 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
                     as={Input}
                     id='confirmPassword'
                     name='confirmPassword'
-                    type='text'
+                    type='password'
                     variant='outline'
                     placeholder='Confirm Password'
                     validate={(value: string) => {
                       let error;
 
                       if (value !== values.password) {
-                        error = 'Passwords are not equal';
+                        error = `Passwords don't match`;
                       }
 
                       return error;

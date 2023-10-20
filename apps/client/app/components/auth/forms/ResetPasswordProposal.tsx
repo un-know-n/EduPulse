@@ -13,10 +13,18 @@ import {
 } from '@chakra-ui/react';
 import { Field, Formik } from 'formik';
 import { ResetButtons } from '../shared/buttons/ResetButtons';
+import { object, TypeOf } from 'zod';
+import { emailValidator } from '../config/validationSchemas';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 type TProps = {
   handlePasswordResetProposal: () => void;
 };
+
+const resetProposalSchema = object({
+  email: emailValidator,
+});
+type TResetProposalFormInputs = TypeOf<typeof resetProposalSchema>;
 
 export const ResetPasswordProposal: FC<TProps> = ({
   handlePasswordResetProposal,
@@ -39,11 +47,13 @@ export const ResetPasswordProposal: FC<TProps> = ({
         </Text>
       </Container>
       <Box>
-        <Formik
+        <Formik<TResetProposalFormInputs>
           validateOnBlur={false}
           initialValues={initialValues}
+          validationSchema={toFormikValidationSchema(resetProposalSchema)}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            const validatedForm = resetProposalSchema.parse(values);
+            alert(JSON.stringify(validatedForm, null, 2));
             handlePasswordResetProposal();
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
@@ -59,15 +69,6 @@ export const ResetPasswordProposal: FC<TProps> = ({
                     type='email'
                     variant='outline'
                     placeholder='Email Address'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (!value.length) {
-                        error = 'You need to enter the email';
-                      }
-
-                      return error;
-                    }}
                   />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>

@@ -19,6 +19,33 @@ import { Field, Formik } from 'formik';
 import { Link } from '@chakra-ui/next-js';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { Routes } from '../config/routes';
+import { boolean, object, string, TypeOf } from 'zod';
+import { emailValidator, passwordValidator } from '../config/validationSchemas';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+
+const signUpSchema = object({
+  name: string({
+    required_error: 'Name is required',
+  })
+    .trim()
+    .min(1, {
+      message: 'Name cannot be empty',
+    }),
+  surname: string({
+    required_error: 'Surname is required',
+  })
+    .trim()
+    .min(1, {
+      message: 'Surname cannot be empty',
+    }),
+  role: string().refine((role) => role === 'student' || role === 'teacher', {
+    message: 'Role must be either "student" or "teacher"',
+  }),
+  email: emailValidator,
+  password: passwordValidator,
+  rememberMe: boolean(),
+});
+type TSignUpFormInputs = TypeOf<typeof signUpSchema>;
 
 export const SignUp: FC = () => {
   const baseRoles = ['student', 'teacher'] as const;
@@ -52,11 +79,13 @@ export const SignUp: FC = () => {
         </Text>
       </Container>
       <Box>
-        <Formik
+        <Formik<TSignUpFormInputs>
           validateOnBlur={false}
           initialValues={initialValues}
+          validationSchema={toFormikValidationSchema(signUpSchema)}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            const validatedForm = signUpSchema.parse(values);
+            alert(JSON.stringify(validatedForm, null, 2));
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
@@ -74,15 +103,6 @@ export const SignUp: FC = () => {
                       type='text'
                       variant='outline'
                       placeholder='Name'
-                      validate={(value: string) => {
-                        let error;
-
-                        if (!value.length) {
-                          error = 'You need to enter the name';
-                        }
-
-                        return error;
-                      }}
                     />
                     <FormErrorMessage>{errors.name}</FormErrorMessage>
                   </FormControl>
@@ -95,15 +115,6 @@ export const SignUp: FC = () => {
                       type='text'
                       variant='outline'
                       placeholder='Surname'
-                      validate={(value: string) => {
-                        let error;
-
-                        if (!value.length) {
-                          error = 'You need to enter the surname';
-                        }
-
-                        return error;
-                      }}
                     />
                     <FormErrorMessage>{errors.surname}</FormErrorMessage>
                   </FormControl>
@@ -116,19 +127,10 @@ export const SignUp: FC = () => {
                     type='email'
                     variant='outline'
                     placeholder='Email Address'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (!value.length) {
-                        error = 'You need to enter the email';
-                      }
-
-                      return error;
-                    }}
                   />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
-                <FormControl>
+                <FormControl isInvalid={!!errors.role && touched.role}>
                   <Field
                     as={Select}
                     id='role'
@@ -144,6 +146,7 @@ export const SignUp: FC = () => {
                       </option>
                     ))}
                   </Field>
+                  <FormErrorMessage>{errors.role}</FormErrorMessage>
                 </FormControl>
                 <FormControl isInvalid={!!errors.password && touched.password}>
                   <Field
@@ -153,18 +156,10 @@ export const SignUp: FC = () => {
                     type='password'
                     variant='outline'
                     placeholder='Password'
-                    validate={(value: string) => {
-                      let error;
-
-                      if (value.length < 6) {
-                        error = 'Password must contain at least 6 characters';
-                      }
-
-                      return error;
-                    }}
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>
+
                 <Field
                   as={Checkbox}
                   id='rememberMe'
@@ -185,12 +180,13 @@ export const SignUp: FC = () => {
                     </Link>
                   </Text>
                 </Field>
+
                 <Button
                   type='submit'
                   colorScheme='blue'
                   variant='outline'
                   width='full'>
-                  Login
+                  Sign up
                 </Button>
               </VStack>
             </form>
