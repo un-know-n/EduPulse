@@ -14,7 +14,13 @@ import {
 import { Field, Formik } from 'formik';
 import { ResetButtons } from '../shared/buttons/ResetButtons';
 
-export const ResetPasswordProposal: FC = () => {
+type TProps = {
+  handlePasswordResetProposal: () => void;
+};
+
+export const ResetPasswordProposal: FC<TProps> = ({
+  handlePasswordResetProposal,
+}) => {
   const initialValues = {
     email: '',
   };
@@ -22,9 +28,7 @@ export const ResetPasswordProposal: FC = () => {
   return (
     <Box
       p={5}
-      maxW={450}
-      my='auto'
-      mx='auto'>
+      maxW={450}>
       <Container
         p={0}
         mb={16}>
@@ -40,6 +44,7 @@ export const ResetPasswordProposal: FC = () => {
           initialValues={initialValues}
           onSubmit={(values) => {
             alert(JSON.stringify(values, null, 2));
+            handlePasswordResetProposal();
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>

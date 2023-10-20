@@ -13,9 +13,7 @@ export const CheckEmail: FC<TProps> = ({ email, resendHandler }) => {
     <Box
       p={5}
       w='60%'
-      maxW={450}
-      my='auto'
-      mx='auto'>
+      maxW={450}>
       <Container
         p={0}
         mb={16}>
