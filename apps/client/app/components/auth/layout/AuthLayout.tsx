@@ -3,7 +3,7 @@
 import { FC, PropsWithChildren } from 'react';
 import { Container, Flex, Heading, Text } from '@chakra-ui/react';
 import Image from 'next/image';
-import logo from '../../../public/logo.svg';
+import logo from '../../../../public/logo.svg';
 
 export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
   return (

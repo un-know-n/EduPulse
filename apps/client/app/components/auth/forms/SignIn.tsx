@@ -27,6 +27,7 @@ export const SignIn: FC = () => {
     <Box
       p={5}
       w='80%'
+      maxW={500}
       my='auto'
       mx='auto'>
       <Container

@@ -35,6 +35,7 @@ export const SignUp: FC = () => {
   return (
     <Box
       p={5}
+      maxW={500}
       my='auto'
       mx='auto'>
       <Container

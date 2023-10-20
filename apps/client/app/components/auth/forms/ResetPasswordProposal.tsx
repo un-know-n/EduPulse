@@ -22,7 +22,6 @@ export const ResetPasswordProposal: FC = () => {
   return (
     <Box
       p={5}
-      w='60%'
       maxW={450}
       my='auto'
       mx='auto'>
