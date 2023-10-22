@@ -6,60 +6,76 @@ import {
   Box,
   Button,
   Center,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
+  Heading,
+  Input,
   Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
   MenuList,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
   useColorMode,
   useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
+import { PiUserListDuotone } from 'react-icons/pi';
+import { Link } from '@chakra-ui/next-js';
+import { HiMenuAlt1 } from 'react-icons/hi';
+import { IoMdNotifications } from 'react-icons/io';
 
-interface Props {
-  children: React.ReactNode;
-}
+type TProps = {
+  link: string;
+};
 
-// const NavLink = (props: Props) => {
-//   const { children } = props;
-//
-//   return (
-//     <Box
-//       as='a'
-//       px={2}
-//       py={1}
-//       rounded={'md'}
-//       _hover={{
-//         textDecoration: 'none',
-//         bg: useColorModeValue('gray.200', 'gray.700'),
-//       }}
-//       href={'#'}>
-//       {children}
-//     </Box>
-//   );
-// };
+const dashboardLinks = [
+  { title: 'Achievements', link: '#' },
+  { title: 'Account Settings', link: '#' },
+  { title: 'Logout', link: '#' },
+];
 
 export const DefaultDashboard: FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const backgroundColor = useColorModeValue('gray.100', 'gray.900');
 
   return (
     <>
       <Box
-        bg={useColorModeValue('gray.100', 'gray.900')}
+        bg={backgroundColor}
         px={4}>
         <Flex
           h={16}
           alignItems={'center'}
           justifyContent={'space-between'}>
-          <Box>Logo</Box>
+          <Flex
+            gap={3}
+            alignItems='center'>
+            <Button onClick={onOpen}>
+              <HiMenuAlt1 />
+            </Button>
+            <Heading fontSize={24}>Dashboard</Heading>
+          </Flex>
 
           <Flex alignItems={'center'}>
             <Stack
               direction={'row'}
-              spacing={7}>
+              spacing={3}>
               <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? (
                   <BsFillMoonStarsFill />
@@ -68,19 +84,27 @@ export const DefaultDashboard: FC = () => {
                 )}
               </Button>
 
+              <Popover>
+                <PopoverTrigger>
+                  <Button>
+                    <IoMdNotifications />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  <PopoverHeader>Confirmation!</PopoverHeader>
+                  <PopoverBody>
+                    Are you sure you want to have that milkshake?
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+
               <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                  minW={0}>
-                  <Avatar
-                    size={'sm'}
-                    src={'https://avatars.dicebear.com/api/male/username.svg'}
-                  />
+                <MenuButton as={Button}>
+                  <PiUserListDuotone />
                 </MenuButton>
-                <MenuList alignItems={'center'}>
+                <MenuList>
                   <br />
                   <Center>
                     <Avatar
@@ -94,15 +118,40 @@ export const DefaultDashboard: FC = () => {
                   </Center>
                   <br />
                   <MenuDivider />
-                  <MenuItem>Your Servers</MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
+                  {dashboardLinks.map((item, i) => (
+                    <MenuItem
+                      as={Link}
+                      key={item.title}
+                      href={item.link}
+                      _hover={{
+                        textDecoration: 'none',
+                        bg: backgroundColor,
+                      }}>
+                      {item.title}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </Menu>
             </Stack>
           </Flex>
         </Flex>
       </Box>
+      <Drawer
+        placement='left'
+        onClose={onClose}
+        isOpen={isOpen}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Search for courses</DrawerHeader>
+
+          <DrawerBody>
+            <Input placeholder='Type here...' />
+          </DrawerBody>
+
+          <DrawerFooter></DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };
