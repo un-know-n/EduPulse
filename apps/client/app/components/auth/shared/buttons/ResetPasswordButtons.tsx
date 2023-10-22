@@ -8,7 +8,7 @@ type TProps = {
   resendHandler?: () => void;
 };
 
-export const ResetButtons: FC<TProps> = ({
+export const ResetPasswordButtons: FC<TProps> = ({
   switchToResendButton = false,
   resendHandler = () => 0,
 }) => {

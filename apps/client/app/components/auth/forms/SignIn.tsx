@@ -4,21 +4,20 @@ import {
   Box,
   Button,
   Container,
-  FormControl,
-  FormErrorMessage,
   Heading,
-  Input,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 import { Routes } from '../config/routes';
-import { Field, Formik } from 'formik';
+import { Formik } from 'formik';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { FC } from 'react';
 import { object, TypeOf } from 'zod';
 import { emailValidator, passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
+import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 
 const signInSchema = object({
   email: emailValidator,
@@ -66,28 +65,14 @@ export const SignIn: FC = () => {
               <VStack
                 spacing={4}
                 align='flex-start'>
-                <FormControl isInvalid={!!errors.email && touched.email}>
-                  <Field
-                    as={Input}
-                    id='email'
-                    name='email'
-                    type='email'
-                    variant='outline'
-                    placeholder='Email Address'
-                  />
-                  <FormErrorMessage>{errors.email}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!errors.password && touched.password}>
-                  <Field
-                    as={Input}
-                    id='password'
-                    name='password'
-                    type='password'
-                    variant='outline'
-                    placeholder='Password'
-                  />
-                  <FormErrorMessage>{errors.password}</FormErrorMessage>
-                </FormControl>
+                <EmailFormInput
+                  isInvalid={Boolean(!!errors.email && touched.email)}
+                  errorMessage={errors.email ?? ''}
+                />
+                <PasswordFormInput
+                  isInvalid={Boolean(!!errors.password && touched.password)}
+                  errorMessage={errors.password ?? ''}
+                />
                 <Container
                   textAlign='end'
                   p={0}>

@@ -7,11 +7,7 @@ import {
   Checkbox,
   Container,
   Flex,
-  FormControl,
-  FormErrorMessage,
   Heading,
-  Input,
-  Select,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -22,6 +18,10 @@ import { Routes } from '../config/routes';
 import { boolean, object, string, TypeOf } from 'zod';
 import { emailValidator, passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { EmailFormInput } from '../shared/inputs/EmailFormInput';
+import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
+import { baseRoles, RoleFormInput } from '../shared/inputs/RoleFormInput';
+import { TextFormInput } from '../shared/inputs/TextFormInput';
 
 const signUpSchema = object({
   name: string({
@@ -48,8 +48,6 @@ const signUpSchema = object({
 type TSignUpFormInputs = TypeOf<typeof signUpSchema>;
 
 export const SignUp: FC = () => {
-  const baseRoles = ['student', 'teacher'] as const;
-
   const initialValues = {
     name: '',
     surname: '',
@@ -95,70 +93,36 @@ export const SignUp: FC = () => {
                 <Flex
                   gap='3'
                   w='full'>
-                  <FormControl isInvalid={!!errors.name && touched.name}>
-                    <Field
-                      as={Input}
-                      id='name'
-                      name='name'
-                      type='text'
-                      variant='outline'
-                      placeholder='Name'
-                    />
-                    <FormErrorMessage>{errors.name}</FormErrorMessage>
-                  </FormControl>
+                  <TextFormInput
+                    isInvalid={Boolean(!!errors.name && touched.name)}
+                    errorMessage={errors.name ?? ''}
+                    fieldName='name'
+                    placeholder='Name'
+                  />
 
-                  <FormControl isInvalid={!!errors.surname && touched.surname}>
-                    <Field
-                      as={Input}
-                      id='surname'
-                      name='surname'
-                      type='text'
-                      variant='outline'
-                      placeholder='Surname'
-                    />
-                    <FormErrorMessage>{errors.surname}</FormErrorMessage>
-                  </FormControl>
+                  <TextFormInput
+                    isInvalid={Boolean(!!errors.surname && touched.surname)}
+                    errorMessage={errors.surname ?? ''}
+                    fieldName='surname'
+                    placeholder='Surname'
+                  />
                 </Flex>
-                <FormControl isInvalid={!!errors.email && touched.email}>
-                  <Field
-                    as={Input}
-                    id='email'
-                    name='email'
-                    type='email'
-                    variant='outline'
-                    placeholder='Email Address'
-                  />
-                  <FormErrorMessage>{errors.email}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!errors.role && touched.role}>
-                  <Field
-                    as={Select}
-                    id='role'
-                    name='role'
-                    value={values.role}
-                    onChange={handleChange}
-                    variant='outline'>
-                    {baseRoles.map((role) => (
-                      <option
-                        key={role}
-                        value={role}>
-                        {role}
-                      </option>
-                    ))}
-                  </Field>
-                  <FormErrorMessage>{errors.role}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!errors.password && touched.password}>
-                  <Field
-                    as={Input}
-                    id='password'
-                    name='password'
-                    type='password'
-                    variant='outline'
-                    placeholder='Password'
-                  />
-                  <FormErrorMessage>{errors.password}</FormErrorMessage>
-                </FormControl>
+                <RoleFormInput
+                  isInvalid={Boolean(!!errors.role && touched.role)}
+                  errorMessage={errors.role ?? ''}
+                  values={values.role}
+                  onChange={handleChange}
+                />
+
+                <EmailFormInput
+                  isInvalid={Boolean(!!errors.email && touched.email)}
+                  errorMessage={errors.email ?? ''}
+                />
+
+                <PasswordFormInput
+                  isInvalid={Boolean(!!errors.password && touched.password)}
+                  errorMessage={errors.password ?? ''}
+                />
 
                 <Field
                   as={Checkbox}

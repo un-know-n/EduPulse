@@ -1,21 +1,13 @@
 'use client';
 
 import { FC } from 'react';
-import {
-  Box,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  Heading,
-  Input,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
-import { Field, Formik } from 'formik';
-import { ResetButtons } from '../shared/buttons/ResetButtons';
+import { Box, Container, Heading, Text, VStack } from '@chakra-ui/react';
+import { Formik } from 'formik';
+import { ResetPasswordButtons } from '../shared/buttons/ResetPasswordButtons';
 import { object, TypeOf } from 'zod';
 import { emailValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 
 type TProps = {
   handlePasswordResetProposal: () => void;
@@ -61,18 +53,11 @@ export const ResetPasswordProposal: FC<TProps> = ({
               <VStack
                 spacing={4}
                 align='flex-start'>
-                <FormControl isInvalid={!!errors.email && touched.email}>
-                  <Field
-                    as={Input}
-                    id='email'
-                    name='email'
-                    type='email'
-                    variant='outline'
-                    placeholder='Email Address'
-                  />
-                  <FormErrorMessage>{errors.email}</FormErrorMessage>
-                </FormControl>
-                <ResetButtons />
+                <EmailFormInput
+                  isInvalid={Boolean(!!errors.email && touched.email)}
+                  errorMessage={errors.email ?? ''}
+                />
+                <ResetPasswordButtons />
               </VStack>
             </form>
           )}

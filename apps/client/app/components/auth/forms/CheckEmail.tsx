@@ -4,17 +4,15 @@ import {
   Box,
   Button,
   Container,
-  FormControl,
-  FormErrorMessage,
   Heading,
-  Input,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ResetButtons } from '../shared/buttons/ResetButtons';
-import { Field, Formik } from 'formik';
+import { ResetPasswordButtons } from '../shared/buttons/ResetPasswordButtons';
+import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { object, string, TypeOf } from 'zod';
+import { TextFormInput } from '../shared/inputs/TextFormInput';
 
 type TProps = {
   email: string;
@@ -59,20 +57,14 @@ export const CheckEmail: FC<TProps> = ({ email, sendHandler }) => {
               <VStack
                 spacing={4}
                 align='flex-start'>
-                <FormControl
-                  isInvalid={
-                    !!errors.confirmationCode && touched.confirmationCode
-                  }>
-                  <Field
-                    as={Input}
-                    id='confirmationCode'
-                    name='confirmationCode'
-                    type='text'
-                    variant='outline'
-                    placeholder='Confirmation code'
-                  />
-                  <FormErrorMessage>{errors.confirmationCode}</FormErrorMessage>
-                </FormControl>
+                <TextFormInput
+                  isInvalid={Boolean(
+                    !!errors.confirmationCode && touched.confirmationCode,
+                  )}
+                  errorMessage={errors.confirmationCode ?? ''}
+                  fieldName='confirmationCode'
+                  placeholder='Confirmation code'
+                />
 
                 <Button
                   type='submit'
@@ -88,7 +80,7 @@ export const CheckEmail: FC<TProps> = ({ email, sendHandler }) => {
         </Formik>
       </Box>
       <Box>
-        <ResetButtons
+        <ResetPasswordButtons
           switchToResendButton
           resendHandler={sendHandler}
         />

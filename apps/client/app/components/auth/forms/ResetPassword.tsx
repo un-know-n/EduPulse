@@ -1,21 +1,13 @@
 'use client';
 
 import { FC } from 'react';
-import {
-  Box,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  Heading,
-  Input,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
-import { Field, Formik } from 'formik';
-import { ResetButtons } from '../shared/buttons/ResetButtons';
+import { Box, Container, Heading, Text, VStack } from '@chakra-ui/react';
+import { Formik } from 'formik';
+import { ResetPasswordButtons } from '../shared/buttons/ResetPasswordButtons';
 import { object, string, TypeOf } from 'zod';
 import { passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 
 type TProps = {
   changeHandler: () => void;
@@ -23,7 +15,7 @@ type TProps = {
 
 const resetSchema = object({
   password: passwordValidator,
-  confirmPassword: string(),
+  confirmPassword: string({ required_error: 'Confirm entered password' }),
 });
 type TResetFormInputs = TypeOf<typeof resetSchema>;
 
@@ -36,7 +28,6 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
   return (
     <Box
       p={5}
-      w='60%'
       maxW={450}>
       <Container
         p={0}
@@ -61,41 +52,20 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
               <VStack
                 spacing={4}
                 align='flex-start'>
-                <FormControl isInvalid={!!errors.password && touched.password}>
-                  <Field
-                    as={Input}
-                    id='password'
-                    name='password'
-                    type='password'
-                    variant='outline'
-                    placeholder='Password'
-                  />
-                  <FormErrorMessage>{errors.password}</FormErrorMessage>
-                </FormControl>
-                <FormControl
-                  isInvalid={
-                    !!errors.confirmPassword && touched.confirmPassword
-                  }>
-                  <Field
-                    as={Input}
-                    id='confirmPassword'
-                    name='confirmPassword'
-                    type='password'
-                    variant='outline'
-                    placeholder='Confirm Password'
-                    validate={(value: string) => {
-                      let error;
+                <PasswordFormInput
+                  isInvalid={Boolean(!!errors.password && touched.password)}
+                  errorMessage={errors.password ?? ''}
+                />
 
-                      if (value !== values.password) {
-                        error = `Passwords don't match`;
-                      }
-
-                      return error;
-                    }}
-                  />
-                  <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
-                </FormControl>
-                <ResetButtons />
+                <PasswordFormInput
+                  isInvalid={Boolean(
+                    !!errors.confirmPassword && touched.confirmPassword,
+                  )}
+                  errorMessage={errors.confirmPassword ?? ''}
+                  forConfirmation
+                  passwordValue={values.password}
+                />
+                <ResetPasswordButtons />
               </VStack>
             </form>
           )}
