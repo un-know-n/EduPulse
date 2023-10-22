@@ -76,7 +76,7 @@ export default function Page() {
         {activeStep === Steps.CheckEmail && (
           <CheckEmail
             email='abrakadabra@mail'
-            resendHandler={goToNext}
+            sendHandler={goToNext}
           />
         )}
 

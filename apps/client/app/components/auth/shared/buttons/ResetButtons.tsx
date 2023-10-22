@@ -16,7 +16,7 @@ export const ResetButtons: FC<TProps> = ({
     <Flex
       w='full'
       flexDirection='column'
-      gap={3}>
+      gap={2}>
       {switchToResendButton ? (
         <Button
           onClick={resendHandler}
