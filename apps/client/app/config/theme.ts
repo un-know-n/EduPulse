@@ -7,7 +7,11 @@ const config: ThemeConfig = {
   initialColorMode: 'dark',
 };
 
+export const themeColors: [string, string] = ['gray.100', 'gray.800'];
+
 // 3. extend the theme
-const theme = extendTheme({ config });
+const theme = extendTheme({
+  config,
+});
 
 export default theme;

@@ -14,7 +14,7 @@ import {
 import { Field, Formik } from 'formik';
 import { Link } from '@chakra-ui/next-js';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
-import { Routes } from '../config/routes';
+import { Routes } from '../../../config/routes';
 import { boolean, object, string, TypeOf } from 'zod';
 import { emailValidator, passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';

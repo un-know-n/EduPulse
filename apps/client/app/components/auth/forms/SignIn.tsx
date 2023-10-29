@@ -9,7 +9,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
-import { Routes } from '../config/routes';
+import { Routes } from '../../../config/routes';
 import { Formik } from 'formik';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { FC } from 'react';

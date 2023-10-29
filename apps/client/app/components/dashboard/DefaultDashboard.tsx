@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import {
   Avatar,
   Box,
@@ -35,24 +35,25 @@ import {
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { PiUserListDuotone } from 'react-icons/pi';
-import { Link } from '@chakra-ui/next-js';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import { IoMdNotifications } from 'react-icons/io';
-
-type TProps = {
-  link: string;
-};
+import { signOut, useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { themeColors } from '../../config/theme';
 
 const dashboardLinks = [
-  { title: 'Achievements', link: '#' },
-  { title: 'Account Settings', link: '#' },
-  { title: 'Logout', link: '#' },
+  { title: 'Achievements', handler: () => redirect('/') },
+  { title: 'Account Settings', handler: () => redirect('/') },
+  { title: 'Logout', handler: () => signOut() },
 ];
 
 export const DefaultDashboard: FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const backgroundColor = useColorModeValue('gray.100', 'gray.900');
+  const backgroundColor = useColorModeValue(...themeColors);
+
+  const { data: session, status } = useSession();
+  useEffect(() => console.log(session, status), [session, status]);
 
   return (
     <>
@@ -93,10 +94,8 @@ export const DefaultDashboard: FC = () => {
                 <PopoverContent>
                   <PopoverArrow />
                   <PopoverCloseButton />
-                  <PopoverHeader>Confirmation!</PopoverHeader>
-                  <PopoverBody>
-                    Are you sure you want to have that milkshake?
-                  </PopoverBody>
+                  <PopoverHeader>Notifications</PopoverHeader>
+                  <PopoverBody>Some notifications right here...</PopoverBody>
                 </PopoverContent>
               </Popover>
 
@@ -109,20 +108,23 @@ export const DefaultDashboard: FC = () => {
                   <Center>
                     <Avatar
                       size={'2xl'}
-                      src={'https://avatars.dicebear.com/api/male/username.svg'}
+                      src={
+                        session?.user?.image ??
+                        'https://avatars.dicebear.com/api/male/username.svg'
+                      }
                     />
                   </Center>
                   <br />
                   <Center>
-                    <p>Username</p>
+                    <p>{session?.user?.name}</p>
                   </Center>
                   <br />
                   <MenuDivider />
                   {dashboardLinks.map((item, i) => (
                     <MenuItem
-                      as={Link}
+                      as={Button}
                       key={item.title}
-                      href={item.link}
+                      onClick={item.handler}
                       _hover={{
                         textDecoration: 'none',
                         bg: backgroundColor,

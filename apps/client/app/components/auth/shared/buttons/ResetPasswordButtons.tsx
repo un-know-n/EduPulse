@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
-import { Routes } from '../../config/routes';
+import { Routes } from '../../../../config/routes';
 
 type TProps = {
   switchToResendButton?: boolean;

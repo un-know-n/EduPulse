@@ -1,10 +1,6 @@
 import './global.css';
-import { DefaultDashboard } from './components/dashboard/DefaultDashboard';
+import Loading from './loading';
 
 export default async function Index() {
-  return (
-    <>
-      <DefaultDashboard></DefaultDashboard>
-    </>
-  );
+  return <Loading />;
 }

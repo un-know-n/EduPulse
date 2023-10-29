@@ -1,8 +1,12 @@
-'use client';
-
 import { Providers } from './providers';
-import theme from './config/theme';
-import { ColorModeScript } from '@chakra-ui/react';
+import SessionProvider from './components/providers/SessionProvider';
+import { Montserrat } from 'next/font/google';
+
+const montserrat = Montserrat({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export default function RootLayout({
   children,
@@ -10,25 +14,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
-      <head>
-        <link
-          rel='preconnect'
-          href='https://fonts.googleapis.com'
-        />
-        <link
-          rel='preconnect'
-          href='https://fonts.gstatic.com'
-          crossOrigin='anonymous'
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap'
-          rel='stylesheet'
-        />
-      </head>
+    <html
+      lang='en'
+      className={montserrat.className}>
       <body>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <Providers>{children}</Providers>
+        <SessionProvider>
+          <Providers>{children}</Providers>
+        </SessionProvider>
       </body>
     </html>
   );

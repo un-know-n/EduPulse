@@ -6,7 +6,7 @@ export default function Loading() {
   return (
     <Flex
       w='full'
-      h='full'
+      h='100vh'
       justifyContent='center'
       alignItems='center'>
       <Spinner size='xl' />
