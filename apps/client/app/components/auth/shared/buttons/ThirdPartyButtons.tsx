@@ -12,10 +12,10 @@ import {
 } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
-import { signIn, SignInOptions } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { Routes } from '../../../../config/routes';
 import { themeColors } from '../../../../config/theme';
+import { signInOptions } from '../../config/constants';
 
 type TProps = {
   includeDivider?: boolean;
@@ -29,10 +29,7 @@ export const ThirdPartyButtons: FC<TProps> = ({
   const { colorMode } = useColorMode();
   const color = useColorModeValue('black', 'whitesmoke');
 
-  const options: SignInOptions = {
-    redirect: true,
-    callbackUrl: useSearchParams().get('callbackUrl') || Routes.Dashboard,
-  };
+  const options = signInOptions(useSearchParams().get('callbackUrl'));
 
   return (
     <Box>

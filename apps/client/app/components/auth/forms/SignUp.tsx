@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import {
   Box,
   Button,
@@ -22,6 +22,9 @@ import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 import { baseRoles, RoleFormInput } from '../shared/inputs/RoleFormInput';
 import { TextFormInput } from '../shared/inputs/TextFormInput';
+import { signIn } from 'next-auth/react';
+import { signInOptions } from '../config/constants';
+import { useSearchParams } from 'next/navigation';
 
 const signUpSchema = object({
   name: string({
@@ -46,15 +49,57 @@ const signUpSchema = object({
   rememberMe: boolean(),
 });
 type TSignUpFormInputs = TypeOf<typeof signUpSchema>;
+const initialValues = {
+  name: '',
+  surname: '',
+  email: '',
+  password: '',
+  role: baseRoles[0],
+  rememberMe: false,
+};
+type TInitialValues = typeof initialValues;
 
 export const SignUp: FC = () => {
-  const initialValues = {
-    name: '',
-    surname: '',
-    email: '',
-    password: '',
-    role: baseRoles[0],
-    rememberMe: false,
+  const [formError, setFormError] = useState('');
+  const options = signInOptions(useSearchParams().get('callbackUrl'));
+  const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
+    const res = await fetch(
+      `http://localhost:${process.env.SERVER_PORT || 3000}`.concat(
+        '/api/auth/signup',
+      ),
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: `${data.name} ${data.surname}`,
+          email: data.email,
+          role: data.role,
+          password: data.password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    if (res.status! >= 400) {
+      setFormError(res.statusText);
+      return null;
+    }
+
+    return await res.json();
+  };
+
+  const onSubmit = async (values: TInitialValues) => {
+    const { rememberMe, ...validatedForm } = signUpSchema.parse(values);
+
+    const response = await signUp(validatedForm as TInitialValues);
+
+    if (response)
+      signIn('credentials', {
+        email: validatedForm.email,
+        password: validatedForm.password,
+        ...options,
+      });
   };
 
   return (
@@ -81,10 +126,7 @@ export const SignUp: FC = () => {
           validateOnBlur={false}
           initialValues={initialValues}
           validationSchema={toFormikValidationSchema(signUpSchema)}
-          onSubmit={(values) => {
-            const validatedForm = signUpSchema.parse(values);
-            alert(JSON.stringify(validatedForm, null, 2));
-          }}>
+          onSubmit={(data) => onSubmit(data as TInitialValues)}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
               <VStack

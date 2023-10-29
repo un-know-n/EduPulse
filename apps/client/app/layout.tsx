@@ -1,3 +1,4 @@
+import './global.css';
 import { Providers } from './providers';
 import SessionProvider from './components/providers/SessionProvider';
 import { Montserrat } from 'next/font/google';

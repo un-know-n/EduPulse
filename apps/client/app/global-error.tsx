@@ -1,31 +1,25 @@
 'use client';
 
 import { PiSmileyNervousDuotone } from 'react-icons/pi';
+import { Montserrat } from 'next/font/google';
+
+const montserrat = Montserrat({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  error: (Error & { digest?: string }) | string;
   reset: () => void;
 }) {
   return (
-    <html lang='en'>
-      <head>
-        <link
-          rel='preconnect'
-          href='https://fonts.googleapis.com'
-        />
-        <link
-          rel='preconnect'
-          href='https://fonts.gstatic.com'
-          crossOrigin='anonymous'
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap'
-          rel='stylesheet'
-        />
-      </head>
+    <html
+      lang='en'
+      className={montserrat.className}>
       <body>
         <main className='grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8'>
           <div className='text-center'>

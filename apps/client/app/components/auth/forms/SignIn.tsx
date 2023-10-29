@@ -18,6 +18,9 @@ import { emailValidator, passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 import { EmailFormInput } from '../shared/inputs/EmailFormInput';
+import { signIn } from 'next-auth/react';
+import { signInOptions } from '../config/constants';
+import { useSearchParams } from 'next/navigation';
 
 const signInSchema = object({
   email: emailValidator,
@@ -30,6 +33,8 @@ export const SignIn: FC = () => {
     email: '',
     password: '',
   };
+
+  const options = signInOptions(useSearchParams().get('callbackUrl'));
 
   return (
     <Box
@@ -58,7 +63,11 @@ export const SignIn: FC = () => {
           validationSchema={toFormikValidationSchema(signInSchema)}
           onSubmit={(values) => {
             const validatedForm = signInSchema.parse(values);
-            alert(JSON.stringify(validatedForm, null, 2));
+            signIn('credentials', {
+              email: validatedForm.email,
+              password: validatedForm.password,
+              ...options,
+            });
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
