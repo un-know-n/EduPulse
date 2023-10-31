@@ -9,8 +9,6 @@ export class UserService {
   constructor(private prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    console.log('DTO: ', createUserDto);
-
     const user = await this.prismaService.user.findUnique({
       where: {
         email: createUserDto.email,
@@ -46,11 +44,24 @@ export class UserService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, { password, role, name }: UpdateUserDto) {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password,
+        role,
+        name,
+      },
+    });
   }
 
   async remove(id: string) {
-    return `This action removes a #${id} user`;
+    return await this.prismaService.user.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

@@ -1,9 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { SignInDto } from './dto/signin.dto';
 import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { ResetVerifyDto } from './dto/reset.verify.dto';
+import { VerificationService } from '../verification/verification.service';
+import { ResetPromptDto } from './dto/reset.prompt.dto';
 
 const EXPIRE_TIME = 20 * 1000; // 20 seconds
 
@@ -12,6 +19,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private verificationService: VerificationService,
   ) {}
 
   async validateUser(dto: SignInDto) {
@@ -22,6 +30,12 @@ export class AuthService {
     }
 
     throw new UnauthorizedException('Wrong email or password!');
+  }
+
+  async findUser(email: string) {
+    const user = await this.userService.findByEmail(email);
+    if (!user) throw new BadRequestException('No user with that email!');
+    return user;
   }
 
   async signUp(dto: CreateUserDto) {
@@ -75,5 +89,29 @@ export class AuthService {
       }),
       expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
+  }
+
+  async emailResetPrompt({ email }: ResetPromptDto) {
+    const user = await this.findUser(email);
+
+    return await this.verificationService.createToken(user);
+  }
+
+  async resetVerify({ email, token }: ResetVerifyDto) {
+    const user = await this.findUser(email);
+
+    try {
+      await this.verificationService.verifyToken(user.id, token);
+    } catch (e) {
+      throw new BadRequestException(e.response);
+    }
+
+    return true;
+  }
+
+  async reset({ password, email }: SignInDto) {
+    const user = await this.findUser(email);
+
+    await this.userService.update(user.id, { password });
   }
 }
