@@ -10,7 +10,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 
 type TProps = {
-  handlePasswordResetProposal: () => void;
+  handlePasswordResetProposal: (email: string) => void;
 };
 
 const resetProposalSchema = object({
@@ -28,6 +28,7 @@ export const ResetPasswordProposal: FC<TProps> = ({
   return (
     <Box
       p={5}
+      pt={0}
       maxW={450}>
       <Container
         p={0}
@@ -45,8 +46,7 @@ export const ResetPasswordProposal: FC<TProps> = ({
           validationSchema={toFormikValidationSchema(resetProposalSchema)}
           onSubmit={(values) => {
             const validatedForm = resetProposalSchema.parse(values);
-            alert(JSON.stringify(validatedForm, null, 2));
-            handlePasswordResetProposal();
+            handlePasswordResetProposal(validatedForm.email);
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>

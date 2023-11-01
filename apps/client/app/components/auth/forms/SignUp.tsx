@@ -65,7 +65,7 @@ export const SignUp: FC = () => {
   const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
     const res = await fetch(
       `http://localhost:${process.env.SERVER_PORT || 3000}`.concat(
-        '/api/auth/signup',
+        '/api/auth/sign-up',
       ),
       {
         method: 'POST',

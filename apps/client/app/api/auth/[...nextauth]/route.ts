@@ -65,7 +65,7 @@ export const authOptions: AuthOptions = {
 
         const res = await fetch(
           `http://localhost:${process.env.SERVER_PORT || 3000}`.concat(
-            '/api/auth/signin',
+            '/api/auth/sign-in',
           ),
           {
             method: 'POST',

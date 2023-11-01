@@ -10,7 +10,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 
 type TProps = {
-  changeHandler: () => void;
+  changeHandler: (password: string) => void;
 };
 
 const resetSchema = object({
@@ -45,7 +45,7 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
           validationSchema={toFormikValidationSchema(resetSchema)}
           onSubmit={(values) => {
             const validatedForm = resetSchema.parse(values);
-            alert(JSON.stringify(validatedForm, null, 2));
+            changeHandler(validatedForm.password);
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>

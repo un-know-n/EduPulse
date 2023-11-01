@@ -50,7 +50,7 @@ export class UserService {
         id,
       },
       data: {
-        password,
+        password: await hash(password, 10),
         role,
         name,
       },

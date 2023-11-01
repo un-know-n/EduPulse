@@ -1,9 +1,11 @@
 'use client';
 import { FC } from 'react';
 import {
+  Badge,
   Box,
   Button,
   Container,
+  Flex,
   Heading,
   Text,
   VStack,
@@ -16,7 +18,9 @@ import { TextFormInput } from '../shared/inputs/TextFormInput';
 
 type TProps = {
   email: string;
-  sendHandler: () => void;
+  duringDevelopmentVerificationCode: string;
+  sendVerificationToken: (token: string) => void;
+  handleResendToken: (email: string) => void;
 };
 
 const checkSchema = object({
@@ -26,7 +30,12 @@ const checkSchema = object({
 });
 type TCheckFormInputs = TypeOf<typeof checkSchema>;
 
-export const CheckEmail: FC<TProps> = ({ email, sendHandler }) => {
+export const CheckEmail: FC<TProps> = ({
+  email,
+  duringDevelopmentVerificationCode,
+  sendVerificationToken,
+  handleResendToken,
+}) => {
   const initialValues = {
     confirmationCode: '',
   };
@@ -42,6 +51,15 @@ export const CheckEmail: FC<TProps> = ({ email, sendHandler }) => {
         <Text>
           We have sent an email with password reset information to {email}.
         </Text>
+        <Flex
+          flexDirection='row'
+          alignItems='center'
+          gap={3}>
+          <Badge colorScheme='red'>During development only!</Badge>
+          <Text>
+            Your verification token: {duringDevelopmentVerificationCode}
+          </Text>
+        </Flex>
       </Container>
       <Box>
         <Formik<TCheckFormInputs>
@@ -50,7 +68,7 @@ export const CheckEmail: FC<TProps> = ({ email, sendHandler }) => {
           validationSchema={toFormikValidationSchema(checkSchema)}
           onSubmit={(values) => {
             const validatedForm = checkSchema.parse(values);
-            alert(JSON.stringify(validatedForm, null, 2));
+            sendVerificationToken(validatedForm.confirmationCode);
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (
             <form onSubmit={handleSubmit}>
@@ -82,7 +100,7 @@ export const CheckEmail: FC<TProps> = ({ email, sendHandler }) => {
       <Box>
         <ResetPasswordButtons
           switchToResendButton
-          resendHandler={sendHandler}
+          resendHandler={() => handleResendToken(email)}
         />
       </Box>
     </Box>
