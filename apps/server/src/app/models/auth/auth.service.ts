@@ -11,8 +11,9 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { ResetVerifyDto } from './dto/reset.verify.dto';
 import { VerificationService } from '../verification/verification.service';
 import { ResetPromptDto } from './dto/reset.prompt.dto';
+import moment from 'moment/moment';
 
-const EXPIRE_TIME = 20 * 1000; // 20 seconds
+const EXPIRE_TIME = 24 * 60 * 60 * 1000; // 24 hours
 
 @Injectable()
 export class AuthService {
@@ -64,7 +65,7 @@ export class AuthService {
           expiresIn: '7d',
           secret: process.env.TOKEN_REFRESH,
         }),
-        expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
+        expiresIn: moment().utc(true).add(EXPIRE_TIME, 'milliseconds').toDate(), //new Date().setTime(new Date().getTime() + EXPIRE_TIME),
       },
     };
   }
@@ -87,7 +88,7 @@ export class AuthService {
         expiresIn: '7d',
         secret: process.env.TOKEN_REFRESH,
       }),
-      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
+      expiresIn: moment().utc(true).add(EXPIRE_TIME, 'milliseconds').toDate(), //new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
   }
 

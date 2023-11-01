@@ -38,7 +38,7 @@ enum Steps {
 }
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

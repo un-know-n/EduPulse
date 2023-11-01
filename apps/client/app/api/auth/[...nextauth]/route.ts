@@ -7,17 +7,24 @@ import prisma from '../../../config/prisma';
 import { Routes } from '../../../config/routes';
 import * as process from 'process';
 import { JWT } from 'next-auth/jwt';
+import axios from 'axios';
+import moment from 'moment';
 
 // TODO: Redo fetching to axios services!!!
-// TODO: Forget Password handling!
+
+const instance = axios.create({
+  baseURL: process.env.SERVER_URL ?? 'http://localhost:3000/api',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 async function refreshToken(token: JWT): Promise<JWT> {
-  const res = await fetch(
-    `http://localhost:${process.env.SERVER_PORT || 3000}`.concat(
-      '/api/auth/refresh',
-    ),
+  const res = await instance.post(
+    '/auth/refresh',
+    {},
     {
-      method: 'POST',
       headers: {
         authorization: `Refresh ${token.backendTokens.refreshToken}`,
       },
@@ -25,10 +32,9 @@ async function refreshToken(token: JWT): Promise<JWT> {
   );
 
   // TODO: Handle incoming error if the token hasn't been refreshed
-  const parsedResponse = await res.json();
   return {
     ...token,
-    backendTokens: parsedResponse,
+    backendTokens: res.data,
   };
 }
 
@@ -63,28 +69,17 @@ export const authOptions: AuthOptions = {
         if (!credentials || !credentials?.email || !credentials?.password)
           return null;
 
-        const res = await fetch(
-          `http://localhost:${process.env.SERVER_PORT || 3000}`.concat(
-            '/api/auth/sign-in',
-          ),
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        );
+        const res = await instance.post('/auth/sign-in', {
+          email: credentials.email,
+          password: credentials.password,
+        });
 
         if (res.status! >= 400) {
           console.log(res.statusText);
           return null;
         }
 
-        return await res.json();
+        return res.data;
       },
     }),
   ],
@@ -93,16 +88,21 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) return { ...token, ...user };
-      if (new Date().getTime() < token.backendTokens.expiersIn) return token;
+      if (user || !token.backendTokens) return { ...token, ...user };
+      if (moment().utc(true).toDate() < token.backendTokens.expiresIn)
+        return token; //new Date().getTime()
 
       return await refreshToken(token);
     },
     async session({ session, token }) {
       if (token.user) {
+        // If the user logged in with credentials
+
         session.user = token.user;
         session.backendTokens = token.backendTokens;
       } else if (token) {
+        // If the user logged in with third-party oauth providers
+
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         session.user = token;
