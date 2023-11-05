@@ -20,10 +20,10 @@ import {
 import { CheckEmail } from '../../components/auth/forms/CheckEmail';
 import { ResetPassword } from '../../components/auth/forms/ResetPassword';
 import { useState } from 'react';
-import { Routes } from '../../config/routes';
+import { Routes } from '../../config/routing/routes';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { defaultToastOptions } from '../../config/toast.options';
+import { defaultToastOptions } from '../../config/UI/toast.options';
 
 const steps = [
   { title: 'Enter Email', description: 'Provide your email' },

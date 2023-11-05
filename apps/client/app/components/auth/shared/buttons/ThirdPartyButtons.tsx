@@ -14,7 +14,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { themeColors } from '../../../../config/theme';
+import { themeColors } from '../../../../config/UI/theme';
 import { signInOptions } from '../../config/constants';
 
 type TProps = {

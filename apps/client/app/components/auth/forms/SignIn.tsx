@@ -9,7 +9,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
-import { Routes } from '../../../config/routes';
+import { Routes } from '../../../config/routing/routes';
 import { Formik } from 'formik';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
 import { FC } from 'react';
@@ -28,12 +28,12 @@ const signInSchema = object({
 });
 type TSignInFormInputs = TypeOf<typeof signInSchema>;
 
-export const SignIn: FC = () => {
-  const initialValues = {
-    email: '',
-    password: '',
-  };
+const initialValues = {
+  email: '',
+  password: '',
+};
 
+export const SignIn: FC = () => {
   const options = signInOptions(useSearchParams().get('callbackUrl'));
 
   return (

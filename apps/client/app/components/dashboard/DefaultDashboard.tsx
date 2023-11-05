@@ -39,7 +39,7 @@ import { HiMenuAlt1 } from 'react-icons/hi';
 import { IoMdNotifications } from 'react-icons/io';
 import { signOut, useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
-import { themeColors } from '../../config/theme';
+import { themeColors } from '../../config/UI/theme';
 
 const dashboardLinks = [
   { title: 'Achievements', handler: () => redirect('/') },
