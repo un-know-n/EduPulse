@@ -12,7 +12,7 @@ import { Link } from '@chakra-ui/next-js';
 import { Routes } from '../../../config/routing/routes';
 import { Formik } from 'formik';
 import { ThirdPartyButtons } from '../shared/buttons/ThirdPartyButtons';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { object, TypeOf } from 'zod';
 import { emailValidator, passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -20,7 +20,8 @@ import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 import { signIn } from 'next-auth/react';
 import { signInOptions } from '../config/constants';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import AuthAlert from '../shared/alerts/AuthAlert';
 
 const signInSchema = object({
   email: emailValidator,
@@ -34,7 +35,10 @@ const initialValues = {
 };
 
 export const SignIn: FC = () => {
-  const options = signInOptions(useSearchParams().get('callbackUrl'));
+  const [error, setError] = useState('');
+  const callbackUrl = useSearchParams().get('callbackUrl') || Routes.Dashboard;
+  const options = signInOptions(callbackUrl);
+  const router = useRouter();
 
   return (
     <Box
@@ -45,7 +49,7 @@ export const SignIn: FC = () => {
       mx='auto'>
       <Container
         p={0}
-        mb={16}>
+        mb={5}>
         <Heading>Login</Heading>
         <Text>
           Don&apos;t have an account?{' '}
@@ -56,17 +60,32 @@ export const SignIn: FC = () => {
           </Link>
         </Text>
       </Container>
-      <Box>
+      {error ? (
+        <AuthAlert
+          title='Error!'
+          description={error}
+          status='error'
+        />
+      ) : null}
+      <Box mt={5}>
         <Formik<TSignInFormInputs>
           validateOnBlur={false}
           initialValues={initialValues}
           validationSchema={toFormikValidationSchema(signInSchema)}
           onSubmit={(values) => {
+            setError('');
             const validatedForm = signInSchema.parse(values);
             signIn('credentials', {
               email: validatedForm.email,
               password: validatedForm.password,
               ...options,
+              redirect: false,
+            }).then((value) => {
+              if (!value?.error) {
+                router.push(callbackUrl);
+              } else {
+                setError('Credentials do not match!');
+              }
             });
           }}>
           {({ handleSubmit, errors, handleChange, values, touched }) => (

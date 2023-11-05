@@ -75,7 +75,6 @@ export const authOptions: AuthOptions = {
         });
 
         if (res.status! >= 400) {
-          console.log(res.statusText);
           return null;
         }
 

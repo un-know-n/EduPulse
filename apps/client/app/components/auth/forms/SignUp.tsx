@@ -24,7 +24,9 @@ import { baseRoles, RoleFormInput } from '../shared/inputs/RoleFormInput';
 import { TextFormInput } from '../shared/inputs/TextFormInput';
 import { signIn } from 'next-auth/react';
 import { signInOptions } from '../config/constants';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import AuthAlert from '../shared/alerts/AuthAlert';
+import axios from 'axios';
 
 const signUpSchema = object({
   name: string({
@@ -59,34 +61,34 @@ const initialValues = {
 };
 type TInitialValues = typeof initialValues;
 
+const instance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export const SignUp: FC = () => {
-  const [formError, setFormError] = useState('');
-  const options = signInOptions(useSearchParams().get('callbackUrl'));
+  const router = useRouter();
+  const [error, setError] = useState('');
+  const callbackUrl = useSearchParams().get('callbackUrl') || Routes.Dashboard;
+  const options = signInOptions(callbackUrl);
+
   const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
-    const res = await fetch(
-      `http://localhost:${process.env.SERVER_PORT || 3000}`.concat(
-        '/api/auth/sign-up',
-      ),
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          name: `${data.name} ${data.surname}`,
-          email: data.email,
-          role: data.role,
-          password: data.password,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    const res = await instance.post('/auth/sign-up', {
+      name: `${data.name} ${data.surname}`,
+      email: data.email,
+      role: data.role,
+      password: data.password,
+    });
 
     if (res.status! >= 400) {
-      setFormError(res.statusText);
+      setError(res.statusText);
       return null;
     }
 
-    return await res.json();
+    return res.data;
   };
 
   const onSubmit = async (values: TInitialValues) => {
@@ -94,12 +96,24 @@ export const SignUp: FC = () => {
 
     const response = await signUp(validatedForm as TInitialValues);
 
-    if (response)
+    if (response) {
+      setError('');
+
       signIn('credentials', {
         email: validatedForm.email,
         password: validatedForm.password,
         ...options,
+        redirect: false,
+      }).then((value) => {
+        if (!value?.error) {
+          router.push(callbackUrl);
+        } else {
+          setError(
+            'Unexpected error occurred, try to login to your account manually!',
+          );
+        }
       });
+    }
   };
 
   return (
@@ -110,7 +124,7 @@ export const SignUp: FC = () => {
       mx='auto'>
       <Container
         p={0}
-        mb={16}>
+        mb={5}>
         <Heading>Create account</Heading>
         <Text>
           Already have an account?{' '}
@@ -121,7 +135,14 @@ export const SignUp: FC = () => {
           </Link>
         </Text>
       </Container>
-      <Box>
+      {error ? (
+        <AuthAlert
+          title='Error!'
+          description={error}
+          status='error'
+        />
+      ) : null}
+      <Box mt={5}>
         <Formik<TSignUpFormInputs>
           validateOnBlur={false}
           initialValues={initialValues}
