@@ -24,7 +24,7 @@ type TProps = {
 
 export const ThirdPartyButtons: FC<TProps> = ({
   includeDivider = false,
-  dividerText = 'Or',
+  dividerText = 'Або',
 }) => {
   const { colorMode } = useColorMode();
   const color = useColorModeValue('black', 'whitesmoke');
@@ -55,13 +55,13 @@ export const ThirdPartyButtons: FC<TProps> = ({
           leftIcon={<FcGoogle />}
           onClick={() => signIn('google', options)}
           variant='outline'>
-          Continue with Google
+          Продовжити з Google
         </Button>
         <Button
           leftIcon={<FaGithub />}
           onClick={() => signIn('github', options)}
           variant='outline'>
-          Continue with GitHub
+          Продовжити з GitHub
         </Button>
       </Flex>
     </Box>

@@ -47,18 +47,17 @@ export const CheckEmail: FC<TProps> = ({
       <Container
         p={0}
         mb={16}>
-        <Heading>Check Your Email</Heading>
+        <Heading>Перевірте свою електронну пошту</Heading>
         <Text>
-          We have sent an email with password reset information to {email}.
+          Ми надіслали електронний лист із інформацією про скидання пароля на
+          адресу {email}.
         </Text>
         <Flex
           flexDirection='row'
           alignItems='center'
           gap={3}>
           <Badge colorScheme='red'>During development only!</Badge>
-          <Text>
-            Your verification token: {duringDevelopmentVerificationCode}
-          </Text>
+          <Text>Ваш перевірочний код: {duringDevelopmentVerificationCode}</Text>
         </Flex>
       </Container>
       <Box>
@@ -90,7 +89,7 @@ export const CheckEmail: FC<TProps> = ({
                   variant='outline'
                   width='full'
                   mb={2}>
-                  Submit
+                  Підтвердити
                 </Button>
               </VStack>
             </form>

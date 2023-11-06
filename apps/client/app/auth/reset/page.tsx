@@ -26,9 +26,12 @@ import axios from 'axios';
 import { defaultToastOptions } from '../../config/UI/toast.options';
 
 const steps = [
-  { title: 'Enter Email', description: 'Provide your email' },
-  { title: 'Check Email', description: 'Find letter from us' },
-  { title: 'Change Password', description: 'Choose another password' },
+  {
+    title: 'Введіть електронну адресу',
+    description: 'Адресу, що була використана при створенні акаунта',
+  },
+  { title: 'Перевірте пошту', description: 'Знайдіть листа від нас' },
+  { title: 'Змініть пароль', description: 'Вигадайте інший пароль' },
 ];
 
 enum Steps {
@@ -71,7 +74,8 @@ export default function Page() {
             token: res.data.token,
           }));
           toast({
-            title: 'Verification code was sent yo tour email!',
+            title:
+              'Перевірочний код був відправлений на вашу електронну пошту!',
             ...defaultToastOptions,
           });
 
@@ -82,7 +86,9 @@ export default function Page() {
     } catch (e: any) {
       console.log('handleResetProposal ERROR: ', e);
       toast({
-        title: e.response.data.message || 'Unexpected error occurred!',
+        title:
+          e.response.data.message ||
+          'Неочікувана помилка під час відправки листа!',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -102,7 +108,9 @@ export default function Page() {
     } catch (e: any) {
       console.log('handleTokenVerification ERROR: ', e);
       toast({
-        title: e.response.data.message || 'Unexpected error occurred!',
+        title:
+          e.response.data.message ||
+          'неочікувана помилка під час перевірки токена!',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -119,7 +127,7 @@ export default function Page() {
         .then((res) => {
           console.log('handlePasswordReset SUCCESS: ', res);
           toast({
-            title: 'Password was changed!',
+            title: 'Пароль було змінено!',
             ...defaultToastOptions,
           });
           router.push(Routes.SignIn);
@@ -127,7 +135,9 @@ export default function Page() {
     } catch (e: any) {
       console.log('handlePasswordReset ERROR: ', e);
       toast({
-        title: e.response.data.message || 'Unexpected error occurred!',
+        title:
+          e.response.data.message ||
+          'Неочікувана помилка під час зміни пароля!',
         ...defaultToastOptions,
         status: 'error',
       });

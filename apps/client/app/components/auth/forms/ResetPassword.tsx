@@ -32,10 +32,10 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
       <Container
         p={0}
         mb={16}>
-        <Heading>Forgot password?</Heading>
+        <Heading>Змініть пароль</Heading>
         <Text>
-          Enter the email address you used to create your account so we can send
-          you instructions for changing your password.
+          Вигадайте складний пароль, використовуючи букви, символи та цифри і
+          підтвердіть його зміну
         </Text>
       </Container>
       <Box>

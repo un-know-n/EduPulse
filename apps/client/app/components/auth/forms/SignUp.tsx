@@ -30,21 +30,21 @@ import axios from 'axios';
 
 const signUpSchema = object({
   name: string({
-    required_error: 'Name is required',
+    required_error: "Введіть ваше ім'я",
   })
     .trim()
     .min(1, {
-      message: 'Name cannot be empty',
+      message: "Ім'я не може бути порожнім",
     }),
   surname: string({
-    required_error: 'Surname is required',
+    required_error: 'Введіть ваше прізвище',
   })
     .trim()
     .min(1, {
-      message: 'Surname cannot be empty',
+      message: 'Прізвище не може бути порожнім',
     }),
   role: string().refine((role) => role === 'student' || role === 'teacher', {
-    message: 'Role must be either "student" or "teacher"',
+    message: 'Дане поле може бути лише "student" або "teacher"',
   }),
   email: emailValidator,
   password: passwordValidator,
@@ -109,7 +109,7 @@ export const SignUp: FC = () => {
           router.push(callbackUrl);
         } else {
           setError(
-            'Unexpected error occurred, try to login to your account manually!',
+            'Сталася неочікувана помилка, спробуйте ввійти в свій обліковий запис вручну!',
           );
         }
       });
@@ -125,19 +125,19 @@ export const SignUp: FC = () => {
       <Container
         p={0}
         mb={5}>
-        <Heading>Create account</Heading>
+        <Heading>Створити обліковий запис</Heading>
         <Text>
-          Already have an account?{' '}
+          Вже зареєстровані?{' '}
           <Link
             color='blue.500'
             href={Routes.SignIn}>
-            Sign in
+            Увійти
           </Link>
         </Text>
       </Container>
       {error ? (
         <AuthAlert
-          title='Error!'
+          title='Помилка!'
           description={error}
           status='error'
         />
@@ -160,14 +160,14 @@ export const SignUp: FC = () => {
                     isInvalid={Boolean(!!errors.name && touched.name)}
                     errorMessage={errors.name ?? ''}
                     fieldName='name'
-                    placeholder='Name'
+                    placeholder="Ім'я"
                   />
 
                   <TextFormInput
                     isInvalid={Boolean(!!errors.surname && touched.surname)}
                     errorMessage={errors.surname ?? ''}
                     fieldName='surname'
-                    placeholder='Surname'
+                    placeholder='Прізвище'
                   />
                 </Flex>
                 <RoleFormInput
@@ -193,17 +193,17 @@ export const SignUp: FC = () => {
                   name='rememberMe'
                   colorScheme='blue'>
                   <Text>
-                    By checking this you agree with{' '}
+                    Я погоджуюся з{' '}
                     <Link
                       color='blue.500'
                       href='/'>
-                      Privacy policy
+                      Політикою конфіденційності
                     </Link>{' '}
-                    and{' '}
+                    та{' '}
                     <Link
                       color='blue.500'
                       href='/'>
-                      Terms of use
+                      Правилами користування
                     </Link>
                   </Text>
                 </Field>
@@ -213,7 +213,7 @@ export const SignUp: FC = () => {
                   colorScheme='blue'
                   variant='outline'
                   width='full'>
-                  Sign up
+                  Створити
                 </Button>
               </VStack>
             </form>

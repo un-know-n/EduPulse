@@ -50,19 +50,19 @@ export const SignIn: FC = () => {
       <Container
         p={0}
         mb={5}>
-        <Heading>Login</Heading>
+        <Heading>Вітаємо!</Heading>
         <Text>
-          Don&apos;t have an account?{' '}
+          Ще не зареєстровані?{' '}
           <Link
             color='blue.500'
             href={Routes.SignUp}>
-            Sign up
+            Створити обліковий запис
           </Link>
         </Text>
       </Container>
       {error ? (
         <AuthAlert
-          title='Error!'
+          title='Помилка!'
           description={error}
           status='error'
         />
@@ -84,7 +84,7 @@ export const SignIn: FC = () => {
               if (!value?.error) {
                 router.push(callbackUrl);
               } else {
-                setError('Credentials do not match!');
+                setError('Облікові дані не збігаються!');
               }
             });
           }}>
@@ -107,7 +107,7 @@ export const SignIn: FC = () => {
                   <Link
                     href={Routes.ResetPassword}
                     color='blue.500'>
-                    Forgot password?
+                    Забули пароль?
                   </Link>
                 </Container>
                 <Button
@@ -115,7 +115,7 @@ export const SignIn: FC = () => {
                   colorScheme='blue'
                   variant='outline'
                   width='full'>
-                  Login
+                  Увійти
                 </Button>
               </VStack>
             </form>

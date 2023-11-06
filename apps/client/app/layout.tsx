@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang='en'
+      lang='uk'
       className={montserrat.className}>
       <body>
         <SessionProvider>

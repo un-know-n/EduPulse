@@ -30,12 +30,17 @@ export class AuthService {
       return rest;
     }
 
-    throw new UnauthorizedException('Wrong email or password!');
+    throw new UnauthorizedException(
+      'Неправильна електронна адреса або пароль!',
+    );
   }
 
   async findUser(email: string) {
     const user = await this.userService.findByEmail(email);
-    if (!user) throw new BadRequestException('No user with that email!');
+    if (!user)
+      throw new BadRequestException(
+        'Немає користувачів із такою електронною адресою!',
+      );
     return user;
   }
 

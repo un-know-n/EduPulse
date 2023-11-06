@@ -33,10 +33,11 @@ export const ResetPasswordProposal: FC<TProps> = ({
       <Container
         p={0}
         mb={16}>
-        <Heading>Forgot password?</Heading>
+        <Heading>Забули пароль?</Heading>
         <Text>
-          Enter the email address you used to create your account so we can send
-          you instructions for changing your password.
+          Введіть адресу електронної пошти, яку ви використовували для створення
+          облікового запису, щоб ми могли надіслати вам інструкції щодо зміни
+          пароля.
         </Text>
       </Container>
       <Box>

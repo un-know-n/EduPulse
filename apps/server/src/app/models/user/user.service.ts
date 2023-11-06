@@ -16,7 +16,9 @@ export class UserService {
     });
 
     if (user)
-      throw new ConflictException('User with that email already exists!');
+      throw new ConflictException(
+        'Користувач із такою електронною поштою вже існує!',
+      );
     const newUser = await this.prismaService.user.create({
       data: {
         ...createUserDto,

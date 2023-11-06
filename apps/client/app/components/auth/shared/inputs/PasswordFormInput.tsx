@@ -32,12 +32,12 @@ export const PasswordFormInput: FC<
             name='confirmPassword'
             type={show ? 'text' : 'password'}
             variant='outline'
-            placeholder='Confirm Password'
+            placeholder='Підтвердіть пароль'
             validate={(value: string) => {
               let error;
 
               if (value !== passwordValue) {
-                error = `Passwords don't match`;
+                error = `Паролі не співпадають!`;
               }
 
               return error;
@@ -50,7 +50,7 @@ export const PasswordFormInput: FC<
             name='password'
             type={show ? 'text' : 'password'}
             variant='outline'
-            placeholder='Password'
+            placeholder='Пароль'
           />
         )}
 

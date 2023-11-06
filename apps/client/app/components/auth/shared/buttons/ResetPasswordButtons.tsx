@@ -23,7 +23,7 @@ export const ResetPasswordButtons: FC<TProps> = ({
           colorScheme='blue'
           variant='outline'
           width='full'>
-          Resend Email
+          Надіслати повторно
         </Button>
       ) : (
         <Button
@@ -31,7 +31,7 @@ export const ResetPasswordButtons: FC<TProps> = ({
           colorScheme='blue'
           variant='outline'
           width='full'>
-          Submit
+          Підтвердити
         </Button>
       )}
 
@@ -49,7 +49,7 @@ export const ResetPasswordButtons: FC<TProps> = ({
         borderRadius={5}
         textAlign='center'
         width='full'>
-        Back To Login
+        Повернутися до авторизації
       </Link>
     </Flex>
   );

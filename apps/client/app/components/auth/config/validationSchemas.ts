@@ -4,21 +4,27 @@ const minPasswordLength = 8;
 const maxPasswordLength = 32;
 
 export const emailValidator = string({
-  required_error: 'Enter your email',
+  required_error: 'Введіть електронну адресу',
 })
-  .email('Please enter a valid email')
+  .email('Введіть дійсну електронну адресу')
   .trim();
 
 export const passwordValidator = string({
-  required_error: 'Enter password',
+  required_error: 'Введіть пароль',
 })
-  .min(minPasswordLength, `Minimum password length is ${minPasswordLength}`)
-  .max(maxPasswordLength, `Maximum password length is ${maxPasswordLength}`)
+  .min(
+    minPasswordLength,
+    `Мінімальна довжина пароля повинна бути ${minPasswordLength}`,
+  )
+  .max(
+    maxPasswordLength,
+    `Максимальна довжина пароля повинна бути ${maxPasswordLength}`,
+  )
   .refine(
     (password) => /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=\S+$).*$/.test(password),
     {
       message:
-        'Password must meet the specified criteria (Uppercase, lowercase, digit, no spaces)',
+        'Пароль має відповідати наступним критеріям - великі/малі символи, цифри, відсутність пробілів',
     },
   );
 // .refine((password) => /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/.test(password), {

@@ -23,7 +23,7 @@ export const EmailFormInput: FC<IInputFormProps> = ({
           name='email'
           type='email'
           variant='outline'
-          placeholder='Email Address'
+          placeholder='Електронна адреса'
         />
         <InputRightElement
           pointerEvents='none'

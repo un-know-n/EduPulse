@@ -29,6 +29,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Stack,
+  Text,
   useColorMode,
   useColorModeValue,
   useDisclosure,
@@ -40,11 +41,12 @@ import { IoMdNotifications } from 'react-icons/io';
 import { signOut, useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { themeColors } from '../../config/UI/theme';
+import { AiOutlineSmile } from 'react-icons/ai';
 
 const dashboardLinks = [
-  { title: 'Achievements', handler: () => redirect('/') },
-  { title: 'Account Settings', handler: () => redirect('/') },
-  { title: 'Logout', handler: () => signOut() },
+  { title: 'Досягнення', handler: () => redirect('/') },
+  { title: 'Налаштування', handler: () => redirect('/') },
+  { title: 'Вийти', handler: () => signOut() },
 ];
 
 export const DefaultDashboard: FC = () => {
@@ -70,7 +72,7 @@ export const DefaultDashboard: FC = () => {
             <Button onClick={onOpen}>
               <HiMenuAlt1 />
             </Button>
-            <Heading fontSize={24}>Dashboard</Heading>
+            <Heading fontSize={24}>Остання активність</Heading>
           </Flex>
 
           <Flex alignItems={'center'}>
@@ -94,8 +96,15 @@ export const DefaultDashboard: FC = () => {
                 <PopoverContent>
                   <PopoverArrow />
                   <PopoverCloseButton />
-                  <PopoverHeader>Notifications</PopoverHeader>
-                  <PopoverBody>Some notifications right here...</PopoverBody>
+                  <PopoverHeader>Сповіщення</PopoverHeader>
+                  <PopoverBody>
+                    <Flex
+                      alignItems='center'
+                      gap={2}>
+                      <Text>У вас ще немає сповіщень {'  '}</Text>
+                      <AiOutlineSmile />
+                    </Flex>
+                  </PopoverBody>
                 </PopoverContent>
               </Popover>
 
@@ -145,10 +154,10 @@ export const DefaultDashboard: FC = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Search for courses</DrawerHeader>
+          <DrawerHeader>Пошук курсів</DrawerHeader>
 
           <DrawerBody>
-            <Input placeholder='Type here...' />
+            <Input placeholder='Введіть назву курса...' />
           </DrawerBody>
 
           <DrawerFooter></DrawerFooter>
