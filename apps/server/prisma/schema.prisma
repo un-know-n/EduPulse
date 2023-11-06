@@ -27,15 +27,6 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  userId       String
-  expires      DateTime
-  sessionToken String   @unique
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
   id                String              @id @default(cuid())
   name              String
@@ -45,7 +36,6 @@ model User {
   role              String?
   image             String?
   accounts          Account[]
-  sessions          Session[]
   VerificationToken VerificationToken[]
 }
 
