@@ -12,6 +12,7 @@ import { ResetVerifyDto } from './dto/reset.verify.dto';
 import { VerificationService } from '../verification/verification.service';
 import { ResetPromptDto } from './dto/reset.prompt.dto';
 import moment from 'moment/moment';
+import { AccountService } from '../account/account.service';
 
 const EXPIRE_TIME = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -21,6 +22,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private verificationService: VerificationService,
+    private accountService: AccountService,
   ) {}
 
   async validateUser(dto: SignInDto) {
@@ -44,12 +46,22 @@ export class AuthService {
     return user;
   }
 
+  async checkIfOAuth(userId: string) {
+    const isOAuthAccount = await this.accountService.findByUserId(userId);
+    if (isOAuthAccount && isOAuthAccount.type === 'oauth')
+      throw new BadRequestException(
+        'Немає користувачів із такою електронною адресою!',
+      );
+  }
+
   async signUp(dto: CreateUserDto) {
     return await this.userService.create(dto);
   }
 
   async signIn(dto: SignInDto) {
     const user = await this.validateUser(dto);
+
+    await this.checkIfOAuth(user.id);
 
     const payload = {
       sub: user.email,
@@ -99,6 +111,7 @@ export class AuthService {
 
   async emailResetPrompt({ email }: ResetPromptDto) {
     const user = await this.findUser(email);
+    await this.checkIfOAuth(user.id);
 
     return await this.verificationService.createToken(user);
   }

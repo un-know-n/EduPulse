@@ -135,13 +135,7 @@ export const SignUp: FC = () => {
           </Link>
         </Text>
       </Container>
-      {error ? (
-        <AuthAlert
-          title='Помилка!'
-          description={error}
-          status='error'
-        />
-      ) : null}
+      {error ? <AuthAlert text={error} /> : null}
       <Box mt={5}>
         <Formik<TSignUpFormInputs>
           validateOnBlur={false}

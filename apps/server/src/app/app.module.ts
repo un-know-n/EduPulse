@@ -9,6 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { PrismaService } from './prisma.service';
 import * as process from 'process';
 import { VerificationModule } from './models/verification/verification.module';
+import { AccountModule } from './models/account/account.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { VerificationModule } from './models/verification/verification.module';
     AuthModule,
     UserModule,
     VerificationModule,
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

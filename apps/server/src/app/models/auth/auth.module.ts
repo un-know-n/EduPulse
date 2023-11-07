@@ -5,6 +5,7 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma.service';
 import { VerificationService } from '../verification/verification.service';
+import { AccountService } from '../account/account.service';
 
 @Module({
   providers: [
@@ -13,6 +14,7 @@ import { VerificationService } from '../verification/verification.service';
     PrismaService,
     JwtService,
     VerificationService,
+    AccountService,
   ],
   controllers: [AuthController],
 })

@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import {
   Alert,
-  AlertDescription,
   AlertIcon,
   AlertProps,
   AlertTitle,
@@ -12,22 +11,20 @@ import {
 } from '@chakra-ui/react';
 
 interface IProps extends AlertProps {
-  title: string;
-  description: string;
+  text: string;
 }
 
-const AuthAlert: FC<IProps> = ({ description, title, status }) => {
+const AuthAlert: FC<IProps> = ({ text }) => {
   const { isOpen: isVisible, onClose } = useDisclosure({ defaultIsOpen: true });
 
   return isVisible ? (
     <Alert
-      status={status}
+      status='error'
       justifyContent='space-between'>
       <Flex>
         <AlertIcon />
         <Box>
-          <AlertTitle>{title}</AlertTitle>
-          <AlertDescription>{description}</AlertDescription>
+          <AlertTitle>{text}</AlertTitle>
         </Box>
       </Flex>
 

@@ -75,7 +75,7 @@ export default function Page() {
           }));
           toast({
             title:
-              'Перевірочний код був відправлений на вашу електронну пошту!',
+              'Перевірочний код було відправлено на вашу електронну пошту!',
             ...defaultToastOptions,
           });
 
@@ -110,7 +110,7 @@ export default function Page() {
       toast({
         title:
           e.response.data.message ||
-          'неочікувана помилка під час перевірки токена!',
+          'Неочікувана помилка під час перевірки токена!',
         ...defaultToastOptions,
         status: 'error',
       });

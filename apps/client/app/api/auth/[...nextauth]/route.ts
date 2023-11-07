@@ -10,8 +10,6 @@ import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
 import moment from 'moment';
 
-// TODO: Redo fetching to axios services!!!
-
 const instance = axios.create({
   baseURL: process.env.SERVER_URL ?? 'http://localhost:3000/api',
   method: 'POST',
@@ -31,7 +29,6 @@ async function refreshToken(token: JWT): Promise<JWT> {
     },
   );
 
-  // TODO: Handle incoming error if the token hasn't been refreshed
   return {
     ...token,
     backendTokens: res.data,

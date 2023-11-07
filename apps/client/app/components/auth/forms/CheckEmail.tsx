@@ -53,10 +53,14 @@ export const CheckEmail: FC<TProps> = ({
           адресу {email}.
         </Text>
         <Flex
-          flexDirection='row'
-          alignItems='center'
-          gap={3}>
-          <Badge colorScheme='red'>During development only!</Badge>
+          flexDirection='column'
+          alignItems='flex-start'>
+          <Badge
+            colorScheme='red'
+            gap={1}
+            mt={3}>
+            During development only!
+          </Badge>
           <Text>Ваш перевірочний код: {duringDevelopmentVerificationCode}</Text>
         </Flex>
       </Container>
@@ -80,7 +84,7 @@ export const CheckEmail: FC<TProps> = ({
                   )}
                   errorMessage={errors.confirmationCode ?? ''}
                   fieldName='confirmationCode'
-                  placeholder='Confirmation code'
+                  placeholder='Код підтвердження'
                 />
 
                 <Button

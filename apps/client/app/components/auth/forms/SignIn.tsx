@@ -60,13 +60,7 @@ export const SignIn: FC = () => {
           </Link>
         </Text>
       </Container>
-      {error ? (
-        <AuthAlert
-          title='Помилка!'
-          description={error}
-          status='error'
-        />
-      ) : null}
+      {error ? <AuthAlert text={error} /> : null}
       <Box mt={5}>
         <Formik<TSignInFormInputs>
           validateOnBlur={false}

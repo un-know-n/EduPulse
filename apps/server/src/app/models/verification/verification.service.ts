@@ -46,7 +46,7 @@ export class VerificationService {
     });
 
     if (!existingToken)
-      throw new BadRequestException('Введено неправильний маркер!');
+      throw new BadRequestException('Введено неправильний токен!');
     if (moment().utc(true).isAfter(existingToken.expires))
       throw new BadRequestException('Термін дії токена минув!');
 
