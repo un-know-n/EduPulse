@@ -18,28 +18,31 @@ const instance = axios.create({
   },
 });
 
-async function refreshToken(token: JWT): Promise<JWT> {
-  const res = await instance.post(
-    '/auth/refresh',
-    {},
-    {
-      headers: {
-        authorization: `Refresh ${token.backendTokens.refreshToken}`,
+async function refreshToken(token: JWT) {
+  try {
+    const response = await instance.post(
+      '/auth/refresh',
+      {},
+      {
+        headers: {
+          authorization: `Refresh ${token.backendTokens.refreshToken}`,
+        },
       },
-    },
-  );
-
-  return {
-    ...token,
-    backendTokens: res.data,
-  };
+    );
+    return {
+      ...token,
+      backendTokens: response.data,
+    };
+  } catch (e) {
+    throw Error('Expired token!');
+  }
 }
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
-    maxAge: 7 * 24 * 60 * 60,
+    maxAge: 24 * 60 * 60, //EXPIRE_TIME / 1000,
   },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -71,7 +74,7 @@ export const authOptions: AuthOptions = {
           password: credentials.password,
         });
 
-        if (res.status! >= 400) {
+        if (res.status >= 400) {
           return null;
         }
 
@@ -85,8 +88,8 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user || !token.backendTokens) return { ...token, ...user };
-      if (moment().utc(true).toDate() < token.backendTokens.expiresIn)
-        return token; //new Date().getTime()
+      if (moment().utc(true).unix() < token.backendTokens.expiresIn)
+        return token;
 
       return await refreshToken(token);
     },

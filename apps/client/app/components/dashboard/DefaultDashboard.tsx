@@ -39,9 +39,10 @@ import { PiUserListDuotone } from 'react-icons/pi';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import { IoMdNotifications } from 'react-icons/io';
 import { signOut, useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { themeColors } from '../../config/UI/theme';
 import { AiOutlineSmile } from 'react-icons/ai';
+import { Routes } from '../../config/routing/routes';
 
 const dashboardLinks = [
   { title: 'Досягнення', handler: () => redirect('/') },
@@ -50,12 +51,16 @@ const dashboardLinks = [
 ];
 
 export const DefaultDashboard: FC = () => {
+  const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const backgroundColor = useColorModeValue(...themeColors);
 
   const { data: session, status } = useSession();
-  useEffect(() => console.log(session, status), [session, status]);
+  useEffect(() => {
+    console.log(session, status);
+    if (status === 'unauthenticated') router.push(Routes.SignIn);
+  }, [session, status]);
 
   return (
     <>

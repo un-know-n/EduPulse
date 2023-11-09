@@ -10,7 +10,7 @@ datasource db {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String
+  userId            String  @unique
   providerAccountId String
   access_token      String?
   expires_at        Int?

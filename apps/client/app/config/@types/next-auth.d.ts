@@ -6,7 +6,7 @@ interface Tokens {
   backendTokens: {
     accessToken: string;
     refreshToken: string;
-    expiresIn: Date;
+    expiresIn: number;
   };
 }
 
