@@ -33,6 +33,7 @@ import {
   useColorMode,
   useColorModeValue,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { PiUserListDuotone } from 'react-icons/pi';
@@ -43,6 +44,9 @@ import { redirect, useRouter } from 'next/navigation';
 import { themeColors } from '../../config/UI/theme';
 import { AiOutlineSmile } from 'react-icons/ai';
 import { Routes } from '../../config/routing/routes';
+import { ChooseRole } from './shared/modals/ChooseRole';
+import { defaultToastOptions } from '../../config/UI/toast.options';
+import axios from 'axios';
 
 const dashboardLinks = [
   { title: 'Досягнення', handler: () => redirect('/') },
@@ -50,9 +54,23 @@ const dashboardLinks = [
   { title: 'Вийти', handler: () => signOut() },
 ];
 
+const instance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export const DefaultDashboard: FC = () => {
   const router = useRouter();
+  const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
+  const {
+    isOpen: isRoleModalOpen,
+    onOpen: onRoleModalOpen,
+    onClose: onRoleModalClose,
+  } = useDisclosure();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const backgroundColor = useColorModeValue(...themeColors);
 
@@ -60,10 +78,38 @@ export const DefaultDashboard: FC = () => {
   useEffect(() => {
     console.log(session, status);
     if (status === 'unauthenticated') router.push(Routes.SignIn);
+    if (status === 'authenticated' && !session?.user.role) onRoleModalOpen();
   }, [session, status]);
+
+  const handleRoleChange = async (role: string) => {
+    try {
+      await instance
+        .patch(`/user/${session?.user.id}`, {
+          role,
+        })
+        .then((res) => {
+          console.log('handleRoleChange SUCCESS: ', res);
+          toast({
+            title: `Ваш статус було змінено на ${role}!`,
+            ...defaultToastOptions,
+          });
+          onRoleModalClose();
+        });
+    } catch (e: any) {
+      console.log('handleRoleChange ERROR: ', e);
+      toast({
+        title:
+          e.response.data.message ||
+          "Неочікувана помилка! Спробуйте ще раз або зв'яжіться з службою підтримки!",
+        ...defaultToastOptions,
+        status: 'error',
+      });
+    }
+  };
 
   return (
     <>
+      {isRoleModalOpen ? <ChooseRole chooseRole={handleRoleChange} /> : null}
       <Box
         bg={backgroundColor}
         px={4}>
