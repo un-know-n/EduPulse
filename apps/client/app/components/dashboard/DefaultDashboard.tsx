@@ -47,6 +47,7 @@ import { Routes } from '../../config/routing/routes';
 import { ChooseRole } from './shared/modals/ChooseRole';
 import { defaultToastOptions } from '../../config/UI/toast.options';
 import axios from 'axios';
+import { translateRole, TRoles } from '../auth/config/constants';
 
 const dashboardLinks = [
   { title: 'Досягнення', handler: () => redirect('/') },
@@ -74,27 +75,34 @@ export const DefaultDashboard: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const backgroundColor = useColorModeValue(...themeColors);
 
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   useEffect(() => {
     console.log(session, status);
     if (status === 'unauthenticated') router.push(Routes.SignIn);
     if (status === 'authenticated' && !session?.user.role) onRoleModalOpen();
-  }, [session, status]);
+  }, [session, status, session?.user.role]);
 
   const handleRoleChange = async (role: string) => {
     try {
-      await instance
-        .patch(`/user/${session?.user.id}`, {
+      const response = await instance.patch(`/user/${session?.user.id}`, {
+        role,
+      });
+      console.log('handleRoleChange SUCCESS: ', response);
+
+      toast({
+        title: `Ваш статус було змінено на "${translateRole(role as TRoles)}"!`,
+        ...defaultToastOptions,
+      });
+
+      await update({
+        ...session,
+        user: {
+          ...session?.user,
           role,
-        })
-        .then((res) => {
-          console.log('handleRoleChange SUCCESS: ', res);
-          toast({
-            title: `Ваш статус було змінено на ${role}!`,
-            ...defaultToastOptions,
-          });
-          onRoleModalClose();
-        });
+        },
+      });
+
+      onRoleModalClose();
     } catch (e: any) {
       console.log('handleRoleChange ERROR: ', e);
       toast({

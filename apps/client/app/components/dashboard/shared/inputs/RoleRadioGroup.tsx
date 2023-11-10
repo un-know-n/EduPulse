@@ -7,7 +7,8 @@ import {
   useRadioGroup,
   UseRadioProps,
 } from '@chakra-ui/react';
-import { TRoles } from '../modals/ChooseRole';
+
+import { translateRole, TRoles } from '../../../auth/config/constants';
 
 interface IProps extends RadioProps {
   options: TRoles[];
@@ -35,7 +36,7 @@ export const RoleRadioGroup: FC<IProps> = ({
           <RadioCard
             key={value}
             {...radio}>
-            {value}
+            {translateRole(value)}
           </RadioCard>
         );
       })}

@@ -20,10 +20,10 @@ import { emailValidator, passwordValidator } from '../config/validationSchemas';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
-import { baseRoles, RoleFormInput } from '../shared/inputs/RoleFormInput';
+import { RoleFormInput } from '../shared/inputs/RoleFormInput';
 import { TextFormInput } from '../shared/inputs/TextFormInput';
 import { signIn } from 'next-auth/react';
-import { signInOptions } from '../config/constants';
+import { baseRoles, signInOptions } from '../config/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthAlert from '../shared/alerts/AuthAlert';
 import axios from 'axios';
@@ -44,7 +44,7 @@ const signUpSchema = object({
       message: 'Прізвище не може бути порожнім',
     }),
   role: string().refine((role) => role === 'student' || role === 'teacher', {
-    message: 'Дане поле може бути лише "student" або "teacher"',
+    message: 'Дане поле може бути лише "Студент" або "Викладач"',
   }),
   email: emailValidator,
   password: passwordValidator,

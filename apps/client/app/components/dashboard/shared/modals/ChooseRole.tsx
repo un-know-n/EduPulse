@@ -11,8 +11,9 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 import { RoleRadioGroup } from '../inputs/RoleRadioGroup';
-import { baseRoles } from '../../../auth/shared/inputs/RoleFormInput';
+
 import { BiUserCheck } from 'react-icons/bi';
+import { baseRoles, TRoles } from '../../../auth/config/constants';
 
 interface IProps {
   chooseRole: (role: string) => void;
@@ -20,8 +21,6 @@ interface IProps {
 }
 
 const defaultChosenRole = baseRoles[0];
-
-export type TRoles = (typeof baseRoles)[number];
 
 export const ChooseRole: FC<IProps> = ({ chooseRole, title }) => {
   const [role, setRole] = useState<TRoles>(defaultChosenRole);

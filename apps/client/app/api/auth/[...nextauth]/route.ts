@@ -86,7 +86,8 @@ export const authOptions: AuthOptions = {
     signIn: Routes.SignIn,
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === 'update') return { ...token, ...session.user };
       if (user || !token.backendTokens) return { ...token, ...user };
       if (moment().utc(true).unix() < token.backendTokens.expiresIn)
         return token;

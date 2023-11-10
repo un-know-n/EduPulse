@@ -2,8 +2,7 @@ import { FC } from 'react';
 import { Field } from 'formik';
 import { FormControl, FormErrorMessage, Select } from '@chakra-ui/react';
 import { IRoleFormProps } from '../@types/IRoleFormProps';
-
-export const baseRoles = ['student', 'teacher'] as const;
+import { baseRoles, translateRole } from '../../config/constants';
 
 export const RoleFormInput: FC<IRoleFormProps> = ({
   errorMessage,
@@ -24,7 +23,7 @@ export const RoleFormInput: FC<IRoleFormProps> = ({
           <option
             key={role}
             value={role}>
-            {role}
+            {translateRole(role)}
           </option>
         ))}
       </Field>
