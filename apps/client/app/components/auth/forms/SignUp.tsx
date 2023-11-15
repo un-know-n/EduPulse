@@ -76,19 +76,19 @@ export const SignUp: FC = () => {
   const options = signInOptions(callbackUrl);
 
   const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
-    const res = await instance.post('/auth/sign-up', {
-      name: `${data.name} ${data.surname}`,
-      email: data.email,
-      role: data.role,
-      password: data.password,
-    });
+    try {
+      const res = await instance.post('/auth/sign-up', {
+        name: `${data.name} ${data.surname}`,
+        email: data.email,
+        role: data.role,
+        password: data.password,
+      });
 
-    if (res.status! >= 400) {
-      setError(res.statusText);
+      return res.data;
+    } catch (e: any) {
+      setError(e?.response.data.message);
       return null;
     }
-
-    return res.data;
   };
 
   const onSubmit = async (values: TInitialValues) => {
