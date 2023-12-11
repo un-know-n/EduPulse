@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
+import { FaDiscord } from 'react-icons/fa';
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { themeColors } from '../../../../config/UI/theme';
@@ -62,6 +63,12 @@ export const ThirdPartyButtons: FC<TProps> = ({
           onClick={() => signIn('github', options)}
           variant='outline'>
           Продовжити з GitHub
+        </Button>
+        <Button
+          leftIcon={<FaDiscord />}
+          onClick={() => signIn('discord', options)}
+          variant='outline'>
+          Продовжити з Discord
         </Button>
       </Flex>
     </Box>
