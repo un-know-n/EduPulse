@@ -27,6 +27,7 @@ import { baseRoles, signInOptions } from '../config/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthAlert from '../shared/alerts/AuthAlert';
 import axios from 'axios';
+import { DefaultButton } from '../shared/buttons/DefaultButton';
 
 const signUpSchema = object({
   name: string({
@@ -118,10 +119,11 @@ export const SignUp: FC = () => {
 
   return (
     <Box
-      p={5}
-      maxW={500}
-      my='auto'
-      mx='auto'>
+      p='60px'
+      maxW={600}
+      m='auto'
+      borderRadius='20'
+      bg='white'>
       <Container
         p={0}
         mb={5}>
@@ -129,7 +131,7 @@ export const SignUp: FC = () => {
         <Text>
           Вже зареєстровані?{' '}
           <Link
-            color='blue.500'
+            color='purple.500'
             href={Routes.SignIn}>
             Увійти
           </Link>
@@ -189,26 +191,19 @@ export const SignUp: FC = () => {
                   <Text>
                     Я погоджуюся з{' '}
                     <Link
-                      color='blue.500'
+                      color='purple.500'
                       href='/'>
                       Політикою конфіденційності
                     </Link>{' '}
                     та{' '}
                     <Link
-                      color='blue.500'
+                      color='purple.500'
                       href='/'>
                       Правилами користування
                     </Link>
                   </Text>
                 </Field>
-
-                <Button
-                  type='submit'
-                  colorScheme='blue'
-                  variant='outline'
-                  width='full'>
-                  Створити
-                </Button>
+                <DefaultButton>Створити</DefaultButton>
               </VStack>
             </form>
           )}

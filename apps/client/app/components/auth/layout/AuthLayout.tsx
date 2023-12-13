@@ -48,6 +48,8 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
         </Container>
       </Flex>
       <Flex
+        color='black'
+        bg='#221C4C'
         w='full'
         h='full'>
         {children}
