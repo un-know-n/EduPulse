@@ -54,73 +54,79 @@ model VerificationToken {
 }
 
 model UsersAssignedToCourse {
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId        String
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  courseId      String
-  createdAt     DateTime @default(now())
-  expiresAt     DateTime
-  isCompleted   Boolean
-  test          Test     @relation(fields: [currentTestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  currentTestId String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId      String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId    String
+  assignedAt  DateTime @default(now())
+  expiresAt   DateTime
+  isCompleted Boolean  @default(true)
 
-  @@id([userId, courseId, currentTestId])
+  // test          Test     @relation(fields: [currentTestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  // currentTestId String
+  @@id([userId, courseId]) // currentTestId
 }
 
 model Course {
-  id                     String   @id @default(cuid())
+  id                     String    @id @default(cuid())
   title                  String
+  purpose                String
   description            String
   creatorId              String
+  createdAt              DateTime  @default(now())
+  timeToPass             Int
+  image                  String?
   difficultyLevel        Int
-  numberOfPeopleEnrolled Int
-  modules                Module[]
+  numberOfPeopleEnrolled Int       @default(0)
+  sections               Section[]
 
   user                  User                    @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   UsersAssignedToCourse UsersAssignedToCourse[]
 }
 
-model Module {
-  id       String    @id @default(cuid())
-  title    String
-  courseId String
-  lections Lection[]
-  test     Test?
+model Section {
+  id        String    @id @default(cuid())
+  title     String
+  courseId  String
+  createdAt DateTime  @default(now())
+  lectures  Lecture[]
+  // test     Test?
 
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model Lection {
-  id       String @id @default(cuid())
-  title    String
-  content  String
-  moduleId String
+model Lecture {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  sectionId String
 
-  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model Test {
-  id        String     @id @default(cuid())
-  questions Question[]
-  moduleId  String     @unique
-
-  module                Module                  @relation(fields: [moduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  UsersAssignedToCourse UsersAssignedToCourse[]
-}
-
-model Question {
-  id             String   @id @default(cuid())
-  text           String
-  test           Test     @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  testId         String
-  multipleChoice Boolean
-  answers        Answer[]
-}
-
-model Answer {
-  id         String   @id @default(cuid())
-  text       String
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  questionId String
-  isCorrect  Boolean
-}
+// model Test {
+//   id        String     @id @default(cuid())
+//   questions Question[]
+//   sectionId  String     @unique
+//
+//   section                Section                  @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   UsersAssignedToCourse UsersAssignedToCourse[]
+// }
+//
+// model Question {
+//   id             String   @id @default(cuid())
+//   text           String
+//   test           Test     @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   testId         String
+//   multipleChoice Boolean
+//   answers        Answer[]
+// }
+//
+// model Answer {
+//   id         String   @id @default(cuid())
+//   text       String
+//   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   questionId String
+//   isCorrect  Boolean
+// }
