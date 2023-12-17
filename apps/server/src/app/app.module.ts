@@ -13,6 +13,7 @@ import { AccountModule } from './models/account/account.module';
 import { CourseModule } from './models/course/course.module';
 import { SectionModule } from './models/section/section.module';
 import { LectureModule } from './models/lecture/lecture.module';
+import { CloudinaryModule } from './common/modules/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { LectureModule } from './models/lecture/lecture.module';
     CourseModule,
     SectionModule,
     LectureModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
