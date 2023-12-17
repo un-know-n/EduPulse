@@ -52,7 +52,12 @@ export class CourseService {
   }
 
   async findOne(id: string) {
-    return await this.prismaService.course.findUnique({ where: { id } });
+    const course = await this.prismaService.course.findUnique({
+      where: { id },
+    });
+    if (!course)
+      throw new BadRequestException('There is no course with given id!');
+    return course;
   }
 
   async update(

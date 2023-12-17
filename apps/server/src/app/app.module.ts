@@ -14,6 +14,7 @@ import { CourseModule } from './models/course/course.module';
 import { SectionModule } from './models/section/section.module';
 import { LectureModule } from './models/lecture/lecture.module';
 import { CloudinaryModule } from './common/modules/cloudinary/cloudinary.module';
+import { EnrollmentModule } from './models/enrollment/enrollment.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CloudinaryModule } from './common/modules/cloudinary/cloudinary.module'
     CourseModule,
     SectionModule,
     LectureModule,
+    EnrollmentModule,
     CloudinaryModule,
   ],
   controllers: [AppController],
