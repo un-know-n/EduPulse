@@ -3,7 +3,11 @@
 import { ResetPasswordProposal } from '../../components/auth/forms/ResetPasswordProposal';
 import {
   Box,
+  ChakraProvider,
+  DarkMode,
+  extendTheme,
   Flex,
+  LightMode,
   Step,
   StepDescription,
   StepIcon,
@@ -24,6 +28,23 @@ import { Routes } from '../../config/routing/routes';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { defaultToastOptions } from '../../config/UI/toast.options';
+
+const baseStyle = {
+  description: {
+    color: 'purple.400',
+    fontSize: '16',
+  },
+};
+
+const stepperTheme = {
+  baseStyle,
+};
+
+const theme = extendTheme({
+  components: {
+    Stepper: stepperTheme,
+  },
+});
 
 const steps = [
   {
@@ -145,40 +166,43 @@ export default function Page() {
   };
 
   return (
-    <>
+    <ChakraProvider theme={theme}>
       <Flex
+        color='white'
         w='full'
         h='full'
         gap={5}
         flexDirection='column'
         justifyContent='center'
         alignItems='center'>
-        <Stepper
-          index={activeStep}
-          orientation={isLargerThan1200 ? 'horizontal' : 'vertical'}
-          w='full'
-          px={5}
-          maxW={750}>
-          {steps.map((step, index) => (
-            <Step key={index}>
-              <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
-                />
-              </StepIndicator>
+        <LightMode>
+          <Stepper
+            index={activeStep}
+            size='lg'
+            colorScheme='purple'
+            orientation='vertical'
+            height='200px'
+            gap='0'>
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus
+                    complete={<StepIcon />}
+                    incomplete={<StepNumber />}
+                    active={<StepNumber />}
+                  />
+                </StepIndicator>
 
-              <Box flexShrink='0'>
-                <StepTitle>{step.title}</StepTitle>
-                <StepDescription>{step.description}</StepDescription>
-              </Box>
+                <Box flexShrink='0'>
+                  <StepTitle>{step.title}</StepTitle>
+                  <StepDescription>{step.description}</StepDescription>
+                </Box>
 
-              <StepSeparator />
-            </Step>
-          ))}
-        </Stepper>
-
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
+        </LightMode>
         {activeStep === Steps.ResetProposal && (
           <ResetPasswordProposal
             handlePasswordResetProposal={handleResetProposal}
@@ -198,6 +222,6 @@ export default function Page() {
           <ResetPassword changeHandler={handlePasswordReset} />
         )}
       </Flex>
-    </>
+    </ChakraProvider>
   );
 }

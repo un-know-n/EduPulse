@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
 import { Link } from '@chakra-ui/next-js';
 import { Routes } from '../../../../config/routing/routes';
+import { DefaultButton } from './DefaultButton';
 
 type TProps = {
   switchToResendButton?: boolean;
@@ -18,37 +19,28 @@ export const ResetPasswordButtons: FC<TProps> = ({
       flexDirection='column'
       gap={2}>
       {switchToResendButton ? (
-        <Button
-          onClick={resendHandler}
-          colorScheme='blue'
-          variant='outline'
-          width='full'>
+        <DefaultButton onClick={resendHandler}>
           Надіслати повторно
-        </Button>
+        </DefaultButton>
       ) : (
-        <Button
-          type='submit'
-          colorScheme='blue'
-          variant='outline'
-          width='full'>
-          Підтвердити
-        </Button>
+        <DefaultButton>Підтвердити</DefaultButton>
       )}
 
       <Link
         href={Routes.SignIn}
         py={2}
-        color='blue.500'
         _hover={{
-          backgroundColor: '#EBF8FF',
-          transitionDuration: '.2s',
+          color: 'white',
+          backgroundColor: 'purple.800',
+          transitionDuration: '.4s',
           transitionTimingFunction: 'ease-in-out',
         }}
         fontWeight='medium'
         border='1px'
-        borderRadius={5}
+        borderRadius={15}
         textAlign='center'
-        width='full'>
+        width='full'
+        variant='outline'>
         Повернутися до авторизації
       </Link>
     </Flex>

@@ -2,6 +2,7 @@ import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import DiscordProvider from 'next-auth/providers/discord';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from '../../../config/database/prisma';
 import { Routes } from '../../../config/routing/routes';
@@ -80,6 +81,10 @@ const authOptions: AuthOptions = {
 
         return res.data;
       },
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID ?? '',
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
     }),
   ],
   pages: {
