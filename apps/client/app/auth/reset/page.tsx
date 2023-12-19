@@ -4,7 +4,6 @@ import { ResetPasswordProposal } from '../../components/auth/forms/ResetPassword
 import {
   Box,
   ChakraProvider,
-  DarkMode,
   extendTheme,
   Flex,
   LightMode,
