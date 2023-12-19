@@ -10,6 +10,11 @@ import { PrismaService } from './prisma.service';
 import * as process from 'process';
 import { VerificationModule } from './models/verification/verification.module';
 import { AccountModule } from './models/account/account.module';
+import { CourseModule } from './models/course/course.module';
+import { SectionModule } from './models/section/section.module';
+import { LectureModule } from './models/lecture/lecture.module';
+import { CloudinaryModule } from './common/modules/cloudinary/cloudinary.module';
+import { EnrollmentModule } from './models/enrollment/enrollment.module';
 
 @Module({
   imports: [
@@ -24,6 +29,11 @@ import { AccountModule } from './models/account/account.module';
     UserModule,
     VerificationModule,
     AccountModule,
+    CourseModule,
+    SectionModule,
+    LectureModule,
+    EnrollmentModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
