@@ -22,6 +22,7 @@ import { signIn } from 'next-auth/react';
 import { signInOptions } from '../config/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthAlert from '../shared/alerts/AuthAlert';
+import { DefaultButton } from '../shared/buttons/DefaultButton';
 
 const signInSchema = object({
   email: emailValidator,
@@ -42,11 +43,12 @@ export const SignIn: FC = () => {
 
   return (
     <Box
-      p={5}
+      p='60px'
       w='80%'
-      maxW={450}
-      my='auto'
-      mx='auto'>
+      maxW={600}
+      m='auto'
+      borderRadius='20'
+      bg='white'>
       <Container
         p={0}
         mb={5}>
@@ -54,7 +56,7 @@ export const SignIn: FC = () => {
         <Text>
           Ще не зареєстровані?{' '}
           <Link
-            color='blue.500'
+            color='purple.500'
             href={Routes.SignUp}>
             Створити обліковий запис
           </Link>
@@ -100,17 +102,11 @@ export const SignIn: FC = () => {
                   p={0}>
                   <Link
                     href={Routes.ResetPassword}
-                    color='blue.500'>
+                    color='purple.500'>
                     Забули пароль?
                   </Link>
                 </Container>
-                <Button
-                  type='submit'
-                  colorScheme='blue'
-                  variant='outline'
-                  width='full'>
-                  Увійти
-                </Button>
+                <DefaultButton>Увійти</DefaultButton>
               </VStack>
             </form>
           )}
