@@ -14,6 +14,13 @@ export class EnrollmentService {
   ) {}
 
   async create({ userId, courseId }: CreateEnrollmentDto) {
+    const exitstingEnrollment =
+      await this.prismaService.usersAssignedToCourse.findFirst({
+        where: { userId, courseId },
+      });
+    if (exitstingEnrollment)
+      throw new BadRequestException('Enrollment already exists!');
+
     const isAuthor = await this.checkForCreator(userId, courseId);
     if (isAuthor)
       throw new BadRequestException(
@@ -22,18 +29,32 @@ export class EnrollmentService {
 
     const expireTime = await this.convertTimeToPass(courseId);
 
-    return await this.prismaService.usersAssignedToCourse.create({
-      data: {
-        user: {
-          connect: { id: userId },
+    const [enrollment] = await this.prismaService.$transaction([
+      this.prismaService.usersAssignedToCourse.create({
+        data: {
+          user: {
+            connect: { id: userId },
+          },
+          course: {
+            connect: { id: courseId },
+          },
+          assignedAt: moment().utc(true).toISOString(),
+          expiresAt: expireTime,
         },
-        course: {
-          connect: { id: courseId },
+      }),
+      this.prismaService.course.update({
+        where: {
+          id: courseId,
         },
-        assignedAt: moment().utc(true).toISOString(),
-        expiresAt: expireTime,
-      },
-    });
+        data: {
+          numberOfPeopleEnrolled: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
+
+    return enrollment;
   }
 
   async reset(id: string) {
@@ -60,9 +81,23 @@ export class EnrollmentService {
         "You can't remove enrollment without being an author of the course",
       );
 
-    return this.prismaService.usersAssignedToCourse.delete({
-      where: { id },
-    });
+    const [deletedEnrollment] = await this.prismaService.$transaction([
+      this.prismaService.usersAssignedToCourse.delete({
+        where: { id },
+      }),
+      this.prismaService.course.update({
+        where: {
+          id: id,
+        },
+        data: {
+          numberOfPeopleEnrolled: {
+            decrement: 1,
+          },
+        },
+      }),
+    ]);
+
+    return deletedEnrollment;
   }
 
   async convertTimeToPass(courseId: string) {
@@ -79,8 +114,12 @@ export class EnrollmentService {
     return userId === course.creatorId;
   }
 
-  findAll() {
-    return this.prismaService.usersAssignedToCourse.findMany();
+  findUserEnrollments(userId: string) {
+    return this.prismaService.usersAssignedToCourse.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 
   async findOne(id: string) {

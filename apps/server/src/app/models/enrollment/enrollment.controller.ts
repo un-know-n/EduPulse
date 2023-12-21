@@ -24,14 +24,9 @@ export class EnrollmentController {
     return this.enrollmentService.create(createEnrollmentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.enrollmentService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.enrollmentService.findOne(id);
+  @Get(':userId')
+  findUserEnrollments(@Param('userId') userId: string) {
+    return this.enrollmentService.findUserEnrollments(userId);
   }
 
   @Patch(':id')

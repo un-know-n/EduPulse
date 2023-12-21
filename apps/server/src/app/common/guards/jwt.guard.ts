@@ -13,6 +13,7 @@ export class JwtGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+
     const token = this.extractTokenFromHeader(request);
     if (!token)
       throw new UnauthorizedException(
@@ -20,11 +21,8 @@ export class JwtGuard implements CanActivate {
       );
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.TOKEN_SECRET,
-      });
-      request['user'] = payload;
-    } catch {
+      request['user'] = await this.jwtService.verifyAsync(token);
+    } catch (e) {
       throw new UnauthorizedException('Non-valid token!');
     }
 

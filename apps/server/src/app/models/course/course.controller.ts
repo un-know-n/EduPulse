@@ -20,6 +20,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { TeacherRoleGuard } from '../../common/guards/teacher-role.guard';
 import { JwtGuard } from '../../common/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { TUser, User } from '../user/user.decorator';
 
 const maxImageSize = 1000 * 1000; // measured in bytes
 const parseFilePipe = new ParseFilePipe({
@@ -87,12 +88,12 @@ export class CourseController {
   }
 
   @Get()
-  findAll() {
-    return this.courseService.findAll();
+  findAll(@User() user: TUser) {
+    return this.courseService.findAll(user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.courseService.findOne(id);
+  findOne(@Param('id') id: string, @User() user: TUser) {
+    return this.courseService.findWithEnrollment(id, user.id);
   }
 }

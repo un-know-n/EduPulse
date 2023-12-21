@@ -15,6 +15,8 @@ import { SectionModule } from './models/section/section.module';
 import { LectureModule } from './models/lecture/lecture.module';
 import { CloudinaryModule } from './common/modules/cloudinary/cloudinary.module';
 import { EnrollmentModule } from './models/enrollment/enrollment.module';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { EXPIRE_TIME } from './models/auth/auth.service';
 
 @Module({
   imports: [
@@ -25,6 +27,13 @@ import { EnrollmentModule } from './models/enrollment/enrollment.module';
       },
     }),
     ConfigModule.forRoot(),
+    JwtModule.register({
+      global: true,
+      secret: process.env.NEXTAUTH_SECRET,
+      signOptions: {
+        expiresIn: EXPIRE_TIME,
+      },
+    }),
     AuthModule,
     UserModule,
     VerificationModule,
@@ -36,6 +45,6 @@ import { EnrollmentModule } from './models/enrollment/enrollment.module';
     CloudinaryModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, JwtService],
 })
 export class AppModule {}

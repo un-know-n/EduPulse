@@ -47,13 +47,54 @@ export class CourseService {
     });
   }
 
-  async findAll() {
-    return await this.prismaService.course.findMany();
+  async findAll(userId: string) {
+    return await this.prismaService.course.findMany({
+      include: {
+        UsersAssignedToCourse: {
+          where: {
+            userId,
+          },
+        },
+        sections: {
+          include: {
+            lectures: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findWithEnrollment(courseId: string, userId: string) {
+    const course = await this.prismaService.course.findUnique({
+      where: { id: courseId },
+      include: {
+        UsersAssignedToCourse: {
+          where: {
+            userId,
+          },
+        },
+        sections: {
+          include: {
+            lectures: true,
+          },
+        },
+      },
+    });
+    if (!course)
+      throw new BadRequestException('There is no course with given id!');
+    return course;
   }
 
   async findOne(id: string) {
     const course = await this.prismaService.course.findUnique({
       where: { id },
+      include: {
+        sections: {
+          include: {
+            lectures: true,
+          },
+        },
+      },
     });
     if (!course)
       throw new BadRequestException('There is no course with given id!');
