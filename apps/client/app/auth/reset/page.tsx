@@ -4,7 +4,6 @@ import { ResetPasswordProposal } from '../../components/auth/forms/ResetPassword
 import {
   Box,
   ChakraProvider,
-  DarkMode,
   extendTheme,
   Flex,
   LightMode,
@@ -17,7 +16,6 @@ import {
   StepSeparator,
   StepStatus,
   StepTitle,
-  useMediaQuery,
   useSteps,
   useToast,
 } from '@chakra-ui/react';
@@ -26,8 +24,8 @@ import { ResetPassword } from '../../components/auth/forms/ResetPassword';
 import { useState } from 'react';
 import { Routes } from '../../config/routing/routes';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { defaultToastOptions } from '../../config/UI/toast.options';
+import { apiInstance } from '../../lib/services/api.instance';
 
 const baseStyle = {
   description: {
@@ -61,14 +59,6 @@ enum Steps {
   ChangePassword,
 }
 
-const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
 export default function Page() {
   const router = useRouter();
   const toast = useToast();
@@ -80,11 +70,10 @@ export default function Page() {
     index: Steps.ResetProposal,
     count: steps.length,
   });
-  const [isLargerThan1200] = useMediaQuery('(min-width: 1200px)');
 
   const handleResetProposal = async (email: string) => {
     try {
-      await instance
+      await apiInstance
         .post('/auth/reset-prompt', {
           email: email,
         })
@@ -117,7 +106,7 @@ export default function Page() {
   };
   const handleTokenVerification = async (token: string) => {
     try {
-      await instance
+      await apiInstance
         .post('/auth/reset-verify', {
           email: resetInformation?.email ?? '',
           token: token,
@@ -140,7 +129,7 @@ export default function Page() {
 
   const handlePasswordReset = async (password: string) => {
     try {
-      await instance
+      await apiInstance
         .post('/auth/reset', {
           email: resetInformation?.email ?? '',
           password: password,

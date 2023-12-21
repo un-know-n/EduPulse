@@ -3,7 +3,6 @@
 import { FC, useState } from 'react';
 import {
   Box,
-  Button,
   Checkbox,
   Container,
   Flex,
@@ -26,8 +25,8 @@ import { signIn } from 'next-auth/react';
 import { baseRoles, signInOptions } from '../config/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthAlert from '../shared/alerts/AuthAlert';
-import axios from 'axios';
 import { DefaultButton } from '../shared/buttons/DefaultButton';
+import { apiInstance } from '../../../lib/services/api.instance';
 
 const signUpSchema = object({
   name: string({
@@ -62,14 +61,6 @@ const initialValues = {
 };
 type TInitialValues = typeof initialValues;
 
-const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
 export const SignUp: FC = () => {
   const router = useRouter();
   const [error, setError] = useState('');
@@ -78,7 +69,7 @@ export const SignUp: FC = () => {
 
   const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
     try {
-      const res = await instance.post('/auth/sign-up', {
+      const res = await apiInstance.post('/auth/sign-up', {
         name: `${data.name} ${data.surname}`,
         email: data.email,
         role: data.role,

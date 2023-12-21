@@ -8,20 +8,14 @@ import prisma from '../../../config/database/prisma';
 import { Routes } from '../../../config/routing/routes';
 import * as process from 'process';
 import { JWT } from 'next-auth/jwt';
-import axios from 'axios';
 import moment from 'moment';
-
-const instance = axios.create({
-  baseURL: process.env.SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+import { apiInstance } from '../../../lib/services/api.instance';
+import { Tokens } from '../../../config/@types/next-auth';
+import { User } from '@prisma/client';
 
 async function refreshToken(token: JWT) {
   try {
-    const response = await instance.post(
+    const response = await apiInstance.post<Tokens['backendTokens']>(
       '/auth/refresh',
       {},
       {
@@ -50,10 +44,17 @@ const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      idToken: true,
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID ?? '',
       clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
+      idToken: true,
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID ?? '',
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
+      idToken: true,
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -70,7 +71,7 @@ const authOptions: AuthOptions = {
         if (!credentials || !credentials?.email || !credentials?.password)
           return null;
 
-        const res = await instance.post('/auth/sign-in', {
+        const res = await apiInstance.post('/auth/sign-in', {
           email: credentials.email,
           password: credentials.password,
         });
@@ -79,22 +80,23 @@ const authOptions: AuthOptions = {
           return null;
         }
 
-        return res.data;
+        return res.data as User | null;
       },
-    }),
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID ?? '',
-      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
     }),
   ],
   pages: {
     signIn: Routes.SignIn,
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account, profile }) {
+      // If update current client session
       if (trigger === 'update') return { ...token, ...session.user };
+
+      // If the user logged in with third-party oauth providers
       if (user || !token.backendTokens) return { ...token, ...user };
-      if (moment().utc(true).unix() < token.backendTokens.expiresIn)
+
+      // If the user logged in with credentials, then check tokens expire time
+      if (moment().utc(true).unix() < (token?.backendTokens?.expiresIn ?? 0))
         return token;
 
       return await refreshToken(token);
@@ -108,9 +110,7 @@ const authOptions: AuthOptions = {
       } else if (token) {
         // If the user logged in with third-party oauth providers
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        session.user = token;
+        session.user = token as unknown as typeof session.user;
       }
 
       return session;

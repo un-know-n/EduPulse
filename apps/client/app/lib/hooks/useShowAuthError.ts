@@ -2,9 +2,9 @@ import { useToast } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { defaultToastOptions } from '../../config/UI/toast.options';
-import { notifyAboutAuthError } from '../utils/handleAuthError';
+import { notifyAboutAuthError } from '../utils/notifyWithToast';
 
-const useShowError = () => {
+const useShowAuthError = () => {
   const toast = useToast();
 
   const error = useSearchParams().get('error');
@@ -24,4 +24,4 @@ const useShowError = () => {
   return error;
 };
 
-export default useShowError;
+export default useShowAuthError;
