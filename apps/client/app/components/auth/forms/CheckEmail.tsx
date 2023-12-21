@@ -47,7 +47,6 @@ export const CheckEmail: FC<TProps> = ({
       color='black'
       borderRadius='20'
       bg='white'
-      // p={5}
       maxW={650}>
       <Container
         p={0}

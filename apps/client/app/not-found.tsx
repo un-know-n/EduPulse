@@ -1,43 +1,84 @@
 'use client';
 
-import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { Routes } from './config/routing/routes';
 import { PiSmileyNervousDuotone } from 'react-icons/pi';
+import './global.css';
 
 export default function NotFound() {
   return (
-    <main className='grid min-h-full place-items-center bg-transparent px-6 py-24 sm:py-32 lg:px-8'>
-      <Box className='text-center'>
-        <Text className='text-base font-semibold text-indigo-600'>404</Text>
-        <Flex
-          justifyContent='center'
-          alignItems='center'
-          gap={5}
-          className='mt-4'>
-          <Heading className='text-3xl font-bold tracking-tight sm:text-5xl'>
+    <main
+      style={{
+        padding: '6rem 1.5rem ',
+        placeItems: 'center',
+        minHeight: '100%',
+        backgroundColor: 'transparent',
+      }}>
+      <div
+        style={{
+          textAlign: 'center',
+        }}>
+        <p
+          style={{
+            color: 'rgb(79 70 229)',
+            fontWeight: '600',
+            fontSize: '2rem',
+            lineHeight: '1.5rem',
+            padding: '',
+          }}>
+          404
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+          }}>
+          <h1
+            style={{
+              fontSize: '3rem',
+              lineHeight: '3rem',
+              fontWeight: '700',
+            }}>
             Сторінку не знайдено
-          </Heading>
-          <PiSmileyNervousDuotone className='text-3xl font-bold sm:text-5xl' />
-        </Flex>
-
-        <Text className='mt-6 text-base leading-7 '>
+          </h1>
+          <PiSmileyNervousDuotone
+            style={{
+              fontSize: '50',
+            }}
+          />
+        </div>
+        <p
+          style={{
+            marginTop: '1.5rem',
+            fontSize: '1rem',
+            lineHeight: '1.5rem',
+          }}>
           Нам не вдалося знайти сторінку, яку ви шукаєте{' '}
-        </Text>
-        <Flex className='mt-10 flex items-center justify-center gap-x-6'>
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: '2.5rem',
+            columnGap: '1.5rem',
+          }}>
           <a
-            href={Routes.Dashboard}
-            className='rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
+            className='mainButton'
+            href={Routes.Dashboard}>
             На головну
           </a>
           <a
             href='/'
-            className='text-sm font-semibold '>
-            <Text>
+            className='SupButton'>
+            <p>
               Служба підтримки <span aria-hidden='true'>&rarr;</span>
-            </Text>
+            </p>
           </a>
-        </Flex>
-      </Box>
+        </div>
+      </div>
     </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import { PiSmileyNervousDuotone } from 'react-icons/pi';
 import { Montserrat } from 'next/font/google';
+import './global.css';
 
 const montserrat = Montserrat({
   weight: ['300', '400', '700'],
@@ -20,27 +21,65 @@ export default function GlobalError({
     <html
       lang='uk'
       className={montserrat.className}>
-      <body>
-        <main className='grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8'>
-          <div className='text-center'>
-            <p className='text-base font-semibold text-indigo-600'>
-              <PiSmileyNervousDuotone />
-            </p>
-            <h1 className='mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl'>
-              Щось трапилось!
-            </h1>
-            <p className='mt-6 text-base leading-7 text-gray-600'>
+      <body
+        style={{
+          backgroundColor: 'rgba(26, 32, 44, 1)',
+        }}>
+        <main
+          style={{
+            display: 'grid',
+            minHeight: '100%',
+            placeItems: 'center',
+            padding: '6rem 1.5rem',
+            color: 'white',
+          }}>
+          <div
+            style={{
+              textAlign: 'center',
+            }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+              }}>
+              <PiSmileyNervousDuotone style={{ fontSize: '50' }} />
+              <h1
+                style={{
+                  fontSize: '2rem',
+                  lineHeight: '2.25rem',
+                  fontWeight: '700',
+                }}>
+                Щось трапилось!
+              </h1>
+            </div>
+            <p
+              style={{
+                marginTop: '1.5rem',
+                fontSize: '1rem',
+                lineHeight: '1.5rem',
+                color: 'color: rgb(75 85 99)',
+              }}>
               Вибачте, неочікувана помилка
             </p>
-            <div className='mt-10 flex items-center justify-center gap-x-6'>
+            <div
+              style={{
+                marginTop: '2.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                columnGap: '1.5rem',
+              }}>
               <button
                 onClick={() => reset()}
-                className='rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>
+                className='mainButton'>
                 Спробувати знову
               </button>
               <a
                 href='#'
-                className='text-sm font-semibold text-gray-900'>
+                className='SupButton'>
                 Служба підтримки <span aria-hidden='true'>&rarr;</span>
               </a>
             </div>
