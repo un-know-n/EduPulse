@@ -20,7 +20,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 import { RoleFormInput } from '../shared/inputs/RoleFormInput';
-import { TextFormInput } from '../shared/inputs/TextFormInput';
+import { TextFormInput } from '../../shared/inputs/TextFormInput';
 import { signIn } from 'next-auth/react';
 import { baseRoles, signInOptions } from '../config/constants';
 import { useRouter, useSearchParams } from 'next/navigation';

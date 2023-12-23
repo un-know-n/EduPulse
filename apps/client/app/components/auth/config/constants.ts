@@ -10,3 +10,9 @@ export type TRoles = (typeof baseRoles)[number];
 export const baseRoles = ['student', 'teacher'] as const;
 export const translateRole = (role: TRoles) =>
   role === 'student' ? 'Студент' : 'Викладач';
+
+export const difficultyLevels = [
+  'Простий рівень',
+  'Середній рівень',
+  'Складний рівень',
+];

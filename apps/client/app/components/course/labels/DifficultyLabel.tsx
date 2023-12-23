@@ -11,7 +11,7 @@ type TProps = {
   level: TDifficultyLevel;
 };
 
-const levelsDictionary: {
+export const levelsDictionary: {
   [key: number]: { icon: React.ReactElement; text: string };
 } = {
   1: {

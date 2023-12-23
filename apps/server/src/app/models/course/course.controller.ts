@@ -22,17 +22,18 @@ import { JwtGuard } from '../../common/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TUser, User } from '../user/user.decorator';
 
-const maxImageSize = 1000 * 1000; // measured in bytes
+const maxImageSize = 1024 * 1024; // measured in bytes
 const parseFilePipe = new ParseFilePipe({
   validators: [
     new MaxFileSizeValidator({
       maxSize: maxImageSize,
-      message: `Image must be less than ${maxImageSize / 1000000}MB`,
+      message: `Зображення повинно бути меншим за 1MB`,
     }),
     new FileTypeValidator({
       fileType: new RegExp('image\\/(jpeg|jpg|png)'),
     }),
   ],
+  fileIsRequired: false,
 });
 
 @Controller('course')
@@ -44,9 +45,9 @@ export class CourseController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   create(
+    @Body() createCourseDto: CreateCourseDto,
     @UploadedFile(parseFilePipe)
     file: Express.Multer.File,
-    @Body() createCourseDto: CreateCourseDto,
   ) {
     return this.courseService.executeWithImage(
       (fileUrl?: string) => this.courseService.create(createCourseDto, fileUrl),

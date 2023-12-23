@@ -134,8 +134,7 @@ const CourseInfo: FC<TCourseInfoProps> = ({
             />
           </Flex>
         </Flex>
-        <Box
-          display='flex'
+        <Flex
           flexDirection='column'
           textAlign='center'
           alignItems='center'>
@@ -150,7 +149,7 @@ const CourseInfo: FC<TCourseInfoProps> = ({
             icon={<HiOutlineUsers size='20px' />}
             text={`${abbreviateNumber(numberOfPeopleEnrolled)} зареєструвалися`}
           />
-        </Box>
+        </Flex>
       </Flex>
     </Center>
   );

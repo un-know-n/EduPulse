@@ -3,7 +3,6 @@ import { FC } from 'react';
 import {
   Badge,
   Box,
-  Button,
   Container,
   Flex,
   Heading,
@@ -14,7 +13,7 @@ import { ResetPasswordButtons } from '../shared/buttons/ResetPasswordButtons';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { object, string, TypeOf } from 'zod';
-import { TextFormInput } from '../shared/inputs/TextFormInput';
+import { TextFormInput } from '../../shared/inputs/TextFormInput';
 import { DefaultButton } from '../shared/buttons/DefaultButton';
 
 type TProps = {
