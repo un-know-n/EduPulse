@@ -27,32 +27,22 @@ import { CiImageOn } from 'react-icons/ci';
 import { DifficultyLabel } from '../labels/DifficultyLabel';
 import { TimeRangeLabel } from '../labels/TimeRangeLabel';
 import { IconTextLabel } from '../labels/IconTextLabel';
-import { TCourseResponse, TEnrollment } from '../@types/course';
+import { TCourseResponse } from '../@types/course';
 import { Header as LayoutHeader } from '../../shared/header/Header';
 import moment from 'moment/moment';
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { checkIfExpired, getFormattedTime } from '../../../lib/utils/time';
-import { useRequest } from '../../../lib/hooks/useRequest';
-import { enrollmentPrefix } from '../../../config/routing/routes';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import {
+  useAddEnrollmentMutation,
+  useResetEnrollmentMutation,
+} from '../../../store/services/courses';
+import { useTypedSelector } from '../../../lib/hooks/redux';
 
 export const Course: FC<TCourseResponse> = (props) => {
-  console.log('GIVEN PROPS: ', props);
-  const [course, setCourse] = useState<TCourseResponse>(props);
-
   return (
-    <LayoutHeader title={course.title}>
-      <CourseInfo {...course} />
-      <CourseDescription
-        {...course}
-        changeCourseEnrollmentState={(enrollment: TEnrollment) =>
-          setCourse((prevState) => ({
-            ...prevState,
-            UsersAssignedToCourse: [enrollment],
-          }))
-        }
-      />
+    <LayoutHeader title={props.title}>
+      <CourseInfo {...props} />
+      <CourseDescription {...props} />
     </LayoutHeader>
   );
 };
@@ -93,18 +83,18 @@ const CourseInfo: FC<TCourseInfoProps> = ({
   UsersAssignedToCourse,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
-  const { colorMode } = useColorMode();
-  const backgroundColor = useColorModeValue('#F3F4FD', '#282B41');
-  const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
-  const headingStyles =
-    colorMode === 'light' ? headingStyleLight : headingStyleDark;
-
   const [startCourseDate, endCourseDate] = [
     getFormattedTime(enrollment?.assignedAt ?? Date.now()),
     enrollment?.expiresAt
       ? getFormattedTime(enrollment.expiresAt)
       : moment().utc(true).add(timeToPass, 'seconds').format('DD.MM'),
   ];
+
+  const { colorMode } = useColorMode();
+  const backgroundColor = useColorModeValue('#F3F4FD', '#282B41');
+  const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
+  const headingStyles =
+    colorMode === 'light' ? headingStyleLight : headingStyleDark;
 
   return (
     <Center bg={backgroundColor}>
@@ -169,25 +159,25 @@ const CourseInfo: FC<TCourseInfoProps> = ({
 type TCourseDescriptionProps = Pick<
   TCourseResponse,
   'description' | 'sections' | 'UsersAssignedToCourse' | 'id'
-> & { changeCourseEnrollmentState: (enrollment: TEnrollment) => void };
+>;
 
 const CourseDescription: FC<TCourseDescriptionProps> = ({
   id,
   description,
   sections,
   UsersAssignedToCourse,
-  changeCourseEnrollmentState,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
-  const makeEnrollmentRequest = useRequest();
-  const router = useRouter();
-  const { data: session } = useSession();
+  const user = useTypedSelector((state) => state.user);
+  const [addEnrollment, { data, error }] = useAddEnrollmentMutation();
+  const [resetEnrollment, { data: resetData, error: errorData }] =
+    useResetEnrollmentMutation();
   const [buttonInfo, setButtonInfo] = useState<{
     title: string;
     callback: () => void;
   } | null>(null);
-  const { colorMode } = useColorMode();
 
+  const { colorMode } = useColorMode();
   const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
   const headingStyles =
     colorMode === 'light' ? headingStyleLight : headingStyleDark;
@@ -196,15 +186,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
     if (!enrollment)
       setButtonInfo({
         title: 'Зареєструватися',
-        callback: () =>
-          makeEnrollmentRequest<TEnrollment>(
-            session!.user!,
-            `${enrollmentPrefix}`,
-            'post',
-            {
-              data: { userId: session!.user!.id, courseId: id },
-            },
-          ).then((r) => changeCourseEnrollmentState(r)),
+        callback: () => addEnrollment({ userId: user.id, courseId: id }), //.then((r) => changeCourseEnrollmentState(r.data)),
       });
 
     if (enrollment) {
@@ -217,12 +199,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
       if (checkIfExpired(enrollment.expiresAt))
         setButtonInfo({
           title: 'Пройти знову',
-          callback: () =>
-            makeEnrollmentRequest<TEnrollment>(
-              session!.user!,
-              `${enrollmentPrefix}/${enrollment.id}`,
-              'patch',
-            ).then((r) => changeCourseEnrollmentState(r)),
+          callback: () => resetEnrollment(enrollment.id),
         });
     }
   }, [enrollment]);

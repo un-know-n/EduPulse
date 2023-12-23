@@ -17,13 +17,15 @@ export class JwtGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
     if (!token)
       throw new UnauthorizedException(
-        'You need to authorize to perform this action!',
+        'Вам необхідно авторизуватися для виконання цієї дії!',
       );
 
     try {
       request['user'] = await this.jwtService.verifyAsync(token);
     } catch (e) {
-      throw new UnauthorizedException('Non-valid token!');
+      throw new UnauthorizedException(
+        'Термін дії токена скінчився, спробуйте повторно ввійти в обліковий запис!',
+      );
     }
 
     return true;

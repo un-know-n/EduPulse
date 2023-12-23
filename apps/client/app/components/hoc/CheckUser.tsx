@@ -2,50 +2,57 @@
 
 import { FC, PropsWithChildren, useEffect } from 'react';
 import { translateRole, TRoles } from '../auth/config/constants';
-import { defaultToastOptions } from '../../config/UI/toast.options';
 import { useSession } from 'next-auth/react';
 import { Routes } from '../../config/routing/routes';
-import { useDisclosure, useToast } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { ChooseRole } from '../dashboard/shared/modals/ChooseRole';
 import Loading from '../../loading';
-
-const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'PATCH',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+import { apiInstance } from '../../lib/services/api.instance';
+import { useNotify } from '../../lib/hooks/useNotify';
+import { useTypedDispatch, useTypedSelector } from '../../lib/hooks/redux';
+import jwt from 'jsonwebtoken';
+import { setUser } from '../../store/reducers/user.slice';
 
 export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
+  const { data: session, status, update } = useSession();
+  const dispatch = useTypedDispatch();
+  const user = useTypedSelector((state) => state.user);
   const router = useRouter();
-  const toast = useToast();
+  const notify = useNotify();
   const {
     isOpen: isRoleModalOpen,
     onOpen: onRoleModalOpen,
     onClose: onRoleModalClose,
   } = useDisclosure();
 
-  const { data: session, status, update } = useSession();
   useEffect(() => {
     console.log(session, status);
     if (status === 'unauthenticated') router.push(Routes.SignIn);
-    if (status === 'authenticated' && !session?.user.role) onRoleModalOpen();
+    else if (status === 'authenticated' && !session?.user.role)
+      onRoleModalOpen();
+    else if (status === 'authenticated') {
+      const token =
+        session?.backendTokens?.accessToken ??
+        jwt.sign(session.user, process.env.NEXT_PUBLIC_TOKEN_SECRET ?? '', {
+          expiresIn: '1d',
+        });
+
+      const { id, role, name, image, email, emailVerified } = session.user;
+      if (!user.role)
+        dispatch(
+          setUser({ id, role, name, image, email, emailVerified, token }),
+        );
+    }
   }, [session, status, session?.user.role]);
 
   const handleRoleChange = async (role: string) => {
     try {
-      const response = await instance.patch(`/user/${session?.user.id}`, {
-        role,
-      });
-      console.log('handleRoleChange SUCCESS: ', response);
-
-      toast({
-        title: `Ваш статус було змінено на "${translateRole(role as TRoles)}"!`,
-        ...defaultToastOptions,
-      });
+      await apiInstance.patch(`/user/${session?.user.id}`, { role });
+      notify(
+        `Ваш статус було змінено на "${translateRole(role as TRoles)}"!`,
+        'success',
+      );
 
       await update({
         ...session,
@@ -54,23 +61,29 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
           role,
         },
       });
-
-      onRoleModalClose();
     } catch (e: any) {
-      console.log('handleRoleChange ERROR: ', e);
-      toast({
-        title:
-          e.response.data.message ||
+      notify(
+        e.response.data.message ||
           "Неочікувана помилка! Спробуйте ще раз або зв'яжіться з службою підтримки!",
-        ...defaultToastOptions,
-        status: 'error',
-      });
+        'error',
+      );
     }
+
+    onRoleModalClose();
   };
+
+  if (status === 'loading') return <Loading />;
+
   return (
     <>
       {isRoleModalOpen ? <ChooseRole chooseRole={handleRoleChange} /> : null}
-      {status === 'loading' ? <Loading /> : children}
+      {status === 'unauthenticated' ? (
+        children
+      ) : user.role ? (
+        children
+      ) : (
+        <Loading />
+      )}
     </>
   );
 };

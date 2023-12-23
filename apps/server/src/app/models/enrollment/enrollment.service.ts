@@ -19,12 +19,12 @@ export class EnrollmentService {
         where: { userId, courseId },
       });
     if (exitstingEnrollment)
-      throw new BadRequestException('Enrollment already exists!');
+      throw new BadRequestException('Ви вже зареєстровані на даний курс!');
 
     const isAuthor = await this.checkForCreator(userId, courseId);
     if (isAuthor)
       throw new BadRequestException(
-        "The author of the course can't join a course that was created by him",
+        'Автор курсу не може приєднатися до курсу, який він створив!',
       );
 
     const expireTime = await this.convertTimeToPass(courseId);
@@ -78,7 +78,7 @@ export class EnrollmentService {
     const isAuthor = await this.checkForCreator(user.id, enrollment.courseId);
     if (!isAuthor)
       throw new BadRequestException(
-        "You can't remove enrollment without being an author of the course",
+        'Ви не можете видалити запис про реєстрацію на курс, не будучи автором курсу!',
       );
 
     const [deletedEnrollment] = await this.prismaService.$transaction([
@@ -105,7 +105,7 @@ export class EnrollmentService {
 
     if (course.timeToPass)
       return moment().utc(true).add(course.timeToPass, 'seconds').toISOString();
-    else throw new BadRequestException('Course has no expiring time!');
+    else throw new BadRequestException('Курс не має терміну дії!');
   }
 
   async checkForCreator(userId: string, courseId: string) {
@@ -128,7 +128,9 @@ export class EnrollmentService {
         where: { id },
       });
     if (!enrollment)
-      throw new BadRequestException('There is no enrollment with given id!');
+      throw new BadRequestException(
+        'Немає реєстрації з вказаним ідентифікатором!',
+      );
     return enrollment;
   }
 }

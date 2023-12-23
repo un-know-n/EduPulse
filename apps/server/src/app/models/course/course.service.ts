@@ -81,7 +81,7 @@ export class CourseService {
       },
     });
     if (!course)
-      throw new BadRequestException('There is no course with given id!');
+      throw new BadRequestException('Немає курсу з вказаним ідентифікатором!');
     return course;
   }
 
@@ -97,7 +97,7 @@ export class CourseService {
       },
     });
     if (!course)
-      throw new BadRequestException('There is no course with given id!');
+      throw new BadRequestException('Немає курсу з вказаним ідентифікатором!');
     return course;
   }
 
