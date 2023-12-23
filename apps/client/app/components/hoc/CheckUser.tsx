@@ -34,9 +34,7 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
     else if (status === 'authenticated') {
       const token =
         session?.backendTokens?.accessToken ??
-        jwt.sign(session.user, process.env.NEXT_PUBLIC_TOKEN_SECRET ?? '', {
-          expiresIn: '1d',
-        });
+        jwt.sign(session.user, process.env.NEXT_PUBLIC_TOKEN_SECRET ?? '');
 
       const { id, role, name, image, email, emailVerified } = session.user;
       if (!user.role)
