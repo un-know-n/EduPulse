@@ -15,15 +15,16 @@ import {
 import { CiImageOn } from 'react-icons/ci';
 
 interface IImageUploadProps extends FormControlProps {
-  errorMessage: string[];
+  errorMessage: string[] | any;
   name: string;
+  existingImageUrl?: string;
 }
 
 export type ImageControlProps = FormControlProps & IImageUploadProps;
 
 export const ImageUpload: FC<ImageControlProps> = forwardRef(
   (props: ImageControlProps, ref: ForwardedRef<HTMLInputElement>) => {
-    const { name, label, errorMessage, ...rest } = props;
+    const { name, label, existingImageUrl, errorMessage, ...rest } = props;
     const [{ onChange, value: imageValue, ...field }, , { setValue }] =
       useField(name);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -41,7 +42,6 @@ export const ImageUpload: FC<ImageControlProps> = forwardRef(
           ? URL.createObjectURL(value.target.files[0])
           : '',
       );
-      console.log('VALUE: ', value, 'Image value: ', imageValue);
     };
 
     return (
@@ -60,7 +60,7 @@ export const ImageUpload: FC<ImageControlProps> = forwardRef(
               ratio={1}>
               <Avatar
                 boxSize='100px'
-                src={imageURL}
+                src={imageURL || existingImageUrl}
                 icon={<CiImageOn fontSize={70} />}
                 mb='10px'
                 borderRadius='8px'

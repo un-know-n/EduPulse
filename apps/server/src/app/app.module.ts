@@ -26,6 +26,7 @@ import { EXPIRE_TIME } from './models/auth/auth.service';
         from: process.env.EMAIL_FROM,
       },
     }),
+
     ConfigModule.forRoot(),
     JwtModule.register({
       global: true,

@@ -60,14 +60,14 @@ export const coursesApi = createApi({
 
         return {
           url: `${coursePrefix}`,
-          method: 'post',
+          method: 'POST',
           body: formData,
         };
       },
     }),
     updateCourse: builder.mutation<
       TCourseResponse,
-      TCreateCourse & { id: string }
+      Omit<TCreateCourse, 'creatorId'> & { id: string }
     >({
       query: ({ id, file, ...body }) => {
         const formData = objectToFormData(body);
@@ -75,17 +75,19 @@ export const coursesApi = createApi({
 
         return {
           url: `${coursePrefix}/${id}`,
-          method: 'patch',
+          method: 'PATCH',
           body: formData,
         };
       },
+      invalidatesTags: [courseTag],
     }),
     createSection: builder.mutation<TCourseResponse, TCreateSection>({
       query: ({ courseId, title }) => ({
         url: `${sectionPrefix}?courseId=${courseId}`,
-        method: 'post',
+        method: 'POST',
         body: title,
       }),
+      invalidatesTags: [courseTag],
     }),
     updateSection: builder.mutation<
       TCourseResponse,
@@ -93,16 +95,18 @@ export const coursesApi = createApi({
     >({
       query: ({ id, courseId, title }) => ({
         url: `${sectionPrefix}/${id}`,
-        method: 'patch',
+        method: 'PATCH',
         body: title,
       }),
+      invalidatesTags: [courseTag],
     }),
     createLecture: builder.mutation<TCourseResponse, TCreateLecture>({
       query: ({ sectionId, ...body }) => ({
         url: `${lecturePrefix}?sectionId=${sectionId}`,
-        method: 'post',
+        method: 'POST',
         body,
       }),
+      invalidatesTags: [courseTag],
     }),
     updateLecture: builder.mutation<
       TCourseResponse,
@@ -110,21 +114,24 @@ export const coursesApi = createApi({
     >({
       query: ({ id, sectionId, ...body }) => ({
         url: `${lecturePrefix}/${id}`,
-        method: 'patch',
+        method: 'PATCH',
         body,
       }),
+      invalidatesTags: [courseTag],
     }),
     removeSection: builder.mutation<TCourseResponse, { id: string }>({
       query: ({ id }) => ({
         url: `${sectionPrefix}/${id}`,
-        method: 'delete',
+        method: 'DELETE',
       }),
+      invalidatesTags: [courseTag],
     }),
     removeLecture: builder.mutation<TCourseResponse, { id: string }>({
       query: ({ id }) => ({
         url: `${lecturePrefix}/${id}`,
-        method: 'delete',
+        method: 'DELETE',
       }),
+      invalidatesTags: [courseTag],
     }),
     addEnrollment: builder.mutation<
       TEnrollment,
@@ -132,7 +139,7 @@ export const coursesApi = createApi({
     >({
       query: (body) => ({
         url: `${enrollmentPrefix}`,
-        method: 'post',
+        method: 'POST',
         body,
       }),
       invalidatesTags: [courseTag],
@@ -140,7 +147,7 @@ export const coursesApi = createApi({
     resetEnrollment: builder.mutation<TEnrollment, string>({
       query: (id) => ({
         url: `${enrollmentPrefix}/${id}`,
-        method: 'patch',
+        method: 'PATCH',
       }),
       invalidatesTags: [courseTag],
     }),

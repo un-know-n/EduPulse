@@ -1,10 +1,9 @@
 import { Button, ButtonProps } from '@chakra-ui/react';
 import { FC, PropsWithChildren } from 'react';
 
-export const DefaultButton: FC<PropsWithChildren<ButtonProps>> = ({
-  children,
-  ...props
-}) => {
+export const DefaultButton: FC<
+  PropsWithChildren<ButtonProps & { href?: string }>
+> = ({ children, ...props }) => {
   return (
     <Button
       borderRadius='15'

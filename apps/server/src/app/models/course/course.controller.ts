@@ -47,7 +47,7 @@ export class CourseController {
   create(
     @Body() createCourseDto: CreateCourseDto,
     @UploadedFile(parseFilePipe)
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ) {
     return this.courseService.executeWithImage(
       (fileUrl?: string) => this.courseService.create(createCourseDto, fileUrl),

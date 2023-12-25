@@ -1,30 +1,35 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { TCourseResponse } from '../@types/course';
 import { Header as LayoutHeader } from '../../shared/header/Header';
 import { Center, Flex, useColorModeValue, VStack } from '@chakra-ui/react';
 import { ContainerOptions } from '../../../config/UI/container.options';
 import { any, number, object, string, TypeOf } from 'zod';
-import { Formik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import { TextFormInput } from '../../shared/inputs/TextFormInput';
 import { TextareaFormInput } from '../shared/inputs/TextareaFormInput';
 import { DifficultyFormInput } from '../shared/inputs/DifficultyFormInput';
 import { TimeToPassFormInput } from '../shared/inputs/TimeToPassFormInput';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { useCreateCourseMutation } from '../../../store/services/courses';
+import {
+  useCreateCourseMutation,
+  useUpdateCourseMutation,
+} from '../../../store/services/courses';
 import { useShowError } from '../../../lib/hooks/useShowError';
 import ImageUpload from '../shared/inputs/ImageUpload';
 import { useTypedSelector } from '../../../lib/hooks/redux';
 import { useNotify } from '../../../lib/hooks/useNotify';
 import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import moment from 'moment/moment';
+import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
 
 type Nullable<T> = { [K in keyof T]?: T[K] };
-type TAlterCourseProps = Nullable<TCourseResponse> & { title: string };
+type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
-export const AlterCourse: FC<TAlterCourseProps> = ({ title, ...props }) => {
+export const AlterCourse: FC<TAlterCourseProps> = ({ pageTitle, ...props }) => {
   return (
-    <LayoutHeader title={title}>
-      <CourseInfoForm />
+    <LayoutHeader title={pageTitle}>
+      <CourseInfoForm {...props} />
+      {props.title ? <CourseProgram sections={props.sections} /> : null}
     </LayoutHeader>
   );
 };
@@ -96,21 +101,41 @@ type TInitialValues = {
 };
 
 type TCourseInfoTableProps = Nullable<
-  Omit<TCourseResponse, 'description' | 'sections'>
+  Omit<
+    TCourseResponse,
+    'sections' | 'UsersAssignedToCourse' | 'numberOfPeopleEnrolled'
+  >
 >;
 const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   title,
-  numberOfPeopleEnrolled,
   purpose,
   difficultyLevel,
+  description,
   image,
   timeToPass,
+  id,
 }) => {
   const user = useTypedSelector((state) => state.user);
+  const [
+    createCourse,
+    {
+      error: createError,
+      isLoading: isLoadingCreate,
+      isSuccess: isSuccessCreate,
+    },
+  ] = useCreateCourseMutation();
+  const [
+    updateCourse,
+    {
+      error: updateError,
+      isLoading: isLoadingUpdate,
+      isSuccess: isSuccessUpdate,
+    },
+  ] = useUpdateCourseMutation();
   const notify = useNotify();
-  const [createCourse, { data, error, isLoading, isSuccess }] =
-    useCreateCourseMutation();
-  useShowError(error, false);
+
+  useShowError(createError, false);
+  useShowError(updateError, false);
 
   const backgroundColor = useColorModeValue('#F3F4FD', '#282B41');
   const onCourseCreate = async (values: TInitialValues) => {
@@ -124,9 +149,50 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
     });
   };
 
+  const onCourseUpdate = async (values: TInitialValues) => {
+    const { difficultyLevel, timeToPass, ...body } = values;
+
+    updateCourse({
+      id: id ?? '',
+      difficultyLevel: Number(difficultyLevel),
+      timeToPass: moment.duration(timeToPass, 'days').asSeconds(),
+      ...body,
+    });
+  };
+
+  const initialFormValues = {
+    title: title ?? '',
+    purpose: purpose ?? '',
+    description: description ?? '',
+    difficultyLevel: difficultyLevel?.toString() ?? '1',
+    timeToPass: timeToPass
+      ? moment.duration(timeToPass, 'seconds').asDays()
+      : 1,
+  };
+  const checkObjectsEquality = useAreObjectsEqual(initialFormValues);
+  const [isDisabledSubmitButton, setDisabledSubmitButton] = useState(false);
+  const formik = useFormik<TAlterCourseInputs>({
+    initialValues: initialFormValues,
+    validateOnBlur: false,
+    validationSchema: toFormikValidationSchema(alterCourseSchema),
+    onSubmit: (data) =>
+      id
+        ? onCourseUpdate(data as TInitialValues)
+        : onCourseCreate(data as TInitialValues),
+  });
+
+  const { values, touched, errors, handleSubmit, handleChange } = formik;
+
   useEffect(() => {
-    if (isSuccess) notify('Курс створено!', 'success');
-  }, [isSuccess]);
+    const { file, ...restValues } = formik.values;
+    const noChange = checkObjectsEquality(restValues);
+    setDisabledSubmitButton(file?.size ? false : noChange);
+  }, [JSON.stringify(formik.values), JSON.stringify(initialFormValues)]);
+
+  useEffect(() => {
+    if (isSuccessCreate) notify('Курс створено!', 'success');
+    else if (isSuccessUpdate) notify('Курс оновлено!', 'success');
+  }, [isSuccessCreate, isSuccessUpdate]);
 
   return (
     <Center bg={backgroundColor}>
@@ -138,97 +204,119 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
           w={'full'}
           justifyContent='space-between'
           flexDirection='column'>
-          <Formik<TAlterCourseInputs>
-            validateOnBlur={false}
-            initialValues={{
-              title: '',
-              purpose: '',
-              description: '',
-              difficultyLevel: '1',
-              timeToPass: 1,
-            }}
-            validationSchema={toFormikValidationSchema(alterCourseSchema)}
-            onSubmit={(data) => onCourseCreate(data as TInitialValues)}>
-            {({ handleSubmit, errors, handleChange, values, touched }) => (
-              <form onSubmit={handleSubmit}>
-                <Flex
-                  justifyContent={'space-between'}
-                  alignItems={'flex-start'}>
-                  <VStack
-                    w={'80%'}
-                    maxW={'600px'}
-                    spacing={4}
-                    align='flex-start'>
-                    <TextFormInput
-                      isInvalid={Boolean(!!errors.title && touched.title)}
-                      errorMessage={errors.title ?? ''}
-                      fieldName='title'
-                      label={'Назва (64 символи)'}
-                    />
+          {/*<Formik<TAlterCourseInputs>*/}
+          {/*  validateOnBlur={false}*/}
+          {/*  initialValues={{*/}
+          {/*    title: title ?? '',*/}
+          {/*    purpose: purpose ?? '',*/}
+          {/*    description: description ?? '',*/}
+          {/*    difficultyLevel: difficultyLevel?.toString() ?? '1',*/}
+          {/*    timeToPass: timeToPass*/}
+          {/*      ? moment.duration(timeToPass, 'seconds').asDays()*/}
+          {/*      : 1,*/}
+          {/*  }}*/}
+          {/*  validationSchema={toFormikValidationSchema(alterCourseSchema)}*/}
+          {/*  onSubmit={(data) =>*/}
+          {/*    id*/}
+          {/*      ? onCourseUpdate(data as TInitialValues)*/}
+          {/*      : onCourseCreate(data as TInitialValues)*/}
+          {/*  }>*/}
+          {/*  {({ handleSubmit, errors, handleChange, values, touched }) => (*/}
+          <FormikProvider value={formik}>
+            <form onSubmit={handleSubmit}>
+              <Flex
+                justifyContent={'space-between'}
+                alignItems={'flex-start'}>
+                <VStack
+                  w={'80%'}
+                  maxW={'600px'}
+                  spacing={4}
+                  align='flex-start'>
+                  <TextFormInput
+                    isInvalid={Boolean(!!errors.title && touched.title)}
+                    errorMessage={errors.title ?? ''}
+                    fieldName='title'
+                    label={'Назва (64 символи)'}
+                  />
 
-                    <TextFormInput
-                      isInvalid={Boolean(!!errors.purpose && touched.purpose)}
-                      errorMessage={errors.purpose ?? ''}
-                      fieldName='purpose'
-                      label={'Короткий опис (512 символів)'}
-                    />
+                  <TextFormInput
+                    isInvalid={Boolean(!!errors.purpose && touched.purpose)}
+                    errorMessage={errors.purpose ?? ''}
+                    fieldName='purpose'
+                    label={'Короткий опис (512 символів)'}
+                  />
 
-                    <Flex
-                      gap='3'
-                      w='full'>
-                      <DifficultyFormInput
-                        isInvalid={Boolean(
-                          !!errors.difficultyLevel && touched.difficultyLevel,
-                        )}
-                        errorMessage={errors.difficultyLevel ?? ''}
-                        values={Number(values.difficultyLevel)}
-                        fieldName={'difficultyLevel'}
-                        label={'Рівень складності курсу'}
-                        onChange={handleChange}
-                      />
-
-                      <TimeToPassFormInput
-                        isInvalid={Boolean(
-                          !!errors.timeToPass && touched.timeToPass,
-                        )}
-                        errorMessage={errors.timeToPass ?? ''}
-                        fieldName='timeToPass'
-                        onChange={handleChange}
-                        value={values.timeToPass}
-                        min={1}
-                        max={30}
-                        label={'Час на проходження курсу (днів)'}
-                      />
-                    </Flex>
-
-                    <TextareaFormInput
+                  <Flex
+                    gap='3'
+                    w='full'>
+                    <DifficultyFormInput
                       isInvalid={Boolean(
-                        !!errors.description && touched.description,
+                        !!errors.difficultyLevel && touched.difficultyLevel,
                       )}
-                      errorMessage={errors.description ?? ''}
-                      fieldName='description'
-                      label={'Про курс (1028 символів)'}
+                      errorMessage={errors.difficultyLevel ?? ''}
+                      values={Number(values.difficultyLevel)}
+                      fieldName={'difficultyLevel'}
+                      label={'Рівень складності курсу'}
+                      onChange={handleChange}
                     />
-                  </VStack>
-                  <VStack align='center'>
-                    <ImageUpload
-                      isInvalid={Boolean(!!errors.file && touched.file)}
-                      errorMessage={errors.file}
-                      name={'file'}
-                      label={'Upload Image'}
+
+                    <TimeToPassFormInput
+                      isInvalid={Boolean(
+                        !!errors.timeToPass && touched.timeToPass,
+                      )}
+                      errorMessage={errors.timeToPass ?? ''}
+                      fieldName='timeToPass'
+                      onChange={handleChange}
+                      value={values.timeToPass}
+                      min={1}
+                      max={30}
+                      label={'Час на проходження курсу (днів)'}
                     />
-                    <DefaultButton
-                      isLoading={isLoading}
-                      w={'fit-content'}>
-                      Створити курс
-                    </DefaultButton>
-                  </VStack>
-                </Flex>
-              </form>
-            )}
-          </Formik>
+                  </Flex>
+
+                  <TextareaFormInput
+                    isInvalid={Boolean(
+                      !!errors.description && touched.description,
+                    )}
+                    errorMessage={errors.description ?? ''}
+                    fieldName='description'
+                    label={'Про курс (1028 символів)'}
+                  />
+                </VStack>
+                <VStack align='center'>
+                  <ImageUpload
+                    isInvalid={Boolean(!!errors.file && touched.file)}
+                    errorMessage={errors.file}
+                    existingImageUrl={image}
+                    name={'file'}
+                    label={'Upload Image'}
+                  />
+                  <DefaultButton
+                    isLoading={isLoadingCreate || isLoadingUpdate}
+                    isDisabled={id ? isDisabledSubmitButton : false}
+                    w={'fit-content'}>
+                    {id ? 'Оновити курс' : 'Створити курс'}
+                  </DefaultButton>
+                </VStack>
+              </Flex>
+            </form>
+          </FormikProvider>
+          {/*  )}*/}
+          {/*</Formik>*/}
         </Flex>
       </Flex>
+    </Center>
+  );
+};
+
+type TCourseProgramProps = Nullable<Pick<TCourseResponse, 'sections'>>;
+
+const CourseProgram: FC<TCourseProgramProps> = ({ sections }) => {
+  return (
+    <Center>
+      <Flex
+        p='5'
+        {...ContainerOptions}></Flex>
     </Center>
   );
 };

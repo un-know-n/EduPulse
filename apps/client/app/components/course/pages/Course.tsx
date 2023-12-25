@@ -37,6 +37,8 @@ import {
   useResetEnrollmentMutation,
 } from '../../../store/services/courses';
 import { useTypedSelector } from '../../../lib/hooks/redux';
+import { Link } from '@chakra-ui/next-js';
+import { coursePrefix } from '../../../config/routing/routes';
 
 export const Course: FC<TCourseResponse> = (props) => {
   return (
@@ -157,13 +159,14 @@ const CourseInfo: FC<TCourseInfoProps> = ({
 
 type TCourseDescriptionProps = Pick<
   TCourseResponse,
-  'description' | 'sections' | 'UsersAssignedToCourse' | 'id'
+  'description' | 'sections' | 'UsersAssignedToCourse' | 'id' | 'creatorId'
 >;
 
 const CourseDescription: FC<TCourseDescriptionProps> = ({
   id,
   description,
   sections,
+  creatorId,
   UsersAssignedToCourse,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
@@ -301,11 +304,24 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
           </Accordion>
         </Box>
         <Box>
-          <DefaultButton
-            mb={5}
-            onClick={buttonInfo?.callback}>
-            {buttonInfo?.title}
-          </DefaultButton>
+          {user.id === creatorId ? (
+            <DefaultButton
+              as={Link}
+              href={`${coursePrefix}/${id}/edit`}
+              _hover={{
+                textDecoration: 'none',
+              }}
+              mb={5}>
+              Оновити курс
+            </DefaultButton>
+          ) : (
+            <DefaultButton
+              mb={5}
+              onClick={buttonInfo?.callback}>
+              {buttonInfo?.title}
+            </DefaultButton>
+          )}
+
           <Text
             {...textStyles}
             mb={2}>

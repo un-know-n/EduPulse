@@ -106,12 +106,12 @@ export class CourseService {
     updateCourseDto: UpdateCourseDto,
     imageUrl?: string,
   ) {
+    const updatedCourse = { ...updateCourseDto };
+    if (imageUrl) updatedCourse['image'] = imageUrl;
+
     return await this.prismaService.course.update({
       where: { id },
-      data: {
-        ...updateCourseDto,
-        image: imageUrl ?? '',
-      },
+      data: updatedCourse,
     });
   }
 

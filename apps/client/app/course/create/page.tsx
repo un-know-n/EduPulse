@@ -6,5 +6,5 @@ import { useUserRoleCheck } from '../../lib/hooks/useUserCheck';
 export default function Page() {
   useUserRoleCheck('teacher');
 
-  return <AlterCourse title={'Створення курсу'} />;
+  return <AlterCourse pageTitle={'Створення курсу'} />;
 }
