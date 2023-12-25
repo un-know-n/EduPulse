@@ -13,7 +13,6 @@ import {
   DrawerOverlay,
   Flex,
   Heading,
-  Input,
   Menu,
   MenuButton,
   MenuDivider,
@@ -33,13 +32,17 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { themeColors } from '../../../config/UI/theme';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { FC, PropsWithChildren } from 'react';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
-import { IoMdNotifications } from 'react-icons/io';
+import { IoIosAddCircleOutline, IoMdNotifications } from 'react-icons/io';
 import { AiOutlineSmile } from 'react-icons/ai';
 import { PiUserListDuotone } from 'react-icons/pi';
+import { IoSearchOutline } from 'react-icons/io5';
+import { RxDashboard } from 'react-icons/rx';
+import { DefaultMenuLink } from './links/DefaultMenuLink';
+import { useTypedSelector } from '../../../lib/hooks/redux';
 
 type TProps = {
   title: string;
@@ -51,12 +54,17 @@ const dashboardLinks = [
   { title: 'Вийти', handler: () => signOut() },
 ];
 
+const burgerMenuLinks = [
+  { title: 'Пошук курсів', href: '/course/search', icon: <IoSearchOutline /> },
+  { title: 'Мої курси', href: '/dashboard', icon: <RxDashboard /> },
+];
+
 export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const backgroundColor = useColorModeValue(...themeColors);
 
-  const { data: session } = useSession();
+  const user = useTypedSelector((state) => state.user);
 
   return (
     <>
@@ -123,14 +131,14 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                     <Avatar
                       size={'2xl'}
                       src={
-                        session?.user?.image ??
+                        user?.image ??
                         'https://avatars.dicebear.com/api/male/username.svg'
                       }
                     />
                   </Center>
                   <br />
                   <Center>
-                    <p>{session?.user?.name}</p>
+                    <p>{user?.name}</p>
                   </Center>
                   <br />
                   <MenuDivider />
@@ -159,10 +167,28 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Пошук курсів</DrawerHeader>
+          <DrawerHeader>Меню</DrawerHeader>
 
           <DrawerBody>
-            <Input placeholder='Введіть назву курса...' />
+            {burgerMenuLinks.map((link) => (
+              <DefaultMenuLink
+                key={link.title}
+                href={link.href}
+                leftIcon={link.icon}
+                w={'full'}
+                my={2}>
+                {link.title}
+              </DefaultMenuLink>
+            ))}
+            {user.role === 'teacher' ? (
+              <DefaultMenuLink
+                href={'/course/create'}
+                leftIcon={<IoIosAddCircleOutline />}
+                w={'full'}
+                my={2}>
+                Створити курс
+              </DefaultMenuLink>
+            ) : null}
           </DrawerBody>
 
           <DrawerFooter></DrawerFooter>
