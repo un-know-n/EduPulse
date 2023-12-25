@@ -22,4 +22,6 @@ export const useShowError = (
       );
     }
   }, [error, includeRerouting, routePath]);
+
+  return { router, notify };
 };

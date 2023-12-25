@@ -36,3 +36,5 @@ export type TLectureResponse = Record<
   'id' | 'title' | 'content' | 'createdAt' | 'sectionId',
   string
 >;
+
+export type Nullable<T> = { [K in keyof T]?: T[K] };

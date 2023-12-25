@@ -85,19 +85,23 @@ export const coursesApi = createApi({
       query: ({ courseId, title }) => ({
         url: `${sectionPrefix}?courseId=${courseId}`,
         method: 'POST',
-        body: title,
+        body: { title },
       }),
       invalidatesTags: [courseTag],
     }),
     updateSection: builder.mutation<
       TCourseResponse,
-      TCreateSection & { id: string }
+      Omit<TCreateSection, 'courseId'> & { id: string }
     >({
-      query: ({ id, courseId, title }) => ({
-        url: `${sectionPrefix}/${id}`,
-        method: 'PATCH',
-        body: title,
-      }),
+      query: ({ id, title }) => {
+        console.log('GIVEN TITLE ', title);
+
+        return {
+          url: `${sectionPrefix}/${id}`,
+          method: 'PATCH',
+          body: { title },
+        };
+      },
       invalidatesTags: [courseTag],
     }),
     createLecture: builder.mutation<TCourseResponse, TCreateLecture>({
@@ -110,9 +114,9 @@ export const coursesApi = createApi({
     }),
     updateLecture: builder.mutation<
       TCourseResponse,
-      TCreateLecture & { id: string }
+      Omit<TCreateLecture, 'sectionId'> & { id: string }
     >({
-      query: ({ id, sectionId, ...body }) => ({
+      query: ({ id, ...body }) => ({
         url: `${lecturePrefix}/${id}`,
         method: 'PATCH',
         body,

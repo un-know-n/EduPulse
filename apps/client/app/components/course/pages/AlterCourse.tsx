@@ -1,7 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
-import { TCourseResponse } from '../@types/course';
+import { Nullable, TCourseResponse } from '../@types/course';
 import { Header as LayoutHeader } from '../../shared/header/Header';
-import { Center, Flex, useColorModeValue, VStack } from '@chakra-ui/react';
+import {
+  Accordion,
+  Center,
+  Flex,
+  Heading,
+  Stack,
+  useColorModeValue,
+  VStack,
+} from '@chakra-ui/react';
 import { ContainerOptions } from '../../../config/UI/container.options';
 import { any, number, object, string, TypeOf } from 'zod';
 import { FormikProvider, useFormik } from 'formik';
@@ -21,15 +29,21 @@ import { useNotify } from '../../../lib/hooks/useNotify';
 import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import moment from 'moment/moment';
 import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
+import { SectionItem } from '../shared/list/SectionItem';
+import { CreateSectionButton } from '../shared/buttons/CreateSectionButton';
 
-type Nullable<T> = { [K in keyof T]?: T[K] };
 type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
 export const AlterCourse: FC<TAlterCourseProps> = ({ pageTitle, ...props }) => {
   return (
     <LayoutHeader title={pageTitle}>
       <CourseInfoForm {...props} />
-      {props.title ? <CourseProgram sections={props.sections} /> : null}
+      {props.title ? (
+        <CourseProgram
+          sections={props.sections}
+          id={props.id}
+        />
+      ) : null}
     </LayoutHeader>
   );
 };
@@ -204,24 +218,6 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
           w={'full'}
           justifyContent='space-between'
           flexDirection='column'>
-          {/*<Formik<TAlterCourseInputs>*/}
-          {/*  validateOnBlur={false}*/}
-          {/*  initialValues={{*/}
-          {/*    title: title ?? '',*/}
-          {/*    purpose: purpose ?? '',*/}
-          {/*    description: description ?? '',*/}
-          {/*    difficultyLevel: difficultyLevel?.toString() ?? '1',*/}
-          {/*    timeToPass: timeToPass*/}
-          {/*      ? moment.duration(timeToPass, 'seconds').asDays()*/}
-          {/*      : 1,*/}
-          {/*  }}*/}
-          {/*  validationSchema={toFormikValidationSchema(alterCourseSchema)}*/}
-          {/*  onSubmit={(data) =>*/}
-          {/*    id*/}
-          {/*      ? onCourseUpdate(data as TInitialValues)*/}
-          {/*      : onCourseCreate(data as TInitialValues)*/}
-          {/*  }>*/}
-          {/*  {({ handleSubmit, errors, handleChange, values, touched }) => (*/}
           <FormikProvider value={formik}>
             <form onSubmit={handleSubmit}>
               <Flex
@@ -301,22 +297,48 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
               </Flex>
             </form>
           </FormikProvider>
-          {/*  )}*/}
-          {/*</Formik>*/}
         </Flex>
       </Flex>
     </Center>
   );
 };
 
-type TCourseProgramProps = Nullable<Pick<TCourseResponse, 'sections'>>;
+type TCourseProgramProps = Nullable<Pick<TCourseResponse, 'sections' | 'id'>>;
 
-const CourseProgram: FC<TCourseProgramProps> = ({ sections }) => {
+const CourseProgram: FC<TCourseProgramProps> = ({ sections, id }) => {
+  if (!sections || !id) return null;
+
   return (
     <Center>
       <Flex
         p='5'
-        {...ContainerOptions}></Flex>
+        alignItems='center'
+        flexDirection='column'
+        justifyItems='space-evenly'
+        w={'full'}
+        {...ContainerOptions}>
+        <Heading>Програма курсу</Heading>
+        <Accordion
+          allowMultiple
+          w={'full'}
+          pt={7}>
+          <Stack spacing={3}>
+            {sections.map((section, i) => (
+              <SectionItem
+                index={i + 1}
+                key={section.id}
+                {...section}
+              />
+            ))}
+          </Stack>
+          <Flex
+            my={3}
+            alignItems={'center'}
+            justifyContent={'center'}>
+            <CreateSectionButton courseId={id} />
+          </Flex>
+        </Accordion>
+      </Flex>
     </Center>
   );
 };

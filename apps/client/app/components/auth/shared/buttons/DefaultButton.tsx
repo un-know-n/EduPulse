@@ -6,7 +6,6 @@ export const DefaultButton: FC<
 > = ({ children, ...props }) => {
   return (
     <Button
-      borderRadius='15'
       bg='purple.600'
       color='white'
       _hover={{
