@@ -45,6 +45,10 @@ export type TEnrollmentResponse = TEnrollment & {
   course: TCourseResponse & { user: TUserResponse };
 };
 
+export type TCourseWithAuthorResponse = TCourseResponse & {
+  user: TUserResponse;
+};
+
 export type TLectureResponse = Record<
   'id' | 'title' | 'content' | 'createdAt' | 'sectionId',
   string

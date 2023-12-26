@@ -9,6 +9,7 @@ import {
   ParseFilePipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -89,8 +90,12 @@ export class CourseController {
   }
 
   @Get()
-  findAll(@User() user: TUser) {
-    return this.courseService.findAll(user.id);
+  findAll(
+    @User() user: TUser,
+    @Query('searchString') searchString?: string,
+    @Query('orderBy') orderBy?: 'asc' | 'desc',
+  ) {
+    return this.courseService.findAll(user.id, searchString, orderBy);
   }
 
   @Get(':id')

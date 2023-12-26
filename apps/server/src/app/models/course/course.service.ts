@@ -47,12 +47,39 @@ export class CourseService {
     });
   }
 
-  async findAll(userId: string) {
+  async findAll(
+    userId: string,
+    searchString?: string,
+    orderBy?: 'asc' | 'desc',
+  ) {
+    const or = searchString
+      ? {
+          OR: [{ title: { contains: searchString || '' } }],
+        }
+      : {};
+    const sortOrder = orderBy || 'asc';
+
     return await this.prismaService.course.findMany({
+      where: {
+        ...or,
+      },
+      orderBy: {
+        createdAt: sortOrder,
+      },
       include: {
         UsersAssignedToCourse: {
           where: {
             userId,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            emailVerified: true,
+            name: true,
+            role: true,
+            image: true,
           },
         },
         sections: {

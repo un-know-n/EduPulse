@@ -1,7 +1,8 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   Box,
   Flex,
+  Grid,
   Heading,
   Input,
   InputGroup,
@@ -9,20 +10,54 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { FiSearch } from 'react-icons/fi';
-import { levelsDictionary } from '../labels/DifficultyLabel';
 import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import { Header } from '../../shared/header/Header';
+import { useLazyGetCoursesQuery } from '../../../store/services/courses';
+import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
+import { useShowError } from '../../../lib/hooks/useShowError';
+import NoCoursesFoundByParametersPoster from '../../shared/posters/NoCoursesFoundByParametersPoster';
+import Loading from '../../../loading';
+import { CourseCard } from '../cards/CourseCard';
 
-type TProps = {};
+type TSearchParams = { searchString?: string; orderBy?: 'asc' | 'desc' };
+const initialSearchParams: TSearchParams = { orderBy: 'asc', searchString: '' };
 
-export const SearchCourse: FC<TProps> = () => {
+const orderDictionary = [
+  {
+    order: 'desc',
+    title: 'Нові спочатку',
+  },
+  {
+    order: 'asc',
+    title: 'Старі спочатку',
+  },
+];
+
+export const SearchCourse: FC = () => {
+  const [getCoursesByParams, { data, isLoading, error }] =
+    useLazyGetCoursesQuery({});
+  const [searchParams, setSearchParams] =
+    useState<TSearchParams>(initialSearchParams);
+  useShowError(error);
+
+  const checkObjectsEquality = useAreObjectsEqual(initialSearchParams);
+
+  const handleSearch = () => {
+    const noChange = checkObjectsEquality(searchParams);
+    if (!noChange) {
+      getCoursesByParams({ ...searchParams });
+    }
+  };
+
+  useEffect(() => {
+    getCoursesByParams({ ...searchParams });
+  }, []);
+
   return (
     <Header title={'Пошук курсів'}>
       <Box
         justifyContent='center'
-        alignItems='center'
-        minHeight='100%'
-        minWidth='100%'>
+        alignItems='center'>
         <Flex
           px='10px'
           mt='2rem'
@@ -42,54 +77,69 @@ export const SearchCourse: FC<TProps> = () => {
             <InputLeftElement pointerEvents='none'>
               <FiSearch color='gray' />
             </InputLeftElement>
-            <Input placeholder='Назва курсу' />
+            <Input
+              placeholder='Назва курсу'
+              value={searchParams.searchString}
+              onChange={(event) =>
+                setSearchParams((prev) => ({
+                  ...prev,
+                  searchString: event.target.value,
+                }))
+              }
+            />
           </InputGroup>
-          <Select w={'fit-content'}>
-            {Object.entries(levelsDictionary).map((level) => (
+          <Select
+            w={'fit-content'}
+            value={searchParams.orderBy}
+            onChange={(event) =>
+              setSearchParams((prev) => ({
+                ...prev,
+                orderBy: event.target.value as TSearchParams['orderBy'],
+              }))
+            }>
+            {orderDictionary.map((orderBy) => (
               <option
-                key={level[1].text}
-                value={level[0]}>
-                {level[1].text}
+                key={orderBy.order}
+                value={orderBy.order}>
+                {orderBy.title}
               </option>
             ))}
           </Select>
-          <DefaultButton w={'fit-content'}>Пошук</DefaultButton>
-        </Flex>
-        <Flex
-          alignItems='center'
-          justifyContent='center'
-          mt='8rem'
-          px='10px'>
-          {/*<NotFindCourses></NotFindCourses>*/}
-          {/* <Grid
-            templateColumns='repeat(3, 1fr)'
-            gap={8}>
-            <CourseCard
-              title='Курс проагрмировани жотскоки пизд иенмле'
-              students={34}
-              content={[23, 34, 54]}
-              progress={0}
-              time='12.1.2001-12.3.3212'
-              author='Alex'></CourseCard>
-
-            <CourseCard
-              title='Курс проагрмировани жотскоки пизд иенмле'
-              students={34}
-              content={[23, 34, 54]}
-              progress={0}
-              time='12.1.2001-12.3.3212'
-              author='Alex'></CourseCard>
-
-            <CourseCard
-              title='Курс проагрмировани жотскоки пизд иенмле'
-              students={34}
-              content={[23, 34, 54]}
-              progress={0}
-              time='12.1.2001-12.3.3212'
-              author='Alex'></CourseCard>
-          </Grid> */}
+          <DefaultButton
+            w={'fit-content'}
+            onClick={handleSearch}>
+            Пошук
+          </DefaultButton>
         </Flex>
       </Box>
+      <Flex
+        alignItems='center'
+        justifyContent='center'
+        w={'full'}
+        mt={5}
+        px='10px'>
+        {isLoading ? (
+          <Loading />
+        ) : data?.length ? (
+          <Grid
+            templateColumns='repeat(3, 1fr)'
+            gap={5}>
+            {data.map((course) => (
+              <CourseCard
+                key={course.id}
+                {...course}
+                author={course.user.name}
+                progress={
+                  course.UsersAssignedToCourse?.[0]?.isCompleted ? 100 : 0
+                }
+                enrollment={course.UsersAssignedToCourse?.[0]}
+              />
+            ))}
+          </Grid>
+        ) : (
+          <NoCoursesFoundByParametersPoster />
+        )}
+      </Flex>
     </Header>
   );
 };

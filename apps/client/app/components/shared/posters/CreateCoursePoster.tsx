@@ -1,13 +1,13 @@
 'use client';
-import { BsEmojiFrown } from 'react-icons/bs';
 import { DefaultPosterLayout } from './layout/DefaultPosterLayout';
+import { IoCreateOutline } from 'react-icons/io5';
 
 export default function CreateCoursePoster() {
   return (
     <DefaultPosterLayout
-      title={'Недоступно!'}
-      description={'Для редагування, спочатку створіть курс.'}
-      icon={<BsEmojiFrown fontSize='2rem' />}
+      title={'Програма курсу...'}
+      description={'Для налаштування програми курсу, спочатку створіть курс.'}
+      icon={<IoCreateOutline fontSize='2rem' />}
     />
   );
 }

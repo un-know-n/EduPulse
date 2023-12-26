@@ -7,6 +7,7 @@ import {
 } from '../../config/routing/routes';
 import {
   TCourseResponse,
+  TCourseWithAuthorResponse,
   TEnrollment,
   TEnrollmentResponse,
 } from '../../components/course/@types/course';
@@ -53,6 +54,16 @@ export const coursesApi = createApi({
   endpoints: (builder) => ({
     getCourseById: builder.query<TCourseResponse, string>({
       query: (id) => `${coursePrefix}/${id}`,
+      providesTags: [courseTag],
+    }),
+    getCourses: builder.query<
+      TCourseWithAuthorResponse[],
+      { searchString?: string; orderBy?: 'asc' | 'desc' }
+    >({
+      query: ({ orderBy, searchString }) =>
+        `${coursePrefix}?searchString=${searchString ?? ''}&orderBy=${
+          orderBy ?? ''
+        }`,
       providesTags: [courseTag],
     }),
     createCourse: builder.mutation<TCourseResponse, TCreateCourse>({
@@ -178,4 +189,6 @@ export const {
   useRemoveLectureMutation,
   useRemoveSectionMutation,
   useGetEnrollmentsByIdQuery,
+  useGetCoursesQuery,
+  useLazyGetCoursesQuery,
 } = coursesApi;

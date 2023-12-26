@@ -29,6 +29,7 @@ export const CourseButton: FC<TProps & ButtonProps> = ({
           _hover={{
             textDecoration: 'none',
           }}
+          w={'fit-content'}
           {...props}>
           Оновити курс
         </DefaultButton>
