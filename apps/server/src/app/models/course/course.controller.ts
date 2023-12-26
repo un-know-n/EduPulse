@@ -1,3 +1,5 @@
+import 'multer';
+
 import {
   Body,
   Controller,
@@ -14,14 +16,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
+
+import { JwtGuard } from '../../common/guards/jwt.guard';
+import { TeacherRoleGuard } from '../../common/guards/teacher-role.guard';
+import { TUser, User } from '../user/user.decorator';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { TeacherRoleGuard } from '../../common/guards/teacher-role.guard';
-import { JwtGuard } from '../../common/guards/jwt.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { TUser, User } from '../user/user.decorator';
 
 const maxImageSize = 1024 * 1024; // measured in bytes
 const parseFilePipe = new ParseFilePipe({
