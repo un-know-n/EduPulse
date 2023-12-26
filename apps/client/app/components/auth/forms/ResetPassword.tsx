@@ -27,11 +27,14 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
 
   return (
     <Box
-      p={5}
-      maxW={450}>
+      p='40px'
+      color='black'
+      borderRadius='20'
+      bg='white'
+      maxW={650}>
       <Container
         p={0}
-        mb={16}>
+        mb={8}>
         <Heading>Змініть пароль</Heading>
         <Text>
           Вигадайте складний пароль, використовуючи букви, символи та цифри і

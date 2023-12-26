@@ -1,27 +1,27 @@
-import { useToast } from '@chakra-ui/react';
-import { useSearchParams } from 'next/navigation';
+import { useNotify } from './useNotify';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { defaultToastOptions } from '../../config/UI/toast.options';
-import { notifyAboutAuthError } from '../utils/handleAuthError';
+import { Routes } from '../../config/routing/routes';
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-const useShowError = () => {
-  const toast = useToast();
-
-  const error = useSearchParams().get('error');
+export const useShowError = (
+  error: FetchBaseQueryError | SerializedError | undefined,
+  includeRerouting = true,
+  routePath?: string,
+) => {
+  const notify = useNotify();
+  const router = useRouter();
 
   useEffect(() => {
-    if (error)
-      notifyAboutAuthError(error, (error) =>
-        toast({
-          title: error,
-          ...defaultToastOptions,
-          duration: 10000,
-          status: 'error',
-        }),
+    if (error) {
+      if (includeRerouting) router.push(routePath ?? Routes.Dashboard);
+      notify(
+        (error as any)?.data?.message ?? 'Сталася невідома помилка!',
+        'error',
       );
-  }, [error]);
+    }
+  }, [error, includeRerouting, routePath]);
 
-  return error;
+  return { router, notify };
 };
-
-export default useShowError;

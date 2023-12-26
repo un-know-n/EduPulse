@@ -3,7 +3,6 @@
 import { FC, useState } from 'react';
 import {
   Box,
-  Button,
   Checkbox,
   Container,
   Flex,
@@ -21,12 +20,13 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { EmailFormInput } from '../shared/inputs/EmailFormInput';
 import { PasswordFormInput } from '../shared/inputs/PasswordFormInput';
 import { RoleFormInput } from '../shared/inputs/RoleFormInput';
-import { TextFormInput } from '../shared/inputs/TextFormInput';
+import { TextFormInput } from '../../shared/inputs/TextFormInput';
 import { signIn } from 'next-auth/react';
 import { baseRoles, signInOptions } from '../config/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthAlert from '../shared/alerts/AuthAlert';
-import axios from 'axios';
+import { DefaultButton } from '../shared/buttons/DefaultButton';
+import { apiInstance } from '../../../lib/services/api.instance';
 
 const signUpSchema = object({
   name: string({
@@ -61,14 +61,6 @@ const initialValues = {
 };
 type TInitialValues = typeof initialValues;
 
-const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
 export const SignUp: FC = () => {
   const router = useRouter();
   const [error, setError] = useState('');
@@ -77,7 +69,7 @@ export const SignUp: FC = () => {
 
   const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
     try {
-      const res = await instance.post('/auth/sign-up', {
+      const res = await apiInstance.post('/auth/sign-up', {
         name: `${data.name} ${data.surname}`,
         email: data.email,
         role: data.role,
@@ -118,10 +110,11 @@ export const SignUp: FC = () => {
 
   return (
     <Box
-      p={5}
-      maxW={500}
-      my='auto'
-      mx='auto'>
+      p='60px'
+      maxW={600}
+      m='auto'
+      borderRadius='20'
+      bg='white'>
       <Container
         p={0}
         mb={5}>
@@ -129,7 +122,7 @@ export const SignUp: FC = () => {
         <Text>
           Вже зареєстровані?{' '}
           <Link
-            color='blue.500'
+            color='purple.500'
             href={Routes.SignIn}>
             Увійти
           </Link>
@@ -189,26 +182,19 @@ export const SignUp: FC = () => {
                   <Text>
                     Я погоджуюся з{' '}
                     <Link
-                      color='blue.500'
+                      color='purple.500'
                       href='/'>
                       Політикою конфіденційності
                     </Link>{' '}
                     та{' '}
                     <Link
-                      color='blue.500'
+                      color='purple.500'
                       href='/'>
                       Правилами користування
                     </Link>
                   </Text>
                 </Field>
-
-                <Button
-                  type='submit'
-                  colorScheme='blue'
-                  variant='outline'
-                  width='full'>
-                  Створити
-                </Button>
+                <DefaultButton>Створити</DefaultButton>
               </VStack>
             </form>
           )}

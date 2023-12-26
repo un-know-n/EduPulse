@@ -3,7 +3,10 @@
 import { ResetPasswordProposal } from '../../components/auth/forms/ResetPasswordProposal';
 import {
   Box,
+  ChakraProvider,
+  extendTheme,
   Flex,
+  LightMode,
   Step,
   StepDescription,
   StepIcon,
@@ -13,7 +16,6 @@ import {
   StepSeparator,
   StepStatus,
   StepTitle,
-  useMediaQuery,
   useSteps,
   useToast,
 } from '@chakra-ui/react';
@@ -22,8 +24,25 @@ import { ResetPassword } from '../../components/auth/forms/ResetPassword';
 import { useState } from 'react';
 import { Routes } from '../../config/routing/routes';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { defaultToastOptions } from '../../config/UI/toast.options';
+import { apiInstance } from '../../lib/services/api.instance';
+
+const baseStyle = {
+  description: {
+    color: 'purple.400',
+    fontSize: '16',
+  },
+};
+
+const stepperTheme = {
+  baseStyle,
+};
+
+const theme = extendTheme({
+  components: {
+    Stepper: stepperTheme,
+  },
+});
 
 const steps = [
   {
@@ -40,14 +59,6 @@ enum Steps {
   ChangePassword,
 }
 
-const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
 export default function Page() {
   const router = useRouter();
   const toast = useToast();
@@ -59,11 +70,10 @@ export default function Page() {
     index: Steps.ResetProposal,
     count: steps.length,
   });
-  const [isLargerThan1200] = useMediaQuery('(min-width: 1200px)');
 
   const handleResetProposal = async (email: string) => {
     try {
-      await instance
+      await apiInstance
         .post('/auth/reset-prompt', {
           email: email,
         })
@@ -96,7 +106,7 @@ export default function Page() {
   };
   const handleTokenVerification = async (token: string) => {
     try {
-      await instance
+      await apiInstance
         .post('/auth/reset-verify', {
           email: resetInformation?.email ?? '',
           token: token,
@@ -119,7 +129,7 @@ export default function Page() {
 
   const handlePasswordReset = async (password: string) => {
     try {
-      await instance
+      await apiInstance
         .post('/auth/reset', {
           email: resetInformation?.email ?? '',
           password: password,
@@ -145,40 +155,43 @@ export default function Page() {
   };
 
   return (
-    <>
+    <ChakraProvider theme={theme}>
       <Flex
+        color='white'
         w='full'
         h='full'
         gap={5}
         flexDirection='column'
         justifyContent='center'
         alignItems='center'>
-        <Stepper
-          index={activeStep}
-          orientation={isLargerThan1200 ? 'horizontal' : 'vertical'}
-          w='full'
-          px={5}
-          maxW={750}>
-          {steps.map((step, index) => (
-            <Step key={index}>
-              <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
-                />
-              </StepIndicator>
+        <LightMode>
+          <Stepper
+            index={activeStep}
+            size='lg'
+            colorScheme='purple'
+            orientation='vertical'
+            height='200px'
+            gap='0'>
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus
+                    complete={<StepIcon />}
+                    incomplete={<StepNumber />}
+                    active={<StepNumber />}
+                  />
+                </StepIndicator>
 
-              <Box flexShrink='0'>
-                <StepTitle>{step.title}</StepTitle>
-                <StepDescription>{step.description}</StepDescription>
-              </Box>
+                <Box flexShrink='0'>
+                  <StepTitle>{step.title}</StepTitle>
+                  <StepDescription>{step.description}</StepDescription>
+                </Box>
 
-              <StepSeparator />
-            </Step>
-          ))}
-        </Stepper>
-
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
+        </LightMode>
         {activeStep === Steps.ResetProposal && (
           <ResetPasswordProposal
             handlePasswordResetProposal={handleResetProposal}
@@ -198,6 +211,6 @@ export default function Page() {
           <ResetPassword changeHandler={handlePasswordReset} />
         )}
       </Flex>
-    </>
+    </ChakraProvider>
   );
 }

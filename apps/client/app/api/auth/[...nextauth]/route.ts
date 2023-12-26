@@ -2,25 +2,20 @@ import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import DiscordProvider from 'next-auth/providers/discord';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from '../../../config/database/prisma';
 import { Routes } from '../../../config/routing/routes';
 import * as process from 'process';
 import { JWT } from 'next-auth/jwt';
-import axios from 'axios';
 import moment from 'moment';
-
-const instance = axios.create({
-  baseURL: process.env.SERVER_URL ?? 'http://localhost:3000/api',
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+import { apiInstance } from '../../../lib/services/api.instance';
+import { Tokens } from '../../../config/@types/next-auth';
+import { User } from '@prisma/client';
 
 async function refreshToken(token: JWT) {
   try {
-    const response = await instance.post(
+    const response = await apiInstance.post<Tokens['backendTokens']>(
       '/auth/refresh',
       {},
       {
@@ -38,7 +33,7 @@ async function refreshToken(token: JWT) {
   }
 }
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
@@ -53,6 +48,10 @@ export const authOptions: AuthOptions = {
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID ?? '',
       clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID ?? '',
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -69,7 +68,7 @@ export const authOptions: AuthOptions = {
         if (!credentials || !credentials?.email || !credentials?.password)
           return null;
 
-        const res = await instance.post('/auth/sign-in', {
+        const res = await apiInstance.post('/auth/sign-in', {
           email: credentials.email,
           password: credentials.password,
         });
@@ -78,7 +77,7 @@ export const authOptions: AuthOptions = {
           return null;
         }
 
-        return res.data;
+        return res.data as User | null;
       },
     }),
   ],
@@ -86,10 +85,15 @@ export const authOptions: AuthOptions = {
     signIn: Routes.SignIn,
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account, profile }) {
+      // If update current client session
       if (trigger === 'update') return { ...token, ...session.user };
+
+      // If the user logged in with third-party oauth providers
       if (user || !token.backendTokens) return { ...token, ...user };
-      if (moment().utc(true).unix() < token.backendTokens.expiresIn)
+
+      // If the user logged in with credentials, then check tokens expire time
+      if (moment().utc(true).unix() < (token?.backendTokens?.expiresIn ?? 0))
         return token;
 
       return await refreshToken(token);
@@ -103,9 +107,7 @@ export const authOptions: AuthOptions = {
       } else if (token) {
         // If the user logged in with third-party oauth providers
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        session.user = token;
+        session.user = token as unknown as typeof session.user;
       }
 
       return session;
@@ -113,6 +115,6 @@ export const authOptions: AuthOptions = {
   },
 };
 
-export const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

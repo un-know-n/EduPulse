@@ -3,7 +3,6 @@ import { FC } from 'react';
 import {
   Badge,
   Box,
-  Button,
   Container,
   Flex,
   Heading,
@@ -14,7 +13,8 @@ import { ResetPasswordButtons } from '../shared/buttons/ResetPasswordButtons';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { object, string, TypeOf } from 'zod';
-import { TextFormInput } from '../shared/inputs/TextFormInput';
+import { TextFormInput } from '../../shared/inputs/TextFormInput';
+import { DefaultButton } from '../shared/buttons/DefaultButton';
 
 type TProps = {
   email: string;
@@ -42,11 +42,14 @@ export const CheckEmail: FC<TProps> = ({
 
   return (
     <Box
-      p={5}
-      maxW={450}>
+      p='50px'
+      color='black'
+      borderRadius='20'
+      bg='white'
+      maxW={650}>
       <Container
         p={0}
-        mb={16}>
+        mb={8}>
         <Heading>Перевірте свою електронну пошту</Heading>
         <Text>
           Ми надіслали електронний лист із інформацією про скидання пароля на
@@ -87,14 +90,7 @@ export const CheckEmail: FC<TProps> = ({
                   placeholder='Код підтвердження'
                 />
 
-                <Button
-                  type='submit'
-                  colorScheme='blue'
-                  variant='outline'
-                  width='full'
-                  mb={2}>
-                  Підтвердити
-                </Button>
+                <DefaultButton mb='2'>Підтвердити</DefaultButton>
               </VStack>
             </form>
           )}

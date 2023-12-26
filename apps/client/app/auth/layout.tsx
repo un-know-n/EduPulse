@@ -1,13 +1,18 @@
 'use client';
 
+import { LightMode } from '@chakra-ui/react';
 import { AuthLayout } from '../components/auth/layout/AuthLayout';
-import useShowError from '../lib/hooks/useShowError';
+import useShowAuthError from '../lib/hooks/useShowAuthError';
 
 export default function DefaultLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const error = useShowError();
-  return <AuthLayout>{children}</AuthLayout>;
+  const error = useShowAuthError();
+  return (
+    <LightMode>
+      <AuthLayout>{children}</AuthLayout>
+    </LightMode>
+  );
 }

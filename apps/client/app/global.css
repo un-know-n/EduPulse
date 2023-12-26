@@ -1,24 +1,43 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+body {
+  padding: 0;
+  margin: 0;
+}
 
-@layer base {
-  html,
-  body {
-    padding: 0;
-    margin: 0;
-  }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+ul {
+  list-style: square;
+}
 
-  ul {
-    list-style: square;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  * {
-    box-sizing: border-box;
-  }
+.mainButton {
+  border-radius: 0.4rem;
+  font-weight: 600;
+  background-color: rgb(79 70 229);
+  padding: 0.5rem 0.75rem;
+  color: white;
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+}
+
+.mainButton:hover {
+  background-color: rgb(120, 70, 229);
+  transition-duration: 0.4s;
+}
+
+.SupButton {
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+}
+
+.SupButton:hover {
+  color: rgb(120, 70, 229);
+  transition-duration: 0.4s;
 }
