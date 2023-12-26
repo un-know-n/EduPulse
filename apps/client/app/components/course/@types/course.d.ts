@@ -32,6 +32,19 @@ export type TSectionResponse = {
   lectures: TLectureResponse[];
 };
 
+export type TUserResponse = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified?: string;
+  role: string;
+  image: string;
+};
+
+export type TEnrollmentResponse = TEnrollment & {
+  course: TCourseResponse & { user: TUserResponse };
+};
+
 export type TLectureResponse = Record<
   'id' | 'title' | 'content' | 'createdAt' | 'sectionId',
   string

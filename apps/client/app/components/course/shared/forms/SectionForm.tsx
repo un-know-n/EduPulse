@@ -14,9 +14,9 @@ import { useShowError } from '../../../../lib/hooks/useShowError';
 import { DefaultButton } from '../../../auth/shared/buttons/DefaultButton';
 
 type TProps = Nullable<Pick<TSectionResponse, 'title' | 'id'>> &
-  Pick<TSectionResponse, 'courseId'>;
+  Pick<TSectionResponse, 'courseId'> & { onClose: () => void };
 
-export const SectionForm: FC<TProps> = ({ title, id, courseId }) => {
+export const SectionForm: FC<TProps> = ({ title, id, courseId, onClose }) => {
   const [
     updateSection,
     {
@@ -70,8 +70,13 @@ export const SectionForm: FC<TProps> = ({ title, id, courseId }) => {
   }, [JSON.stringify(values), JSON.stringify(initialFormValues)]);
 
   useEffect(() => {
-    if (isSuccessCreate) notify('Модуль створено!', 'success');
-    else if (isSuccessUpdate) notify('Модуль оновлено!', 'success');
+    if (isSuccessCreate) {
+      notify('Модуль створено!', 'success');
+      onClose();
+    } else if (isSuccessUpdate) {
+      notify('Модуль оновлено!', 'success');
+      onClose();
+    }
   }, [isSuccessCreate, isSuccessUpdate]);
 
   return (

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -21,7 +21,6 @@ import {
 import { MdCheckCircle } from 'react-icons/md';
 import { FaRegBookmark } from 'react-icons/fa';
 import { HiOutlineUsers } from 'react-icons/hi2';
-import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import { ContainerOptions } from '../../../config/UI/container.options';
 import { CiImageOn } from 'react-icons/ci';
 import { DifficultyLabel } from '../labels/DifficultyLabel';
@@ -31,14 +30,8 @@ import { TCourseResponse } from '../@types/course';
 import { Header as LayoutHeader } from '../../shared/header/Header';
 import moment from 'moment/moment';
 import { abbreviateNumber } from 'js-abbreviation-number';
-import { checkIfExpired, getFormattedTime } from '../../../lib/utils/time';
-import {
-  useAddEnrollmentMutation,
-  useResetEnrollmentMutation,
-} from '../../../store/services/courses';
-import { useTypedSelector } from '../../../lib/hooks/redux';
-import { Link } from '@chakra-ui/next-js';
-import { coursePrefix } from '../../../config/routing/routes';
+import { getFormattedTime } from '../../../lib/utils/time';
+import { CourseButton } from '../shared/buttons/CourseButton';
 
 export const Course: FC<TCourseResponse> = (props) => {
   return (
@@ -170,41 +163,41 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
   UsersAssignedToCourse,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
-  const user = useTypedSelector((state) => state.user);
-  const [addEnrollment, { data, error }] = useAddEnrollmentMutation();
-  const [resetEnrollment, { data: resetData, error: errorData }] =
-    useResetEnrollmentMutation();
-  const [buttonInfo, setButtonInfo] = useState<{
-    title: string;
-    callback: () => void;
-  } | null>(null);
+
+  // const [addEnrollment, { data, error }] = useAddEnrollmentMutation();
+  // const [resetEnrollment, { data: resetData, error: errorData }] =
+  //   useResetEnrollmentMutation();
+  // const [buttonInfo, setButtonInfo] = useState<{
+  //   title: string;
+  //   callback: () => void;
+  // } | null>(null);
 
   const { colorMode } = useColorMode();
   const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
   const headingStyles =
     colorMode === 'light' ? headingStyleLight : headingStyleDark;
 
-  useEffect(() => {
-    if (!enrollment)
-      setButtonInfo({
-        title: 'Зареєструватися',
-        callback: () => addEnrollment({ userId: user.id, courseId: id }), //.then((r) => changeCourseEnrollmentState(r.data)),
-      });
-
-    if (enrollment) {
-      if (enrollment.isCompleted)
-        setButtonInfo({
-          title: 'Отримати сертифікат',
-          callback: () => {},
-        });
-
-      if (checkIfExpired(enrollment.expiresAt))
-        setButtonInfo({
-          title: 'Пройти знову',
-          callback: () => resetEnrollment(enrollment.id),
-        });
-    }
-  }, [enrollment]);
+  // useEffect(() => {
+  //   if (!enrollment)
+  //     setButtonInfo({
+  //       title: 'Зареєструватися',
+  //       callback: () => addEnrollment({ userId: user.id, courseId: id }), //.then((r) => changeCourseEnrollmentState(r.data)),
+  //     });
+  //
+  //   if (enrollment) {
+  //     if (enrollment.isCompleted)
+  //       setButtonInfo({
+  //         title: 'Отримати сертифікат',
+  //         callback: () => {},
+  //       });
+  //
+  //     if (checkIfExpired(enrollment.expiresAt))
+  //       setButtonInfo({
+  //         title: 'Пройти знову',
+  //         callback: () => resetEnrollment(enrollment.id),
+  //       });
+  //   }
+  // }, [enrollment]);
 
   return (
     <Center>
@@ -304,23 +297,12 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
           </Accordion>
         </Box>
         <Box>
-          {user.id === creatorId ? (
-            <DefaultButton
-              as={Link}
-              href={`${coursePrefix}/${id}/edit`}
-              _hover={{
-                textDecoration: 'none',
-              }}
-              mb={5}>
-              Оновити курс
-            </DefaultButton>
-          ) : (
-            <DefaultButton
-              mb={5}
-              onClick={buttonInfo?.callback}>
-              {buttonInfo?.title}
-            </DefaultButton>
-          )}
+          <CourseButton
+            id={id}
+            creatorId={creatorId}
+            enrollment={enrollment}
+            mb={5}
+          />
 
           <Text
             {...textStyles}

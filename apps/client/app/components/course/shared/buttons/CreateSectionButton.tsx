@@ -37,7 +37,10 @@ export const CreateSectionButton: FC<Pick<TSectionResponse, 'courseId'>> = (
         headerTitle='Створіть модуль'
         onClose={onClose}
         isOpen={isOpen}>
-        <SectionForm {...props} />
+        <SectionForm
+          {...props}
+          onClose={onClose}
+        />
       </DefaultCourseModal>
     </>
   );

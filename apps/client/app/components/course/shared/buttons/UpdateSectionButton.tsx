@@ -25,7 +25,10 @@ export const UpdateSectionButton: FC<
         headerTitle='Змініть налаштування модуля'
         onClose={onClose}
         isOpen={isOpen}>
-        <SectionForm {...props} />
+        <SectionForm
+          {...props}
+          onClose={onClose}
+        />
       </DefaultCourseModal>
     </>
   );

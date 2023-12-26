@@ -8,6 +8,7 @@ import {
 import {
   TCourseResponse,
   TEnrollment,
+  TEnrollmentResponse,
 } from '../../components/course/@types/course';
 import { RootState } from '../store';
 import { objectToFormData } from '../../lib/utils/objectToFormData';
@@ -34,6 +35,7 @@ type TCreateLecture = {
 };
 
 const courseTag = 'Courses';
+const enrollmentTag = 'Enrollments';
 
 export const coursesApi = createApi({
   reducerPath: 'coursesApi',
@@ -47,7 +49,7 @@ export const coursesApi = createApi({
       return headers;
     },
   }),
-  tagTypes: [courseTag],
+  tagTypes: [courseTag, enrollmentTag],
   endpoints: (builder) => ({
     getCourseById: builder.query<TCourseResponse, string>({
       query: (id) => `${coursePrefix}/${id}`,
@@ -137,6 +139,10 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: [courseTag],
     }),
+    getEnrollmentsById: builder.query<TEnrollmentResponse[], string>({
+      query: (id) => `${enrollmentPrefix}/${id}`,
+      providesTags: [enrollmentTag],
+    }),
     addEnrollment: builder.mutation<
       TEnrollment,
       { userId: string; courseId: string }
@@ -146,14 +152,14 @@ export const coursesApi = createApi({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [courseTag],
+      invalidatesTags: [courseTag, enrollmentTag],
     }),
     resetEnrollment: builder.mutation<TEnrollment, string>({
       query: (id) => ({
         url: `${enrollmentPrefix}/${id}`,
         method: 'PATCH',
       }),
-      invalidatesTags: [courseTag],
+      invalidatesTags: [courseTag, enrollmentTag],
     }),
   }),
 });
@@ -171,4 +177,5 @@ export const {
   useUpdateSectionMutation,
   useRemoveLectureMutation,
   useRemoveSectionMutation,
+  useGetEnrollmentsByIdQuery,
 } = coursesApi;

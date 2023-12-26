@@ -37,7 +37,10 @@ export const CreateLectureButton: FC<Pick<TLectureResponse, 'sectionId'>> = (
         headerTitle='Створіть лекцію'
         onClose={onClose}
         isOpen={isOpen}>
-        <LectureForm {...props} />
+        <LectureForm
+          {...props}
+          onClose={onClose}
+        />
       </DefaultCourseModal>
     </>
   );

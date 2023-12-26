@@ -9,6 +9,7 @@ import { Flex, Text } from '@chakra-ui/react';
 export type TDifficultyLevel = 1 | 2 | 3;
 type TProps = {
   level: TDifficultyLevel;
+  showText?: boolean;
 };
 
 export const levelsDictionary: {
@@ -43,11 +44,11 @@ export const levelsDictionary: {
   },
 };
 
-export const DifficultyLabel: FC<TProps> = ({ level }) => {
+export const DifficultyLabel: FC<TProps> = ({ level, showText = true }) => {
   return (
     <Flex align='center'>
       {levelsDictionary[level].icon}
-      <Text ml='10px'>{levelsDictionary[level].text}</Text>
+      {showText ? <Text ml='10px'>{levelsDictionary[level].text}</Text> : null}
     </Flex>
   );
 };

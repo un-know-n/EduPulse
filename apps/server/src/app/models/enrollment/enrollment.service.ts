@@ -119,6 +119,27 @@ export class EnrollmentService {
       where: {
         userId,
       },
+      include: {
+        course: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                emailVerified: true,
+                name: true,
+                role: true,
+                image: true,
+              },
+            },
+            sections: {
+              include: {
+                lectures: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 

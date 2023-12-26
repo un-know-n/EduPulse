@@ -25,7 +25,10 @@ export const UpdateLectureButton: FC<Omit<TLectureResponse, 'createdAt'>> = (
         headerTitle='Змініть вміст лекції'
         onClose={onClose}
         isOpen={isOpen}>
-        <LectureForm {...props} />
+        <LectureForm
+          {...props}
+          onClose={onClose}
+        />
       </DefaultCourseModal>
     </>
   );

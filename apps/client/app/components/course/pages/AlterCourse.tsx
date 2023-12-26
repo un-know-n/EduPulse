@@ -25,12 +25,12 @@ import {
 import { useShowError } from '../../../lib/hooks/useShowError';
 import ImageUpload from '../shared/inputs/ImageUpload';
 import { useTypedSelector } from '../../../lib/hooks/redux';
-import { useNotify } from '../../../lib/hooks/useNotify';
 import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import moment from 'moment/moment';
 import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
 import { SectionItem } from '../shared/list/SectionItem';
 import { CreateSectionButton } from '../shared/buttons/CreateSectionButton';
+import CreateCoursePoster from '../../shared/posters/CreateCoursePoster';
 
 type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
@@ -43,7 +43,9 @@ export const AlterCourse: FC<TAlterCourseProps> = ({ pageTitle, ...props }) => {
           sections={props.sections}
           id={props.id}
         />
-      ) : null}
+      ) : (
+        <CreateCoursePoster />
+      )}
     </LayoutHeader>
   );
 };
@@ -133,6 +135,7 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   const [
     createCourse,
     {
+      data: createData,
       error: createError,
       isLoading: isLoadingCreate,
       isSuccess: isSuccessCreate,
@@ -146,9 +149,8 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
       isSuccess: isSuccessUpdate,
     },
   ] = useUpdateCourseMutation();
-  const notify = useNotify();
 
-  useShowError(createError, false);
+  const { notify, router } = useShowError(createError, false);
   useShowError(updateError, false);
 
   const backgroundColor = useColorModeValue('#F3F4FD', '#282B41');
@@ -204,8 +206,10 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   }, [JSON.stringify(formik.values), JSON.stringify(initialFormValues)]);
 
   useEffect(() => {
-    if (isSuccessCreate) notify('Курс створено!', 'success');
-    else if (isSuccessUpdate) notify('Курс оновлено!', 'success');
+    if (isSuccessCreate && createData) {
+      notify('Курс створено!', 'success');
+      router.push(`/course/${createData.id}/edit`);
+    } else if (isSuccessUpdate) notify('Курс оновлено!', 'success');
   }, [isSuccessCreate, isSuccessUpdate]);
 
   return (

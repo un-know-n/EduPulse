@@ -16,9 +16,15 @@ import { TInitialLectureValues } from '../schemas/lecture';
 import { TextareaFormInput } from '../inputs/TextareaFormInput';
 
 type TProps = Nullable<Pick<TLectureResponse, 'id' | 'title' | 'content'>> &
-  Pick<TLectureResponse, 'sectionId'>;
+  Pick<TLectureResponse, 'sectionId'> & { onClose: () => void };
 
-export const LectureForm: FC<TProps> = ({ sectionId, title, id, content }) => {
+export const LectureForm: FC<TProps> = ({
+  sectionId,
+  title,
+  id,
+  content,
+  onClose,
+}) => {
   const [
     updateLecture,
     {
@@ -75,8 +81,13 @@ export const LectureForm: FC<TProps> = ({ sectionId, title, id, content }) => {
   }, [JSON.stringify(values), JSON.stringify(initialFormValues)]);
 
   useEffect(() => {
-    if (isSuccessCreate) notify('Лекцію створено!', 'success');
-    else if (isSuccessUpdate) notify('Лекцію оновлено!', 'success');
+    if (isSuccessCreate) {
+      notify('Лекцію створено!', 'success');
+      onClose();
+    } else if (isSuccessUpdate) {
+      notify('Лекцію оновлено!', 'success');
+      onClose();
+    }
   }, [isSuccessCreate, isSuccessUpdate]);
 
   return (
