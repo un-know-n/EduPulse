@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import 'multer';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -55,10 +57,10 @@ export class CourseService {
   ) {
     const or = searchString
       ? {
-          OR: [{ title: { contains: searchString || '' } }],
+          OR: [{ title: { contains: searchString ?? '' } }],
         }
       : {};
-    const sortOrder = orderBy || 'asc';
+    const sortOrder = orderBy ?? 'asc';
 
     return await this.prismaService.course.findMany({
       where: {
@@ -92,6 +94,31 @@ export class CourseService {
     });
   }
 
+  async findCreatedCourses(userId: string) {
+    return await this.prismaService.course.findMany({
+      where: {
+        creatorId: userId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            emailVerified: true,
+            name: true,
+            role: true,
+            image: true,
+          },
+        },
+        sections: {
+          include: {
+            lectures: true,
+          },
+        },
+      },
+    });
+  }
+
   async findWithEnrollment(courseId: string, userId: string) {
     const course = await this.prismaService.course.findUnique({
       where: { id: courseId },
@@ -102,8 +129,15 @@ export class CourseService {
           },
         },
         sections: {
+          orderBy: {
+            createdAt: 'asc',
+          },
           include: {
-            lectures: true,
+            lectures: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
           },
         },
       },
@@ -118,8 +152,15 @@ export class CourseService {
       where: { id },
       include: {
         sections: {
+          orderBy: {
+            createdAt: 'asc',
+          },
           include: {
-            lectures: true,
+            lectures: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
           },
         },
       },

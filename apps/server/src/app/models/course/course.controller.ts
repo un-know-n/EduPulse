@@ -101,6 +101,11 @@ export class CourseController {
     return this.courseService.findAll(user.id, searchString, orderBy);
   }
 
+  @Get('created')
+  findCreatedCourses(@User() user: TUser) {
+    return this.courseService.findCreatedCourses(user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @User() user: TUser) {
     return this.courseService.findWithEnrollment(id, user.id);

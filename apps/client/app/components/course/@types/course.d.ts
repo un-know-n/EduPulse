@@ -54,4 +54,6 @@ export type TLectureResponse = Record<
   string
 >;
 
+export type TUserRoles = 'student' | 'teacher';
+
 export type Nullable<T> = { [K in keyof T]?: T[K] };

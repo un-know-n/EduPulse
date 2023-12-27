@@ -66,8 +66,8 @@ export const CourseCard: FC<TProps> = ({
 
   const cardColor = useColorModeValue('#805AD5', '#D6BCFA');
   const progressAlignment = progress < 50 ? 'left' : 'right';
-  const bgColor = useColorModeValue('#FFFFFF', '#2B2B2B');
-  const bgColorFooter = useColorModeValue('#DDE6F6', '#1A1A1D');
+  const bgColor = useColorModeValue('#FFFFFF', '#373d52'); //#3F444E
+  const bgColorFooter = useColorModeValue('#DDE6F6', '#2a2e41');
 
   const [startCourseDate, endCourseDate] = [
     getFormattedTime(createdAt),
@@ -79,18 +79,20 @@ export const CourseCard: FC<TProps> = ({
       maxWidth='450px'
       overflow='hidden'
       variant='outline'
-      w={'full'}
+      w='full'
       borderRadius='15px'
       backgroundColor={bgColor}>
       <CardBody>
         <Stack>
           <Flex
             justify='space-between'
-            flexWrap='wrap'>
+            alignItems='flex-start'
+            gap={3}>
             <Heading
               as={Link}
               href={`course/${id}`}
-              size='md'>
+              size='md'
+              noOfLines={2}>
               {title}
             </Heading>
             <Avatar

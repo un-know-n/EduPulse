@@ -2,11 +2,11 @@ import { useRouter } from 'next/navigation';
 import { useNotify } from './useNotify';
 import { useEffect } from 'react';
 import { Routes } from '../../config/routing/routes';
-import { TUser } from '../../../../server/src/app/models/user/user.decorator';
 import { useTypedSelector } from './redux';
+import { TUserRoles } from '../../components/course/@types/course';
 
 export const useUserRoleCheck = (
-  givenRole: TUser['role'],
+  givenRole: TUserRoles,
   message = 'Ви не маєте права виконувати цю дію!',
   includeRerouting = true,
 ) => {
