@@ -1,8 +1,7 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import {
   Box,
   Flex,
-  Grid,
   Heading,
   Input,
   InputGroup,
@@ -12,14 +11,10 @@ import {
 import { FiSearch } from 'react-icons/fi';
 import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import { Header } from '../../shared/header/Header';
-import { useLazyGetCoursesQuery } from '../../../store/services/courses';
-import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
-import { useShowError } from '../../../lib/hooks/useShowError';
 import NoCoursesFoundByParametersPoster from '../../shared/posters/NoCoursesFoundByParametersPoster';
-import Loading from '../../../loading';
-import { CourseCard } from '../cards/CourseCard';
+import { TSearchParams, useSearch } from '../../../lib/hooks/useSearch';
+import { CoursesList } from '../shared/list/CoursesList';
 
-type TSearchParams = { searchString?: string; orderBy?: 'asc' | 'desc' };
 const initialSearchParams: TSearchParams = { orderBy: 'asc', searchString: '' };
 
 const orderDictionary = [
@@ -34,24 +29,14 @@ const orderDictionary = [
 ];
 
 export const SearchCourse: FC = () => {
-  const [getCoursesByParams, { data, isLoading, error }] =
-    useLazyGetCoursesQuery({});
-  const [searchParams, setSearchParams] =
-    useState<TSearchParams>(initialSearchParams);
-  useShowError(error);
-
-  const checkObjectsEquality = useAreObjectsEqual(initialSearchParams);
-
-  const handleSearch = () => {
-    const noChange = checkObjectsEquality(searchParams);
-    if (!noChange) {
-      getCoursesByParams({ ...searchParams });
-    }
-  };
-
-  useEffect(() => {
-    getCoursesByParams({ ...searchParams });
-  }, []);
+  const {
+    isDisabledSearchButton,
+    data,
+    isLoading,
+    currentSearchParams: searchParams,
+    setCurrentSearchParams: setSearchParams,
+    handleSearch,
+  } = useSearch(initialSearchParams);
 
   return (
     <Header title={'Пошук курсів'}>
@@ -107,39 +92,49 @@ export const SearchCourse: FC = () => {
           </Select>
           <DefaultButton
             w={'fit-content'}
+            isDisabled={isDisabledSearchButton}
             onClick={handleSearch}>
             Пошук
           </DefaultButton>
         </Flex>
       </Box>
-      <Flex
-        alignItems='center'
-        justifyContent='center'
-        w={'full'}
-        mt={5}
-        px='10px'>
-        {isLoading ? (
-          <Loading />
-        ) : data?.length ? (
-          <Grid
-            templateColumns='repeat(3, 1fr)'
-            gap={5}>
-            {data.map((course) => (
-              <CourseCard
-                key={course.id}
-                {...course}
-                author={course.user.name}
-                progress={
-                  course.UsersAssignedToCourse?.[0]?.isCompleted ? 100 : 0
-                }
-                enrollment={course.UsersAssignedToCourse?.[0]}
-              />
-            ))}
-          </Grid>
-        ) : (
-          <NoCoursesFoundByParametersPoster />
-        )}
-      </Flex>
+
+      <CoursesList
+        isLoading={isLoading}
+        poster={<NoCoursesFoundByParametersPoster />}
+        courses={data}
+      />
+
+      {/*<Center>*/}
+      {/*  <Flex*/}
+      {/*    alignItems='center'*/}
+      {/*    justifyContent='center'*/}
+      {/*    maxW='80%'*/}
+      {/*    mt={5}*/}
+      {/*    px='10px'>*/}
+      {/*    {isLoading ? (*/}
+      {/*      <Loading />*/}
+      {/*    ) : data?.length ? (*/}
+      {/*      <Grid*/}
+      {/*        templateColumns='repeat(3,minmax(450px, 1fr))'*/}
+      {/*        gap={5}>*/}
+      {/*        {data.map((course) => (*/}
+      {/*          <CourseCard*/}
+      {/*            key={course.id}*/}
+      {/*            {...course}*/}
+      {/*            author={course.user.name}*/}
+      {/*            progress={*/}
+      {/*              course.UsersAssignedToCourse?.[0]?.isCompleted ? 100 : 0*/}
+      {/*            }*/}
+      {/*            enrollment={course.UsersAssignedToCourse?.[0]}*/}
+      {/*          />*/}
+      {/*        ))}*/}
+      {/*      </Grid>*/}
+      {/*    ) : (*/}
+      {/*      <NoCoursesFoundByParametersPoster />*/}
+      {/*    )}*/}
+      {/*  </Flex>*/}
+      {/*</Center>*/}
     </Header>
   );
 };

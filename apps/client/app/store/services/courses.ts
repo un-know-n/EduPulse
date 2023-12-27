@@ -13,6 +13,7 @@ import {
 } from '../../components/course/@types/course';
 import { RootState } from '../store';
 import { objectToFormData } from '../../lib/utils/objectToFormData';
+import { TSearchParams } from '../../lib/hooks/useSearch';
 
 type TCreateCourse = {
   file?: File;
@@ -56,14 +57,15 @@ export const coursesApi = createApi({
       query: (id) => `${coursePrefix}/${id}`,
       providesTags: [courseTag],
     }),
-    getCourses: builder.query<
-      TCourseWithAuthorResponse[],
-      { searchString?: string; orderBy?: 'asc' | 'desc' }
-    >({
+    getCourses: builder.query<TCourseWithAuthorResponse[], TSearchParams>({
       query: ({ orderBy, searchString }) =>
         `${coursePrefix}?searchString=${searchString ?? ''}&orderBy=${
           orderBy ?? ''
         }`,
+      providesTags: [courseTag],
+    }),
+    getCreatedCourses: builder.query<TCourseWithAuthorResponse[], null>({
+      query: () => `${coursePrefix}/created`,
       providesTags: [courseTag],
     }),
     createCourse: builder.mutation<TCourseResponse, TCreateCourse>({
@@ -191,4 +193,6 @@ export const {
   useGetEnrollmentsByIdQuery,
   useGetCoursesQuery,
   useLazyGetCoursesQuery,
+  useLazyGetCreatedCoursesQuery,
+  useGetCreatedCoursesQuery,
 } = coursesApi;

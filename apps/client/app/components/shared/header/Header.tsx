@@ -13,11 +13,20 @@ import {
   DrawerOverlay,
   Flex,
   Heading,
+  List,
+  ListIcon,
+  ListItem,
   Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -33,7 +42,7 @@ import {
 } from '@chakra-ui/react';
 import { themeColors } from '../../../config/UI/theme';
 import { signOut } from 'next-auth/react';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, ReactElement } from 'react';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { IoIosAddCircleOutline, IoMdNotifications } from 'react-icons/io';
@@ -43,31 +52,99 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { RxDashboard } from 'react-icons/rx';
 import { DefaultMenuLink } from './links/DefaultMenuLink';
 import { useTypedSelector } from '../../../lib/hooks/redux';
+import { dashboardPrefix } from '../../../config/routing/routes';
+import { MdCheckCircle } from 'react-icons/md';
+import { TUserRoles } from '../../course/@types/course';
+import { GiGraduateCap } from 'react-icons/gi';
 
 type TProps = {
   title: string;
 };
 
 const dashboardLinks = [
-  { title: 'Досягнення', handler: () => redirect('/') },
-  { title: 'Налаштування', handler: () => redirect('/') },
+  { title: 'Досягнення', handler: () => redirect(dashboardPrefix) },
+  { title: 'Налаштування', handler: () => redirect(dashboardPrefix) },
   { title: 'Вийти', handler: () => signOut() },
 ];
+//<GiGraduateCap />
+const burgerMenuLinks: {
+  title: string;
+  href: string;
+  icon: ReactElement;
+  role: TUserRoles[];
+}[] = [
+  {
+    title: 'Пошук курсів',
+    href: '/course/search',
+    icon: <IoSearchOutline />,
+    role: ['student', 'teacher'],
+  },
+  {
+    title: 'Мої курси',
+    href: '/dashboard',
+    icon: <RxDashboard />,
+    role: ['student', 'teacher'],
+  },
+  {
+    title: 'Створені курси',
+    href: '/course/created',
+    icon: <GiGraduateCap />,
+    role: ['teacher'],
+  },
+  {
+    title: 'Створити курс',
+    href: '/course/create',
+    icon: <IoIosAddCircleOutline />,
+    role: ['teacher'],
+  },
+];
 
-const burgerMenuLinks = [
-  { title: 'Пошук курсів', href: '/course/search', icon: <IoSearchOutline /> },
-  { title: 'Мої курси', href: '/dashboard', icon: <RxDashboard /> },
+const authors = [
+  'Добровольський Євгеній',
+  'Мартинець Артем',
+  'Брюханов Олександр',
 ];
 
 export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onClose: onModalClose,
+  } = useDisclosure();
   const backgroundColor = useColorModeValue(...themeColors);
 
   const user = useTypedSelector((state) => state.user);
 
   return (
     <>
+      <Modal
+        blockScrollOnMount
+        isOpen={isModalOpen}
+        onClose={onModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Платформу створили студенти ППФК 4 курсу, 45 групи, 121
+            спеціальності &quot;Інженерія програмного забезпечення&quot;
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <List spacing={3}>
+              {authors.map((author) => (
+                <ListItem key={author}>
+                  <ListIcon
+                    as={MdCheckCircle}
+                    color='green.500'
+                  />
+                  {author}
+                </ListItem>
+              ))}
+            </List>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Box
         w='full'
         position='sticky'
@@ -142,6 +219,16 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                   </Center>
                   <br />
                   <MenuDivider />
+                  <MenuItem
+                    as={Button}
+                    onClick={onModalOpen}
+                    _hover={{
+                      textDecoration: 'none',
+                      bg: backgroundColor,
+                    }}>
+                    Про авторів
+                  </MenuItem>
+                  <MenuDivider />
                   {dashboardLinks.map((item, i) => (
                     <MenuItem
                       as={Button}
@@ -170,25 +257,18 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
           <DrawerHeader>Меню</DrawerHeader>
 
           <DrawerBody>
-            {burgerMenuLinks.map((link) => (
-              <DefaultMenuLink
-                key={link.title}
-                href={link.href}
-                leftIcon={link.icon}
-                w={'full'}
-                my={2}>
-                {link.title}
-              </DefaultMenuLink>
-            ))}
-            {user.role === 'teacher' ? (
-              <DefaultMenuLink
-                href={'/course/create'}
-                leftIcon={<IoIosAddCircleOutline />}
-                w={'full'}
-                my={2}>
-                Створити курс
-              </DefaultMenuLink>
-            ) : null}
+            {burgerMenuLinks.map((link) =>
+              link.role.includes((user.role as TUserRoles) ?? 'student') ? (
+                <DefaultMenuLink
+                  key={link.title}
+                  href={link.href}
+                  leftIcon={link.icon}
+                  w={'full'}
+                  my={2}>
+                  {link.title}
+                </DefaultMenuLink>
+              ) : null,
+            )}
           </DrawerBody>
 
           <DrawerFooter></DrawerFooter>
