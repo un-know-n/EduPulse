@@ -42,7 +42,7 @@ const enrollmentTag = 'Enrollments';
 export const coursesApi = createApi({
   reducerPath: 'coursesApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000/api',
+    baseUrl: `${process.env.NEXT_PUBLIC_SERVER_URL}`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).user.token;
       if (token) {
