@@ -164,40 +164,10 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
 
-  // const [addEnrollment, { data, error }] = useAddEnrollmentMutation();
-  // const [resetEnrollment, { data: resetData, error: errorData }] =
-  //   useResetEnrollmentMutation();
-  // const [buttonInfo, setButtonInfo] = useState<{
-  //   title: string;
-  //   callback: () => void;
-  // } | null>(null);
-
   const { colorMode } = useColorMode();
   const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
   const headingStyles =
     colorMode === 'light' ? headingStyleLight : headingStyleDark;
-
-  // useEffect(() => {
-  //   if (!enrollment)
-  //     setButtonInfo({
-  //       title: 'Зареєструватися',
-  //       callback: () => addEnrollment({ userId: user.id, courseId: id }), //.then((r) => changeCourseEnrollmentState(r.data)),
-  //     });
-  //
-  //   if (enrollment) {
-  //     if (enrollment.isCompleted)
-  //       setButtonInfo({
-  //         title: 'Отримати сертифікат',
-  //         callback: () => {},
-  //       });
-  //
-  //     if (checkIfExpired(enrollment.expiresAt))
-  //       setButtonInfo({
-  //         title: 'Пройти знову',
-  //         callback: () => resetEnrollment(enrollment.id),
-  //       });
-  //   }
-  // }, [enrollment]);
 
   return (
     <Center>
