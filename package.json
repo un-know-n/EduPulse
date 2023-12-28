@@ -5,14 +5,15 @@
   "prisma": {
     "schema": "apps/server/prisma/schema.prisma"
   },
+  "main": "dist/apps/server/main.js",
   "scripts": {
+    "start:dev": "npx nx run-many --target=serve --projects=client,server",
     "server:dev": "npx nx serve server",
     "client:dev": "npx nx serve client",
-    "start:dev": "npx nx run-many --target=serve --projects=client,server",
     "client:production": "npx nx build client && npx nx serve client --prod",
     "server:production": "npx nx build server && npx nx serve server --prod",
-    "build:production": "npx nx run-many --target=build --projects=client,server --prod",
-    "start:production": "npx nx run-many --target=serve --projects=client,server --prod",
+    "build": "npx nx run-many --target=build --projects=client,server --prod",
+    "start": "npx nx run-many --target=serve --projects=client,server --prod",
     "migrate:dev": "npx prisma migrate dev",
     "husky:prepare": "npx husky install",
     "commit:prompt": "git-cz",
