@@ -157,7 +157,6 @@ export default function Page() {
   return (
     <ChakraProvider theme={theme}>
       <Flex
-        color='white'
         w='full'
         h='full'
         gap={5}
@@ -168,6 +167,7 @@ export default function Page() {
           <Stepper
             index={activeStep}
             size='lg'
+            color='#1D2734'
             colorScheme='purple'
             orientation='vertical'
             height='200px'

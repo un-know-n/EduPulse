@@ -27,11 +27,9 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
 
   return (
     <Box
-      p='40px'
-      color='black'
-      borderRadius='20'
-      bg='white'
-      maxW={650}>
+      p='30px'
+      color='#1D2734'
+      w={500}>
       <Container
         p={0}
         mb={8}>

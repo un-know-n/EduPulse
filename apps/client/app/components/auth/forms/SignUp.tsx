@@ -66,6 +66,7 @@ export const SignUp: FC = () => {
   const [error, setError] = useState('');
   const callbackUrl = useSearchParams().get('callbackUrl') || Routes.Dashboard;
   const options = signInOptions(callbackUrl);
+  const [isChecked, setIsChecked] = useState(false);
 
   const signUp = async (data: Omit<TInitialValues, 'rememberMe'>) => {
     try {
@@ -108,17 +109,19 @@ export const SignUp: FC = () => {
     }
   };
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(e.target.checked);
+  };
+
   return (
     <Box
-      p='60px'
-      maxW={600}
-      m='auto'
-      borderRadius='20'
-      bg='white'>
+      p='30px'
+      w={500}
+      color='#1D2734'>
       <Container
         p={0}
         mb={5}>
-        <Heading>Створити обліковий запис</Heading>
+        <Heading fontSize={32}>Створити обліковий запис</Heading>
         <Text>
           Вже зареєстровані?{' '}
           <Link
@@ -178,7 +181,8 @@ export const SignUp: FC = () => {
                   as={Checkbox}
                   id='rememberMe'
                   name='rememberMe'
-                  colorScheme='blue'>
+                  colorScheme='purple'
+                  onChange={handleCheckboxChange}>
                   <Text>
                     Я погоджуюся з{' '}
                     <Link
@@ -194,7 +198,7 @@ export const SignUp: FC = () => {
                     </Link>
                   </Text>
                 </Field>
-                <DefaultButton>Створити</DefaultButton>
+                <DefaultButton isDisabled={!isChecked}>Створити</DefaultButton>
               </VStack>
             </form>
           )}

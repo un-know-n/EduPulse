@@ -27,13 +27,9 @@ export const ResetPasswordProposal: FC<TProps> = ({
 
   return (
     <Box
-      p='60px'
-      w='80%'
-      color='black'
-      borderRadius='20'
-      bg='white'
-      mx='auto'
-      maxW={600}>
+      p='30px'
+      color='#1D2734'
+      w={500}>
       <Container
         p={0}
         mb={8}>

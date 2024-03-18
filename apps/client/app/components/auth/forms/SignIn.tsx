@@ -43,12 +43,9 @@ export const SignIn: FC = () => {
 
   return (
     <Box
-      p='60px'
-      w='80%'
-      maxW={600}
-      m='auto'
-      borderRadius='20'
-      bg='white'>
+      p='30px'
+      minW={500}
+      color='#1D2734'>
       <Container
         p={0}
         mb={5}>
