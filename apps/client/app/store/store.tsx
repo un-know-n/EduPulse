@@ -2,8 +2,14 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { coursesApi } from './services/courses';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import userReducer from './reducers/user.slice';
+import lectureReducer from './reducers/lecture.slice';
+import videoReducer from './reducers/video.slice';
+import testReducer from './reducers/test.slice';
 
 const rootReducer = combineReducers({
+  lecture: lectureReducer,
+  video: videoReducer,
+  test: testReducer,
   user: userReducer,
   [coursesApi.reducerPath]: coursesApi.reducer,
 });

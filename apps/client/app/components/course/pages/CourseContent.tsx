@@ -4,7 +4,12 @@ import { CommentsContentLayout } from '../comments/CommentsContentLayout';
 
 export const CourseContent: FC = () => {
   return (
-    <CourseContentLayout>
+    <CourseContentLayout
+      items={['Назва модуля буде', 'Дадада']}
+      subitems={[
+        ['Назва матеріалу буде', 'аіваіва', 'аіваіва'],
+        ['аіваіва', 'аіваіва'],
+      ]}>
       <CourseContentComment />
     </CourseContentLayout>
   );
