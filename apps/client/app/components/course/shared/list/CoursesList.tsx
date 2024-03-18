@@ -23,7 +23,7 @@ export const CoursesList: FC<TProps> = ({ isLoading, poster, courses }) => {
         px='10px'>
         {courses?.length ? (
           <Grid
-            templateColumns='repeat(3,minmax(450px, 1fr))'
+            templateColumns='repeat(2,minmax(450px, 1fr))'
             gap={5}>
             {courses.map((course) => (
               <CourseCard
