@@ -95,6 +95,7 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
             alt='Logo'
           />
           <Heading
+            fontWeight={300}
             color='white'
             pl='3'>
             PolyWit
