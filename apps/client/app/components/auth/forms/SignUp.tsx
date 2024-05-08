@@ -116,7 +116,7 @@ export const SignUp: FC = () => {
   return (
     <Box
       p='30px'
-      w={500}
+      w={['auto', 500]}
       color='#1D2734'>
       <Container
         p={0}

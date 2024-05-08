@@ -29,11 +29,11 @@ export const ResetPasswordProposal: FC<TProps> = ({
     <Box
       p='30px'
       color='#1D2734'
-      w={500}>
+      w={['auto', 500]}>
       <Container
         p={0}
         mb={8}>
-        <Heading>Забули пароль?</Heading>
+        <Heading fontSize={24}>Забули пароль?</Heading>
         <Text>
           Введіть адресу електронної пошти, яку ви використовували для створення
           облікового запису, щоб ми могли надіслати вам інструкції щодо зміни

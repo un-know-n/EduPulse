@@ -159,18 +159,19 @@ export default function Page() {
       <Flex
         w='full'
         h='full'
-        gap={5}
         flexDirection='column'
         justifyContent='center'
         alignItems='center'>
         <LightMode>
           <Stepper
+            pt={{ base: '30px', md: '0' }}
+            px='30px'
             index={activeStep}
-            size='lg'
+            size={{ base: 'md', md: 'lg' }}
             color='#1D2734'
             colorScheme='purple'
             orientation='vertical'
-            height='200px'
+            height={{ base: '230px', md: '200px' }}
             gap='0'>
             {steps.map((step, index) => (
               <Step key={index}>
@@ -182,7 +183,9 @@ export default function Page() {
                   />
                 </StepIndicator>
 
-                <Box flexShrink='0'>
+                <Box
+                  flexShrink='0'
+                  w={{ base: '90%', md: '100%' }}>
                   <StepTitle>{step.title}</StepTitle>
                   <StepDescription>{step.description}</StepDescription>
                 </Box>
