@@ -27,7 +27,3 @@ export const passwordValidator = string({
         'Пароль має відповідати наступним критеріям - великі/малі символи, цифри, відсутність пробілів',
     },
   );
-// .refine((password) => /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/.test(password), {
-//   message:
-//     'Password must contain at least one uppercase letter, one lowercase letter, and one digit',
-// });

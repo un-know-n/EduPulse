@@ -1,24 +1,28 @@
 'use client';
 
-import { FC, PropsWithChildren } from 'react';
 import {
+  Box,
   Flex,
   Heading,
-  Text,
-  Box,
   Stack,
+  Text,
   useMediaQuery,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import { AdvantageCard } from '../../../components/auth/cards/AdvantageCard';
-import logo from '../../../../public/logo.svg';
-import { FaSearch, FaEdit } from 'react-icons/fa';
+import { FC, PropsWithChildren } from 'react';
+import { FaEdit, FaSearch } from 'react-icons/fa';
 import { HiOutlineAcademicCap } from 'react-icons/hi';
-import { TbWorld } from 'react-icons/tb';
 import { IoMdHelpCircleOutline } from 'react-icons/io';
-import background from '../../../../public/background.svg';
+import { TbWorld } from 'react-icons/tb';
 
-const advCard = [
+import logo from '../../../../public/logo.svg';
+import { AdvantageCard } from '../../../components/auth/cards/AdvantageCard';
+
+const advCard: {
+  icon: JSX.Element;
+  title: string;
+  description: string;
+}[] = [
   {
     icon: <FaSearch />,
     title: 'Різноманітність курсів',
@@ -45,6 +49,8 @@ const advCard = [
   },
 ];
 
+const advMaxWidth = 400;
+
 export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
   const handleGetHelpClick = () => {
     window.location.href = 'mailto:suportppfkquiz@gmail.com';
@@ -52,7 +58,6 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
 
-  //TO DO: ADD EFFECTS ON BACKGROUND IMAGE
   return (
     <Flex
       direction={isSmallScreen ? 'column' : 'row'}
@@ -60,13 +65,27 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
       justify='center'
       width='100vw'
       height='100vh'
-      bgImage="url('https://images.wallpaperscraft.ru/image/single/noutbuk_stol_rabochee_mesto_211869_1920x1080.jpg')"
-      bgSize='cover'
-      bgPosition='center'
+      pb='10px'
+      px='10px'
+      position='relative'
       overflow='hidden'
       overflowY='auto'>
+      <Box
+        position='absolute'
+        top='0'
+        left='0'
+        width='100%'
+        height='100%'
+        bgImage="url('https://images.wallpaperscraft.ru/image/single/noutbuk_stol_rabochee_mesto_211869_1920x1080.jpg')"
+        bgSize='cover'
+        bgPosition='center'
+        bgRepeat='no-repeat'
+        filter='blur(5px) grayscale(50%)'
+        zIndex='-1'
+      />
       <Stack
         align='center'
+        gap={0}
         maxHeight='100vh'>
         <Flex p='30px'>
           <Image
@@ -84,16 +103,17 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
         <Flex
           direction={isSmallScreen ? 'column' : 'row'}
           alignItems={isSmallScreen ? 'flex-start' : 'center'}
-          borderRadius='20'
-          bg='white'
-          mx='5px'>
+          bgGradient={
+            isSmallScreen
+              ? 'linear(to-r, white 0%, white 100%)'
+              : `linear(to-r, #ECEFF3 ${advMaxWidth}px, white ${advMaxWidth}px, white 100%)`
+          }
+          borderRadius='20'>
           {!isSmallScreen && (
             <Box
-              minH='full'
               p='30px'
-              maxW='400'
+              maxW={advMaxWidth}
               color='#1D2734'
-              bg='#ECEFF3'
               borderLeftRadius='20'>
               <Text
                 mb='50px'
