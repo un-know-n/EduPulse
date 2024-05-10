@@ -29,7 +29,7 @@ export const useCourseButtonInfo = (
     if (enrollment) {
       if (enrollment.isCompleted)
         setButtonInfo({
-          title: 'Отримати сертифікат',
+          title: 'Сертифікат',
           callback: () => {},
         });
 

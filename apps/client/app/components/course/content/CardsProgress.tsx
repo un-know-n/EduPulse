@@ -22,6 +22,7 @@ import {
   useColorMode,
   VStack,
   Tooltip,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { GoAlertFill } from 'react-icons/go';
 import { IoCheckmarkCircleSharp } from 'react-icons/io5';
@@ -47,19 +48,22 @@ export const CardsProgress: FC<TProps> = ({
   const [showTooltip, setShowTooltip] = useState(false);
   const { colorMode } = useColorMode();
 
+  const circularSize = useBreakpointValue({ base: '120px', md: '220px' });
+  const iconSize = useBreakpointValue({ base: '40px', md: '20px' });
+
   return (
     <Stack spacing='20px'>
       <Card>
         <CardBody
           display='flex'
           justifyContent='space-between'>
-          <Box>
-            <Heading size='md'>Завершення курсу</Heading>
+          <Box w={{ base: '60%', md: '70%' }}>
+            <Heading size={{ base: 'sm', md: 'md' }}>Завершення курсу</Heading>
             <Text pt='2'>Це означає, яку частину змісту курсу ви пройшли.</Text>
           </Box>
           <Box>
             <CircularProgress
-              size='220px'
+              size={circularSize}
               value={progressValue}
               color='purple.500'>
               <CircularProgressLabel color='purple.500'>
@@ -71,10 +75,12 @@ export const CardsProgress: FC<TProps> = ({
       </Card>
       <Card>
         <CardBody
-          display='flex'
+          display={{ base: 'block', md: 'flex' }}
           justifyContent='space-between'
           alignItems='center'>
-          <Box w='40%'>
+          <Box
+            w={{ base: '100%', md: '40%' }}
+            mb={{ base: '50px', md: '0' }}>
             <Heading size='md'>Успішність проходження</Heading>
             <Text pt='2'>
               Це відповідає вашій зваженій оцінці порівняно з оцінкою,
@@ -82,8 +88,10 @@ export const CardsProgress: FC<TProps> = ({
             </Text>
           </Box>
           <Box
+            mx='auto'
             position='relative'
-            w='40%'>
+            w={{ base: '90%', md: '50%' }}
+            mb={{ base: '35px', md: '0' }}>
             <Tooltip label='Поточна оцінка'>
               <Box
                 bg='purple.500'
@@ -155,16 +163,16 @@ export const CardsProgress: FC<TProps> = ({
           {progressValue >= progressValueMin ? (
             <IoCheckmarkCircleSharp
               color='#2F855A'
-              size='20px'
+              size={iconSize}
             />
           ) : (
             <GoAlertFill
               color='#C05621'
-              size='20px'
+              size={iconSize}
             />
           )}
           <Text
-            ml='2'
+            ml='4'
             color='#1D2734'
             fontWeight='bold'>
             {progressValue >= progressValueMin

@@ -17,6 +17,7 @@ import {
   Text,
   useColorMode,
   useColorModeValue,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { MdCheckCircle } from 'react-icons/md';
 import { FaRegBookmark } from 'react-icons/fa';
@@ -91,11 +92,13 @@ const CourseInfo: FC<TCourseInfoProps> = ({
   const headingStyles =
     colorMode === 'light' ? headingStyleLight : headingStyleDark;
 
+  const iconSize = useBreakpointValue({ base: '15px', md: '20px' });
+
   return (
     <Center bg={backgroundColor}>
       <Flex
         p='5'
-        direction={['column-reverse', 'column-reverse', 'row']}
+        direction={['column', 'column', 'row']}
         justifyContent={['center', 'center', 'space-between']}
         {...ContainerOptions}>
         <Flex
@@ -115,18 +118,23 @@ const CourseInfo: FC<TCourseInfoProps> = ({
             </Text>
           </Box>
           <Flex
-            justifyContent='flex-start'
-            alignItems='center'
-            gap={5}>
-            <DifficultyLabel level={difficultyLevel} />
-            <TimeRangeLabel
-              startDate={startCourseDate}
-              endDate={endCourseDate}
-            />
-            <IconTextLabel
-              icon={<FaRegBookmark size='20px' />}
-              text={'Сертифікат'}
-            />
+            justifyContent={{ base: 'center', md: 'flex-start' }}
+            alignItems='center'>
+            <Box
+              display={{ base: 'block', md: 'flex' }}
+              flexDirection={{ base: 'column', md: 'row' }}
+              gap={{ base: '3', md: '5' }}
+              mb={{ base: '20px', md: '0' }}>
+              <DifficultyLabel level={difficultyLevel} />
+              <TimeRangeLabel
+                startDate={startCourseDate}
+                endDate={endCourseDate}
+              />
+              <IconTextLabel
+                icon={<FaRegBookmark size={iconSize} />}
+                text={'Сертифікат'}
+              />
+            </Box>
           </Flex>
         </Flex>
         <Flex
@@ -173,7 +181,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
     <Center>
       <Flex
         p='5'
-        direction={'row'}
+        direction={{ base: 'column', md: 'row' }}
         justifyContent={'space-between'}
         {...ContainerOptions}>
         <Box
@@ -266,7 +274,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
             </AccordionItem>
           </Accordion>
         </Box>
-        <Box>
+        <Box textAlign={{ base: 'center', md: 'left' }}>
           <CourseButton
             id={id}
             creatorId={creatorId}

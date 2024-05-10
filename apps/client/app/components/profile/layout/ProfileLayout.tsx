@@ -18,9 +18,11 @@ export const ProfileLayout: FC<PropsWithChildren<TProps>> = ({
       <LayoutHeader title={headerTitle ?? 'Профіль'} />
       <Center>
         <Flex
-          p='50px'
+          direction={{ base: 'column', md: 'row' }}
+          p={{ base: '20px', md: '50px' }}
           maxWidth={1200}
-          w={'full'}>
+          w={'full'}
+          gap='25px'>
           {hasProfileInfo ? (
             <ProfileInfo
               registeredAt='22.04.2024'

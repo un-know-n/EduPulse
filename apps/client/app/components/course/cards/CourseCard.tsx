@@ -15,6 +15,7 @@ import {
   Text,
   useBoolean,
   useColorModeValue,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { IoBookOutline } from 'react-icons/io5';
 import { FaStar } from 'react-icons/fa';
@@ -74,12 +75,14 @@ export const CourseCard: FC<TProps> = ({
     moment().utc(true).add(timeToPass, 'seconds').format('DD.MM'),
   ];
 
+  const iconSize = useBreakpointValue({ base: '15px', md: '20px' });
+
   return (
     <Card
-      maxWidth='450px'
+      maxWidth='430px'
+      w={{ base: '350px', md: '450px' }}
       overflow='hidden'
       variant='outline'
-      w='full'
       borderRadius='15px'
       backgroundColor={bgColor}>
       <CardBody>
@@ -96,7 +99,7 @@ export const CourseCard: FC<TProps> = ({
               {title}
             </Heading>
             <Avatar
-              size={'lg'}
+              size={{ base: 'md', md: 'lg' }}
               src={image ?? ''}
               borderWidth={4}
               borderColor={cardColor}
@@ -109,7 +112,7 @@ export const CourseCard: FC<TProps> = ({
             gap='3'
             direction='column'>
             <IconTextLabel
-              icon={<IoBookOutline size='20px' />}
+              icon={<IoBookOutline size={iconSize} />}
               text={`Модулів: ${sections.length}; Тем: ${sections.reduce(
                 (acc, section) => (acc += section.lectures.length),
                 0,

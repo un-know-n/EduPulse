@@ -55,27 +55,21 @@ export const CommentsContentLayout: FC<TProps> = ({
             />
           </Box>
           <Flex
+            flexDirection='row'
             justifyContent='space-between'
             alignItems='center'
             mb='10px'>
             <Text
-              fontSize='24'
+              fontSize={{ base: '16', md: '24' }}
+              mb={{ base: '2', md: '0' }}
               fontWeight='bold'>
               {quantityComment} Коментарів
             </Text>
-            <Flex alignItems='center'>
-              <Text
-                fontSize='24'
-                fontWeight='medium'
-                mr='10px'>
-                Сортувати
-              </Text>
-              <Select>
-                <option value='option1'>Найпопулярніші</option>
-                <option value='option2'>Спочатку нові</option>
-                <option value='option3'>Спочатку старі</option>
-              </Select>
-            </Flex>
+            <Select w='fiil-content'>
+              <option value='option1'>Найпопулярніші</option>
+              <option value='option2'>Спочатку нові</option>
+              <option value='option3'>Спочатку старі</option>
+            </Select>
           </Flex>
           <Divider
             mb='20px'
@@ -109,7 +103,7 @@ export const CommentsContentLayout: FC<TProps> = ({
           <CommentsContent
             imageUrl=''
             userName={user.name || 'User'}
-            userComment='фу бляха'
+            userComment='текст текст текст😀'
             likesComment={123}
             dislikesComment={321}></CommentsContent>
         </Box>

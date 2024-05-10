@@ -33,7 +33,7 @@ export default function Page({ params }: { params: { id: string } }) {
       {data && isCourseCreator ? (
         <AlterCourse
           {...data}
-          pageTitle={'Змінити інформацію про курс'}
+          pageTitle={'Змінити дані курсу'}
         />
       ) : (
         <Loading />
