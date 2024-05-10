@@ -14,20 +14,6 @@ export class CourseService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async executeWithImage(
-    callback: (imageUrl?: string) => any,
-    image?: Express.Multer.File,
-  ) {
-    if (image)
-      return this.cloudinaryService
-        .uploadImage(image)
-        .then((image) => callback(image.url))
-        .catch((error) => {
-          throw new BadRequestException(error.message);
-        });
-    return callback();
-  }
-
   async deletePreviousCourseImage(id: string) {
     const course = await this.findOne(id);
 

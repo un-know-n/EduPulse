@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../../prisma.service';
@@ -56,6 +60,21 @@ export class UserService {
         role,
         name,
       },
+    });
+  }
+
+  async updateProfile(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    imageUrl?: string,
+  ) {
+    const { password, role, ...updatedProfile } = updateUserDto;
+
+    if (imageUrl) updatedProfile['image'] = imageUrl;
+
+    return await this.prismaService.user.update({
+      where: { id },
+      data: updatedProfile,
     });
   }
 
