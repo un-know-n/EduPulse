@@ -10,6 +10,14 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
+export const metadata = {
+  title: 'PolyWit',
+  openGraph: {
+    title: 'PolyWit',
+    description: 'PolyWit - сучасна та доступна освіта без перешкод!',
+  },
+};
+
 export default function RootLayout({
   children,
 }: {

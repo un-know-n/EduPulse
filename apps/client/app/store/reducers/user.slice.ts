@@ -7,6 +7,8 @@ const initialState: UserState = {
   role: '',
   id: '',
   name: '',
+  description: '',
+  createdAt: new Date(),
   email: '',
   image: '',
   emailVerified: null,
@@ -23,6 +25,8 @@ export const userSlice = createSlice({
       state.email = payload.email;
       state.image = payload.image;
       state.name = payload.name;
+      state.description = payload.description;
+      state.createdAt = payload.createdAt;
       state.emailVerified = payload.emailVerified;
       state.token = payload.token;
     },

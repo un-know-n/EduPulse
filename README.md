@@ -20,7 +20,7 @@
 * Next.js
 * Chakra UI
 * Redux Toolkit
-* NextAtuh.js
+* NextAuth.js
 
 ## Опублікований продукт
 Для користування створеним програмним продуктом слід перейти за посиланням [PolyWit](https://edu-pulse-one.vercel.app/dashboard)
