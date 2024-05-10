@@ -205,10 +205,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                     <Avatar
                       size={'2xl'}
                       cursor='pointer'
-                      src={
-                        user?.image ??
-                        'https://avatars.dicebear.com/api/male/username.svg'
-                      }
+                      src={user?.image ?? ''}
                       onClick={() => router.push(Routes.ProfileView)}
                     />
                   </Center>
