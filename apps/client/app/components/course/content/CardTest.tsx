@@ -32,12 +32,12 @@ export const CardTest: FC<TProps> = ({
     {
       question:
         'Коли Python працює в інтерактивному режимі та відображає підказку з цими символами - що саме Python запитує вас?',
-      options: ['Патлач', 'Кримпай', 'Шрек'],
+      options: ['Варіант 1', 'Варіант 2', 'Варіант 3'],
     },
     {
       question:
         'Коли Python працює в інтерактивному режимі та відображає підказку з цими символами - що саме Python запитує вас?',
-      options: ['Естріпер', 'Кавасакі', 'Каго'],
+      options: ['Варіант 1', 'Варіант 2', 'Варіант 3'],
     },
   ];
 
@@ -102,7 +102,9 @@ export const CardTest: FC<TProps> = ({
           variant='outline'>
           Відправити
         </Button>
-        <Text ml='10px'>
+        <Text
+          ml='10px'
+          fontSize={{ base: '14', md: '16' }}>
           Ви використали {usedAttempts} з {totalAttempts} спроб
         </Text>
       </Flex>

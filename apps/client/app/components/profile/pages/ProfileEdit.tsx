@@ -47,7 +47,7 @@ export const ProfileEdit: FC = () => {
           mb='20px'>
           <FormControl
             isRequired
-            display='flex'>
+            display={{ base: 'block', md: 'flex' }}>
             <FormLabel {...titleStyles}>Ваше ім'я</FormLabel>
             <Flex display='column'>
               <Input placeholder={user.name || 'User'} />
@@ -57,26 +57,28 @@ export const ProfileEdit: FC = () => {
             </Flex>
           </FormControl>
 
-          <FormControl display='flex'>
+          <FormControl display={{ base: 'block', md: 'flex' }}>
             <FormLabel {...titleStyles}>Про себе</FormLabel>
             <Textarea />
           </FormControl>
 
-          <FormControl display='flex'>
+          <FormControl display={{ base: 'block', md: 'flex' }}>
             <FormLabel {...titleStyles}>Аватарка</FormLabel>
-            <Avatar
-              boxSize='150px'
-              src={user.image || ''}
-              borderRadius='30px'
-              mr='20px'
-            />
-            <Stack
-              direction='column'
-              justifyContent='center'
-              spacing='40px'>
-              <Link color='#9872EA'>Завантажити</Link>
-              <Link color='#9872EA'>Видалити</Link>
-            </Stack>
+            <Flex>
+              <Avatar
+                boxSize='150px'
+                src={user.image || ''}
+                borderRadius='30px'
+                mr='20px'
+              />
+              <Stack
+                direction='column'
+                justifyContent='center'
+                spacing='40px'>
+                <Link color='#9872EA'>Завантажити</Link>
+                <Link color='#9872EA'>Видалити</Link>
+              </Stack>
+            </Flex>
           </FormControl>
         </Stack>
         <Button

@@ -159,7 +159,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
             <Button onClick={onOpen}>
               <HiMenuAlt1 />
             </Button>
-            <Heading fontSize={24}>{title}</Heading>
+            <Heading fontSize={{ base: 'auto', md: 24 }}>{title}</Heading>
           </Flex>
 
           <Flex alignItems={'center'}>

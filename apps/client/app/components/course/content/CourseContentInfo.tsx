@@ -14,6 +14,7 @@ import {
   Stack,
   Heading,
   useSteps,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { MdChevronRight } from 'react-icons/md';
 import { FaChevronRight } from 'react-icons/fa';
@@ -51,9 +52,11 @@ export const CourseContentInfo: FC<TProps> = ({
     count: steps.length,
   });
 
+  const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
+
   return (
     <Box
-      p='25px'
+      p={{ base: '10px', md: '20px' }}
       maxWidth={1200}
       w={'full'}>
       <Tabs colorScheme='purple'>
@@ -64,25 +67,27 @@ export const CourseContentInfo: FC<TProps> = ({
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Breadcrumb
-              mb='20px'
-              separator={<MdChevronRight color='gray.500' />}>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href='#'
-                  fontWeight='medium'>
-                  {courseName}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
+            {!isSmallScreen && (
+              <Breadcrumb
+                mb='20px'
+                separator={<MdChevronRight color='gray.500' />}>
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    href='#'
+                    fontWeight='medium'>
+                    {courseName}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
 
-              <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink href='#'>{moduleName}</BreadcrumbLink>
-              </BreadcrumbItem>
+                <BreadcrumbItem isCurrentPage>
+                  <BreadcrumbLink href='#'>{moduleName}</BreadcrumbLink>
+                </BreadcrumbItem>
 
-              <BreadcrumbItem isCurrentPage>
-                <BreadcrumbLink href='#'>{materialName}</BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
+                <BreadcrumbItem isCurrentPage>
+                  <BreadcrumbLink href='#'>{materialName}</BreadcrumbLink>
+                </BreadcrumbItem>
+              </Breadcrumb>
+            )}
             <Flex
               mb='20px'
               gap='15px'
@@ -131,7 +136,7 @@ export const CourseContentInfo: FC<TProps> = ({
               <CardLayout
                 materialName={materialName}
                 materialType='лекція'>
-                <CardLecture materialContent='Хахахахах' />
+                <CardLecture materialContent='Контент лекції' />
               </CardLayout>
               <CardLayout
                 materialName={materialName}
@@ -155,7 +160,7 @@ export const CourseContentInfo: FC<TProps> = ({
           <TabPanel>
             <Heading mb='20px'>Ваш прогрес</Heading>
             <CardsProgress
-              progressValue={40}
+              progressValue={60}
               progressValueMin={60}
               moduleName='Назва модуля буде'
               materialName='Тест 1'

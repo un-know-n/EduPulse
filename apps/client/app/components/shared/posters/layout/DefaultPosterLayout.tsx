@@ -20,6 +20,7 @@ export const DefaultPosterLayout: FC<TProps & BoxProps> = ({
       {...props}>
       <Center>
         <Flex
+          mb='30px'
           h={'full'}
           flexWrap='wrap'
           alignItems='center'

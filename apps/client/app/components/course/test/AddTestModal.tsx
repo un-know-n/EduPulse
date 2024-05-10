@@ -211,7 +211,9 @@ export const AddTestModal: FC<TProps> = ({ isOpen, onClose }) => {
                   onChange={formik.handleChange}
                 />
               </FormControl>
-              <HStack flexWrap='wrap'>
+              <HStack
+                flexWrap='wrap'
+                justifyContent={{ base: 'center', md: 'flex-start' }}>
                 {formik.values.steps.map((step, index) => (
                   <Button
                     key={index}
@@ -252,7 +254,7 @@ export const AddTestModal: FC<TProps> = ({ isOpen, onClose }) => {
                           formik.values.steps[activeStep].pointsPerQuestion
                         }
                         onChange={(valueString) => {
-                          const value = parseInt(valueString); // Преобразование строки в число
+                          const value = parseInt(valueString);
                           formik.setFieldValue(
                             `steps.${activeStep}.pointsPerQuestion`,
                             value,

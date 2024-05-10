@@ -226,10 +226,11 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
             <form onSubmit={handleSubmit}>
               <Flex
                 justifyContent={'space-between'}
-                alignItems={'flex-start'}>
+                alignItems={{ base: 'center', md: 'flex-start' }}
+                flexDirection={{ base: 'column', md: 'row' }}>
                 <VStack
-                  w={'80%'}
-                  maxW={'600px'}
+                  w={{ base: 'full', md: '80%' }}
+                  maxW={{ base: 'full', md: '600px' }}
                   spacing={4}
                   align='flex-start'>
                   <TextFormInput
@@ -248,7 +249,8 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
 
                   <Flex
                     gap='3'
-                    w='full'>
+                    w='full'
+                    flexDirection={{ base: 'column', md: 'row' }}>
                     <DifficultyFormInput
                       isInvalid={Boolean(
                         !!errors.difficultyLevel && touched.difficultyLevel,
@@ -283,7 +285,9 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                     label={'Про курс (1028 символів)'}
                   />
                 </VStack>
-                <VStack align='center'>
+                <VStack
+                  align='center'
+                  py={{ base: '4', md: '0' }}>
                   <ImageUpload
                     isInvalid={Boolean(!!errors.file && touched.file)}
                     errorMessage={errors.file}
