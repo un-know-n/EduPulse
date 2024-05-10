@@ -36,10 +36,29 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
         session?.backendTokens?.accessToken ??
         jwt.sign(session.user, `${process.env.NEXT_PUBLIC_TOKEN_SECRET}`);
 
-      const { id, role, name, image, email, emailVerified } = session.user;
+      const {
+        id,
+        role,
+        name,
+        image,
+        email,
+        emailVerified,
+        createdAt,
+        description,
+      } = session.user;
       if (!user.role)
         dispatch(
-          setUser({ id, role, name, image, email, emailVerified, token }),
+          setUser({
+            id,
+            role,
+            name,
+            image,
+            email,
+            createdAt,
+            description,
+            emailVerified,
+            token,
+          }),
         );
     }
   }, [session, status, session?.user.role]);
