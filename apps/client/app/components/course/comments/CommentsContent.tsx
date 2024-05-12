@@ -1,5 +1,14 @@
 import React, { FC } from 'react';
-import { Flex, Text, Heading, Box, Avatar, Stack } from '@chakra-ui/react';
+import {
+  Flex,
+  Text,
+  Heading,
+  Box,
+  Avatar,
+  Stack,
+  IconButton,
+  useBoolean,
+} from '@chakra-ui/react';
 import { BiSolidLike } from 'react-icons/bi';
 import { BiSolidDislike } from 'react-icons/bi';
 
@@ -18,8 +27,21 @@ export const CommentsContent: FC<TProps> = ({
   likesComment,
   dislikesComment,
 }) => {
+  const [isLikeClicked, setIsLikeClicked] = useBoolean();
+  const [isDislikeClicked, setIsDislikeClicked] = useBoolean();
+
+  const handleLikeClick = () => {
+    setIsLikeClicked.toggle();
+    setIsDislikeClicked.off();
+  };
+
+  const handleDislikeClick = () => {
+    setIsDislikeClicked.toggle();
+    setIsLikeClicked.off();
+  };
+
   return (
-    <Stack>
+    <Stack mb='20px'>
       <Flex>
         <Avatar
           boxSize='50px'
@@ -27,26 +49,53 @@ export const CommentsContent: FC<TProps> = ({
           borderRadius='10px'
           mr='10px'
         />
-        <Box>
+        <Flex direction='column'>
           <Heading
             size='sm'
             mb='5px'>
             {userName}
           </Heading>
-          <Text mb='5px'>{userComment}</Text>
+          <Text
+            w='50%'
+            mb='5px'
+            overflowWrap='break-word'>
+            {userComment}
+          </Text>
           <Flex>
             <Flex
               alignItems='center'
               mr='15px'>
-              <BiSolidLike />
-              <Text ml='5px'>{likesComment}</Text>
+              <IconButton
+                icon={<BiSolidLike />}
+                aria-label='Liked'
+                color={isLikeClicked ? 'purple.600' : 'gray'}
+                bg='transparent'
+                size='sm'
+                fontSize='18px'
+                _hover={{ bg: 'transparent' }}
+                onClick={handleLikeClick}
+              />
+              <Text ml='5px'>
+                {isLikeClicked ? likesComment + 1 : likesComment}
+              </Text>
             </Flex>
             <Flex alignItems='center'>
-              <BiSolidDislike />
-              <Text ml='5px'>{dislikesComment}</Text>
+              <IconButton
+                icon={<BiSolidDislike />}
+                aria-label='Disliked'
+                color={isDislikeClicked ? 'purple.600' : 'gray'}
+                bg='transparent'
+                size='sm'
+                fontSize='18px'
+                _hover={{ bg: 'transparent' }}
+                onClick={handleDislikeClick}
+              />
+              <Text ml='5px'>
+                {isDislikeClicked ? dislikesComment + 1 : dislikesComment}
+              </Text>
             </Flex>
           </Flex>
-        </Box>
+        </Flex>
       </Flex>
     </Stack>
   );
