@@ -56,7 +56,7 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
     window.location.href = 'mailto:suportppfkquiz@gmail.com';
   };
 
-  const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
+  const [isSmallScreen] = useMediaQuery('(max-width: 1024px)');
 
   return (
     <Flex
@@ -87,7 +87,9 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
         align='center'
         gap={0}
         maxHeight='100vh'>
-        <Flex p='30px'>
+        <Flex
+          p='30px'
+          alignItems={'center'}>
           <Image
             width={50}
             height={50}
@@ -95,7 +97,8 @@ export const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
             alt='Logo'
           />
           <Heading
-            fontWeight={300}
+            fontWeight='bold'
+            fontSize={26}
             color='white'
             pl='3'>
             PolyWit

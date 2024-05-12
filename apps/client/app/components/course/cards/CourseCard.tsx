@@ -81,6 +81,7 @@ export const CourseCard: FC<TProps> = ({
     <Card
       maxWidth='430px'
       w={{ base: '350px', md: '450px' }}
+      h={{ base: 'auto', md: '330px' }}
       overflow='hidden'
       variant='outline'
       borderRadius='15px'
