@@ -4,11 +4,8 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   Patch,
   Post,
   Query,
@@ -25,25 +22,18 @@ import { TUser, User } from '../user/user.decorator';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
-
-const maxImageSize = 1024 * 1024; // measured in bytes
-const parseFilePipe = new ParseFilePipe({
-  validators: [
-    new MaxFileSizeValidator({
-      maxSize: maxImageSize,
-      message: `Зображення повинно бути меншим за 1MB`,
-    }),
-    new FileTypeValidator({
-      fileType: new RegExp('image\\/(jpeg|jpg|png)'),
-    }),
-  ],
-  fileIsRequired: false,
-});
+import {
+  CloudinaryService,
+  parseFilePipe,
+} from '../../common/modules/cloudinary/cloudinary.service';
 
 @Controller('course')
 @UseGuards(JwtGuard)
 export class CourseController {
-  constructor(private readonly courseService: CourseService) {}
+  constructor(
+    private readonly courseService: CourseService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @UseGuards(TeacherRoleGuard)
   @Post()
@@ -53,7 +43,7 @@ export class CourseController {
     @UploadedFile(parseFilePipe)
     file?: Express.Multer.File,
   ) {
-    return this.courseService.executeWithImage(
+    return this.cloudinaryService.executeWithImage(
       (fileUrl?: string) => this.courseService.create(createCourseDto, fileUrl),
       file,
     );
@@ -71,7 +61,7 @@ export class CourseController {
       id,
     );
 
-    const updateResponse = await this.courseService.executeWithImage(
+    const updateResponse = await this.cloudinaryService.executeWithImage(
       (fileUrl?: string) =>
         this.courseService.update(id, updateCourseDto, fileUrl),
       file,

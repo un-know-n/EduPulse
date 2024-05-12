@@ -15,6 +15,7 @@ import { ResetPromptDto } from './dto/reset.prompt.dto';
 import moment from 'moment/moment';
 import { AccountService } from '../account/account.service';
 import { User } from '@prisma/client';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
 
 export const EXPIRE_TIME = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -146,6 +147,6 @@ export class AuthService {
   async reset({ password, email }: SignInDto) {
     const user = await this.findUser(email);
 
-    await this.userService.update(user.id, { password });
+    await this.userService.update(user.id, { password } as UpdateUserDto);
   }
 }
