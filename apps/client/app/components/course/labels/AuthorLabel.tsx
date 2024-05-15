@@ -12,7 +12,9 @@ export const AuthorLabel: FC<TProps> = ({ author }) => {
   return (
     <Flex alignItems='center'>
       <VscAccount size={iconSize} />
-      <Text ml='10px'>{author}</Text>
+      <Text ml='10px'>
+        {author.length > 20 ? `${author.substring(0, 20)}...` : author}
+      </Text>
     </Flex>
   );
 };

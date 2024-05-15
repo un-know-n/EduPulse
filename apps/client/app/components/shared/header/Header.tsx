@@ -39,6 +39,7 @@ import {
   useColorMode,
   useColorModeValue,
   useDisclosure,
+  Tooltip,
 } from '@chakra-ui/react';
 import { themeColors } from '../../../config/UI/theme';
 import { signOut } from 'next-auth/react';
@@ -211,12 +212,18 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                   </Center>
                   <br />
                   <Center>
-                    <Heading
-                      size='md'
-                      cursor='pointer'
-                      onClick={() => router.push(Routes.ProfileView)}>
-                      {user?.name}
-                    </Heading>
+                    <Tooltip
+                      label={user?.name}
+                      placement='left-end'>
+                      <Heading
+                        size='md'
+                        cursor='pointer'
+                        onClick={() => router.push(Routes.ProfileView)}>
+                        {user?.name.length > 15
+                          ? `${user?.name.substring(0, 15)}...`
+                          : user?.name}
+                      </Heading>
+                    </Tooltip>
                   </Center>
                   <br />
                   <MenuDivider />

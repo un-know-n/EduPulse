@@ -15,7 +15,7 @@ type TProps = {
 
 const resetSchema = object({
   password: passwordValidator,
-  confirmPassword: string({ required_error: 'Confirm entered password' }),
+  confirmPassword: string({ required_error: 'Підтвердіть введений пароль' }),
 });
 type TResetFormInputs = TypeOf<typeof resetSchema>;
 

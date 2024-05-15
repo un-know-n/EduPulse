@@ -44,6 +44,7 @@ export const SignIn: FC = () => {
   return (
     <Box
       p='30px'
+      maxW='500px'
       minW={['auto', 500]}
       color='#1D2734'>
       <Container
