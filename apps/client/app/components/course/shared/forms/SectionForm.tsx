@@ -71,10 +71,10 @@ export const SectionForm: FC<TProps> = ({ title, id, courseId, onClose }) => {
 
   useEffect(() => {
     if (isSuccessCreate) {
-      notify('Модуль створено!', 'success');
+      notify('Модуль створено', 'success');
       onClose();
     } else if (isSuccessUpdate) {
-      notify('Модуль оновлено!', 'success');
+      notify('Модуль оновлено', 'success');
       onClose();
     }
   }, [isSuccessCreate, isSuccessUpdate]);

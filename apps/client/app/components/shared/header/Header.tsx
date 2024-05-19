@@ -54,7 +54,7 @@ import { RxDashboard } from 'react-icons/rx';
 import { DefaultMenuLink } from './links/DefaultMenuLink';
 import { useTypedSelector } from '../../../lib/hooks/redux';
 import { Routes } from '../../../config/routing/routes';
-import { MdCheckCircle } from 'react-icons/md';
+import { MdCheckCircle, MdLibraryBooks } from 'react-icons/md';
 import { TUserRoles } from '../../course/@types/course';
 import { GiGraduateCap } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
@@ -65,7 +65,7 @@ type TProps = {
 
 const dashboardLinks = [
   { title: 'Профіль', link: Routes.ProfileView },
-  { title: 'Досягнення', link: Routes.ProfileCertificate },
+  { title: 'Сертифікати', link: Routes.ProfileCertificate },
   { title: 'Налаштування', link: Routes.ProfileSettings },
   { title: 'Вийти', handler: () => signOut() },
 ];
@@ -78,8 +78,14 @@ const burgerMenuLinks: {
 }[] = [
   {
     title: 'Пошук курсів',
-    href: '/course/search',
+    href: `${Routes.SearchCourse}`,
     icon: <IoSearchOutline />,
+    role: ['student', 'teacher'],
+  },
+  {
+    title: 'Мої курси',
+    href: `${Routes.Dashboard}`,
+    icon: <MdLibraryBooks />,
     role: ['student', 'teacher'],
   },
   {
@@ -90,17 +96,13 @@ const burgerMenuLinks: {
   },
   {
     title: 'Створити курс',
-    href: '/course/create',
+    href: `${Routes.CreateCourse}`,
     icon: <IoIosAddCircleOutline />,
     role: ['teacher'],
   },
 ];
 
-const authors = [
-  'Добровольський Євгеній',
-  'Мартинець Артем',
-  'Брюханов Олександр',
-];
+const authors = ['Добровольський Євгеній', 'Мартинець Артем'];
 
 export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
   const router = useRouter();

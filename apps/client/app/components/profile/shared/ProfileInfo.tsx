@@ -4,19 +4,15 @@ import {
   Box,
   Divider,
   Flex,
-  Link,
   Stack,
+  Link,
   Text,
   useColorMode,
   useMediaQuery,
-  Tabs,
-  TabList,
-  Tab,
   HStack,
+  useConst,
 } from '@chakra-ui/react';
-import { FaUsers } from 'react-icons/fa6';
-import { PiCertificateFill } from 'react-icons/pi';
-import { RiBookMarkFill } from 'react-icons/ri';
+
 import {
   commonIconStyleDark,
   commonIconStyleLight,
@@ -25,22 +21,26 @@ import {
   numberTextStyleDark,
   numberTextStyleLight,
 } from '../config/styles';
+import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
+import moment from 'moment';
+import { TRoles, translateRole } from '../../auth/config/constants';
+import { FaRegUserCircle } from 'react-icons/fa';
+import { HiOutlineMail } from 'react-icons/hi';
+import { Routes } from 'apps/client/app/config/routing/routes';
+import NextLink from 'next/link';
 
-type TProps = {
-  imageUrl: string;
-  subscribers: number;
-  certificates: number;
-  courses?: number;
-  registeredAt: string;
-};
+// const [courses, certificates] = [10, 10];
 
-export const ProfileInfo: FC<TProps> = ({
-  registeredAt,
-  certificates,
-  subscribers,
-  imageUrl,
-  courses,
-}) => {
+const infoLinks: { href: string; title: string }[] = [
+  { href: `${Routes.ProfileView}`, title: 'Профіль' },
+  { href: `${Routes.ProfileCertificate}`, title: 'Сертифікати' },
+  { href: `${Routes.ProfileSettings}`, title: 'Налаштування' },
+];
+
+export const ProfileInfo: FC = () => {
+  const user = useTypedSelector((state) => state.user);
+  const registeredAt = useConst(moment(user.createdAt).format('DD.MM.YYYY'));
+
   const { colorMode } = useColorMode();
   const commonStyles =
     colorMode === 'light' ? commonTextStyleLight : commonTextStyleDark;
@@ -59,46 +59,21 @@ export const ProfileInfo: FC<TProps> = ({
       <Flex direction='column'>
         {!setMobile && (
           <HStack mb='20px'>
-            <Link
-              href='/profile/view'
-              color={currentPath === '/profile/view' ? 'gray' : '#9872EA'}
-              fontSize='18'
-              pointerEvents={currentPath === '/profile/view' ? 'none' : 'auto'}
-              _hover={{
-                color: currentPath === '/profile/view' ? 'gray' : '#9872EA',
-                textDecoration: 'underline',
-              }}>
-              Профіль
-            </Link>
-            <Link
-              href='/profile/certificate'
-              color={
-                currentPath === '/profile/certificate' ? 'gray.500' : '#9872EA'
-              }
-              fontSize='18'
-              pointerEvents={
-                currentPath === '/profile/certificate' ? 'none' : 'auto'
-              }
-              _hover={{
-                color:
-                  currentPath === '/profile/certificate'
-                    ? 'gray.500'
-                    : '#9872EA',
-                textDecoration: 'underline',
-              }}>
-              Сертифікати
-            </Link>
-            <Link
-              href='/profile/edit'
-              color={currentPath === '/profile/edit' ? 'gray' : '#9872EA'}
-              fontSize='18'
-              pointerEvents={currentPath === '/profile/edit' ? 'none' : 'auto'}
-              _hover={{
-                color: currentPath === '/profile/edit' ? 'gray' : '#9872EA',
-                textDecoration: 'underline',
-              }}>
-              Налаштування
-            </Link>
+            {infoLinks.map((link) => (
+              <Link
+                as={NextLink}
+                key={link.title}
+                href={link.href}
+                color={currentPath === link.href ? 'gray' : '#9872EA'}
+                fontSize='18'
+                pointerEvents={currentPath === link.href ? 'none' : 'auto'}
+                _hover={{
+                  color: currentPath === link.href ? 'gray' : '#9872EA',
+                  textDecoration: 'underline',
+                }}>
+                {link.title}
+              </Link>
+            ))}
           </HStack>
         )}
         <Flex
@@ -108,23 +83,31 @@ export const ProfileInfo: FC<TProps> = ({
           justifyContent={{ base: 'center', md: 'flex-start' }}>
           <Avatar
             boxSize={{ base: '130px', md: '150px' }}
-            src={imageUrl}
+            src={user.image || ''}
             mb={{ base: '0', md: '25px' }}
             borderRadius='30px'
           />
           <Stack mb={{ base: '0', md: '25px' }}>
             <Flex alignItems='center'>
-              <FaUsers {...commonIconStyles} />
+              <FaRegUserCircle {...commonIconStyles} />
               <Text {...commonStyles}>
-                <Text
+                {/* <Text
                   as='span'
                   {...numberStyles}>
                   {subscribers}
                 </Text>{' '}
-                підписників
+                підписників */}
+                {translateRole(user.role as TRoles)}
               </Text>
             </Flex>
             <Flex alignItems='center'>
+              <HiOutlineMail {...commonIconStyles} />
+              <Text {...commonStyles}>
+                {user.emailVerified ? 'Підтверджена' : 'Не підтверджена'}
+              </Text>
+            </Flex>
+
+            {/* <Flex alignItems='center'>
               <PiCertificateFill {...commonIconStyles} />
               <Text {...commonStyles}>
                 <Text
@@ -132,7 +115,7 @@ export const ProfileInfo: FC<TProps> = ({
                   {...numberStyles}>
                   {certificates}
                 </Text>{' '}
-                сертифікатів
+                {getUkrainianPluralWord('сертифікати', certificates)}
               </Text>
             </Flex>
             <Flex alignItems='center'>
@@ -143,60 +126,29 @@ export const ProfileInfo: FC<TProps> = ({
                   {...numberStyles}>
                   {courses}
                 </Text>{' '}
-                курси
+                {getUkrainianPluralWord('курси', courses)}
               </Text>
-            </Flex>
+            </Flex> */}
           </Stack>
           {!isSmallScreen && (
             <Stack
               direction='column'
               alignItems='flex-start'>
-              <Link
-                href='/profile/view'
-                color={currentPath === '/profile/view' ? 'gray' : '#9872EA'}
-                fontSize='18'
-                pointerEvents={
-                  currentPath === '/profile/view' ? 'none' : 'auto'
-                }
-                _hover={{
-                  color: currentPath === '/profile/view' ? 'gray' : '#9872EA',
-                  textDecoration: 'underline',
-                }}>
-                Профіль
-              </Link>
-              <Link
-                href='/profile/certificate'
-                color={
-                  currentPath === '/profile/certificate'
-                    ? 'gray.500'
-                    : '#9872EA'
-                }
-                fontSize='18'
-                pointerEvents={
-                  currentPath === '/profile/certificate' ? 'none' : 'auto'
-                }
-                _hover={{
-                  color:
-                    currentPath === '/profile/certificate'
-                      ? 'gray.500'
-                      : '#9872EA',
-                  textDecoration: 'underline',
-                }}>
-                Сертифікати
-              </Link>
-              <Link
-                href='/profile/edit'
-                color={currentPath === '/profile/edit' ? 'gray' : '#9872EA'}
-                fontSize='18'
-                pointerEvents={
-                  currentPath === '/profile/edit' ? 'none' : 'auto'
-                }
-                _hover={{
-                  color: currentPath === '/profile/edit' ? 'gray' : '#9872EA',
-                  textDecoration: 'underline',
-                }}>
-                Налаштування
-              </Link>
+              {infoLinks.map((link) => (
+                <Link
+                  as={NextLink}
+                  key={link.title}
+                  href={link.href}
+                  color={currentPath === link.href ? 'gray' : '#9872EA'}
+                  fontSize='18'
+                  pointerEvents={currentPath === link.href ? 'none' : 'auto'}
+                  _hover={{
+                    color: currentPath === link.href ? 'gray' : '#9872EA',
+                    textDecoration: 'underline',
+                  }}>
+                  {link.title}
+                </Link>
+              ))}
               <Divider
                 mt='20px'
                 mb='20px'

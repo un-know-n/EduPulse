@@ -4,27 +4,18 @@ import { useTypedSelector } from '../../../lib/hooks/redux';
 import { PiCertificateFill } from 'react-icons/pi';
 import { ProfileLayout } from '../layout/ProfileLayout';
 import { CertificateList } from '../../profile/certificate/CertificateList';
-
-const certificates = [
-  {
-    title: 'Написання віконних програм на C#. ВСЕ САМ',
-    completion: 96,
-    color: '#5EBD32',
-  },
-  {
-    title: 'Написання віконних програм на C#. ВСЕ САМ',
-    completion: 81,
-    color: '#FBBC04',
-  },
-  {
-    title: 'Написання віконних програм на C#. ВСЕ САМ',
-    completion: 91,
-    color: '#5EBD32',
-  },
-];
+import { useGetCertificatesQuery } from 'apps/client/app/store/services/courses';
+import { useShowError } from 'apps/client/app/lib/hooks/useShowError';
+import Loading from 'apps/client/app/loading';
 
 export const ProfileCertificate: FC = () => {
   const user = useTypedSelector((state) => state.user);
+  const {
+    data: certificates,
+    error,
+    isLoading,
+  } = useGetCertificatesQuery(user.id);
+  useShowError(error);
 
   return (
     <ProfileLayout>
@@ -33,7 +24,7 @@ export const ProfileCertificate: FC = () => {
           fontSize='32px'
           fontWeight='medium'
           mb='10px'>
-          {user.name || 'User'}
+          {user.name}
         </Text>
         <Text
           fontSize='24px'
@@ -41,7 +32,11 @@ export const ProfileCertificate: FC = () => {
           mb='20px'>
           Сертифікати
         </Text>
-        <CertificateList certificates={certificates} />
+        {isLoading || !certificates ? (
+          <Loading />
+        ) : (
+          <CertificateList certificates={certificates} />
+        )}
       </Box>
     </ProfileLayout>
   );

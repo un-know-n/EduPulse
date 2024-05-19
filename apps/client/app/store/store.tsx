@@ -5,6 +5,7 @@ import userReducer from './reducers/user.slice';
 import lectureReducer from './reducers/lecture.slice';
 import videoReducer from './reducers/video.slice';
 import testReducer from './reducers/test.slice';
+import { userApi } from './services/user';
 
 const rootReducer = combineReducers({
   lecture: lectureReducer,
@@ -12,12 +13,16 @@ const rootReducer = combineReducers({
   test: testReducer,
   user: userReducer,
   [coursesApi.reducerPath]: coursesApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
 });
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({}).concat([coursesApi.middleware]),
+    getDefaultMiddleware({}).concat([
+      coursesApi.middleware,
+      userApi.middleware,
+    ]),
   devTools: process.env.NODE_ENV !== 'production',
 });
 

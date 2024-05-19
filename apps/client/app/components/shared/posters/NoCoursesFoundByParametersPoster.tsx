@@ -5,7 +5,7 @@ import { DefaultPosterLayout } from './layout/DefaultPosterLayout';
 export default function NoCoursesFoundByParametersPoster() {
   return (
     <DefaultPosterLayout
-      title={'Пусто!'}
+      title={'Пусто'}
       description={'На жаль, ваш пошук не дав результатів.'}
       icon={<TbMoodEmpty fontSize='2rem' />}
     />

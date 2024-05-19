@@ -15,4 +15,6 @@ export enum Routes {
   ProfileView = `${profilePrefix}/view`,
   ProfileCertificate = `${profilePrefix}/certificate`,
   ProfileSettings = `${profilePrefix}/edit`,
+  SearchCourse = `${coursePrefix}/search`,
+  CreateCourse = `${coursePrefix}/create`,
 }

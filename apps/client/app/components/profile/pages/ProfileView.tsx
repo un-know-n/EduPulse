@@ -20,7 +20,7 @@ export const ProfileView: FC = () => {
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState<any[]>([]);
 
-  const debouncedSearch = useDebounce(search, 1500);
+  const debouncedSearch = useDebounce(search, 500);
 
   useEffect(() => {
     if (data) {
@@ -42,14 +42,12 @@ export const ProfileView: FC = () => {
           fontSize='32px'
           fontWeight='medium'
           mb='10px'>
-          {user.name || 'User'}
+          {user.name}
         </Text>
         <Text
           fontSize='16px'
           mb='25px'>
-          У програмуванні 5+ років. Брав участь у різноманітних проектах. Зараз
-          займаюся Android розробкою у дочірній компанії Ощад. Також займаюся
-          викладанням.
+          {user.description}
         </Text>
         <InputGroup maxWidth='400px'>
           <InputLeftElement pointerEvents='none'>

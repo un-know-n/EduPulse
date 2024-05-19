@@ -14,14 +14,12 @@ export const CoursesList: FC<TProps> = ({ isLoading, poster, courses }) => {
   if (isLoading) return <Loading />;
 
   return (
-    <Center>
+    <>
       {courses?.length ? (
         <Flex
           alignItems='center'
-          justifyContent='center'
-          mt={5}
-          mb='10px'
-          gap={5}
+          my={5}
+          gap={4}
           flexWrap='wrap'>
           {courses.map((course) => (
             <CourseCard
@@ -38,6 +36,6 @@ export const CoursesList: FC<TProps> = ({ isLoading, poster, courses }) => {
       ) : (
         poster
       )}
-    </Center>
+    </>
   );
 };

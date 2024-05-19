@@ -1,7 +1,9 @@
 import React, { FC, PropsWithChildren } from 'react';
 import { Header as LayoutHeader } from '../../shared/header/Header';
-import { Center, Flex, Link } from '@chakra-ui/react';
+import { Center, Flex, Link, Box } from '@chakra-ui/react';
 import { ProfileInfo } from '../shared/ProfileInfo';
+import { Routes } from 'apps/client/app/config/routing/routes';
+import NextLink from 'next/link';
 
 type TProps = {
   headerTitle?: string;
@@ -24,22 +26,18 @@ export const ProfileLayout: FC<PropsWithChildren<TProps>> = ({
           w={'full'}
           gap='25px'>
           {hasProfileInfo ? (
-            <ProfileInfo
-              registeredAt='22.04.2024'
-              courses={3}
-              certificates={3}
-              subscribers={10}
-              imageUrl={''}
-            />
+            <ProfileInfo />
           ) : (
-            <Link
-              w='150px'
-              href='/profile/view'
-              color='#9872EA'
-              fontSize='18'
-              mr='25px'>
-              {'<Профіль'}
-            </Link>
+            <Box w='150px'>
+              <Link
+                as={NextLink}
+                href={Routes.ProfileView}
+                color='#9872EA'
+                fontSize='18'
+                mr='25px'>
+                {'<Профіль'}
+              </Link>
+            </Box>
           )}
           {children}
         </Flex>

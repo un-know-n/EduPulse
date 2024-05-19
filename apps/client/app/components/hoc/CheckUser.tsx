@@ -6,13 +6,14 @@ import { useSession } from 'next-auth/react';
 import { Routes } from '../../config/routing/routes';
 import { useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { ChooseRole } from '../dashboard/shared/modals/ChooseRole';
+
 import Loading from '../../loading';
 import { apiInstance } from '../../lib/services/api.instance';
 import { useNotify } from '../../lib/hooks/useNotify';
 import { useTypedDispatch, useTypedSelector } from '../../lib/hooks/redux';
 import jwt from 'jsonwebtoken';
 import { setUser } from '../../store/reducers/user.slice';
+import { ChooseRole } from '../shared/modals/ChooseRole';
 
 export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
   const { data: session, status, update } = useSession();
@@ -31,7 +32,7 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
     if (status === 'unauthenticated') router.push(Routes.SignIn);
     else if (status === 'authenticated' && !session?.user.role)
       onRoleModalOpen();
-    else if (status === 'authenticated') {
+    else if (status === 'authenticated' && !user.role) {
       const token =
         session?.backendTokens?.accessToken ??
         jwt.sign(session.user, `${process.env.NEXT_PUBLIC_TOKEN_SECRET}`);
@@ -46,20 +47,20 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
         createdAt,
         description,
       } = session.user;
-      if (!user.role)
-        dispatch(
-          setUser({
-            id,
-            role,
-            name,
-            image,
-            email,
-            createdAt,
-            description,
-            emailVerified,
-            token,
-          }),
-        );
+
+      dispatch(
+        setUser({
+          id,
+          role,
+          name,
+          image,
+          email,
+          createdAt,
+          description,
+          emailVerified,
+          token,
+        }),
+      );
     }
   }, [session, status, session?.user.role]);
 

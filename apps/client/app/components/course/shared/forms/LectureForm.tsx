@@ -82,10 +82,10 @@ export const LectureForm: FC<TProps> = ({
 
   useEffect(() => {
     if (isSuccessCreate) {
-      notify('Лекцію створено!', 'success');
+      notify('Лекцію створено', 'success');
       onClose();
     } else if (isSuccessUpdate) {
-      notify('Лекцію оновлено!', 'success');
+      notify('Лекцію оновлено', 'success');
       onClose();
     }
   }, [isSuccessCreate, isSuccessUpdate]);

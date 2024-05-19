@@ -7,7 +7,7 @@ import { TUserRoles } from '../../components/course/@types/course';
 
 export const useUserRoleCheck = (
   givenRole: TUserRoles,
-  message = 'Ви не маєте права виконувати цю дію!',
+  message = 'Ви не маєте права виконувати цю дію',
   includeRerouting = true,
 ) => {
   const notify = useNotify();
