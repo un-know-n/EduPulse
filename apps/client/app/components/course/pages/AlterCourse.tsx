@@ -20,6 +20,7 @@ import { TimeToPassFormInput } from '../shared/inputs/TimeToPassFormInput';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
   useCreateCourseMutation,
+  useGetAllCategoriesQuery,
   useUpdateCourseMutation,
 } from '../../../store/services/courses';
 import { useShowError } from '../../../lib/hooks/useShowError';
@@ -31,10 +32,13 @@ import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
 import { SectionItem } from '../shared/list/SectionItem';
 import { CreateSectionButton } from '../shared/buttons/CreateSectionButton';
 import CreateCoursePoster from '../../shared/posters/CreateCoursePoster';
+import Loading from '../../../loading';
+import { CategoryFormInput } from '../shared/inputs/CategoryFormInput';
 
 type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
 export const AlterCourse: FC<TAlterCourseProps> = ({ pageTitle, ...props }) => {
+  console.log('PROPS: ', props);
   return (
     <LayoutHeader title={pageTitle}>
       <CourseInfoForm {...props} />
@@ -87,6 +91,7 @@ const alterCourseSchema = object({
   difficultyLevel: string().refine((level) => ['1', '2', '3'].includes(level), {
     message: 'Складність може бути лише простою, середнью або високою',
   }),
+  categoryId: string().optional(),
   timeToPass: number({
     required_error: 'Введіть час на проходження курсу',
   })
@@ -129,8 +134,12 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   description,
   image,
   timeToPass,
+  categoryId,
   id,
 }) => {
+  const { data: categoriesData, isLoading: isLoadingCategories } =
+    useGetAllCategoriesQuery(null);
+
   const user = useTypedSelector((state) => state.user);
   const [
     createCourse,
@@ -168,6 +177,8 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   const onCourseUpdate = async (values: TInitialValues) => {
     const { difficultyLevel, timeToPass, ...body } = values;
 
+    console.log('update course: ', body);
+
     updateCourse({
       id: id ?? '',
       difficultyLevel: Number(difficultyLevel),
@@ -181,6 +192,7 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
     purpose: purpose ?? '',
     description: description ?? '',
     difficultyLevel: difficultyLevel?.toString() ?? '1',
+    categoryId: categoryId?.toString(),
     timeToPass: timeToPass
       ? moment.duration(timeToPass, 'seconds').asDays()
       : 1,
@@ -201,16 +213,23 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
 
   useEffect(() => {
     const { file, ...restValues } = formik.values;
-    const noChange = checkObjectsEquality(restValues);
+    const noChange = checkObjectsEquality(restValues as any);
     setDisabledSubmitButton(file?.size ? false : noChange);
   }, [JSON.stringify(formik.values), JSON.stringify(initialFormValues)]);
 
   useEffect(() => {
     if (isSuccessCreate && createData) {
-      notify('Курс створено!', 'success');
+      notify('Курс створено', 'success');
       router.push(`/course/${createData.id}/edit`);
-    } else if (isSuccessUpdate) notify('Курс оновлено!', 'success');
+    } else if (isSuccessUpdate) notify('Курс оновлено', 'success');
   }, [isSuccessCreate, isSuccessUpdate]);
+
+  if (isLoadingCategories)
+    return (
+      <Center bg={backgroundColor}>
+        <Loading />
+      </Center>
+    );
 
   return (
     <Center bg={backgroundColor}>
@@ -275,6 +294,20 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                       label={'Час на проходження курсу (днів)'}
                     />
                   </Flex>
+
+                  {categoriesData ? (
+                    <CategoryFormInput
+                      isInvalid={Boolean(
+                        !!errors.categoryId && touched.categoryId,
+                      )}
+                      errorMessage={errors.categoryId ?? ''}
+                      values={values.categoryId}
+                      categories={categoriesData}
+                      fieldName={'categoryId'}
+                      label={'Категорія курсу'}
+                      onChange={handleChange}
+                    />
+                  ) : null}
 
                   <TextareaFormInput
                     isInvalid={Boolean(

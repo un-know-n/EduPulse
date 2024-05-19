@@ -16,14 +16,14 @@ export class RefreshJwtGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
     if (!token)
       throw new UnauthorizedException(
-        'Вам необхідно авторизуватися для виконання цієї дії!',
+        'Вам необхідно авторизуватися для виконання цієї дії',
       );
 
     try {
       request['user'] = await this.jwtService.verifyAsync(token);
     } catch {
       throw new UnauthorizedException(
-        'Термін дії токена скінчився, спробуйте повторно ввійти в обліковий запис!',
+        'Термін дії токена скінчився, спробуйте повторно ввійти в обліковий запис',
       );
     }
 

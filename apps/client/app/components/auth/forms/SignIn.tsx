@@ -78,7 +78,7 @@ export const SignIn: FC = () => {
               if (!value?.error) {
                 router.push(callbackUrl);
               } else {
-                setError('Облікові дані не збігаються!');
+                setError('Облікові дані не збігаються');
               }
             });
           }}>

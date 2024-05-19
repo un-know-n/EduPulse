@@ -1,29 +1,28 @@
-import { FC } from 'react';
 import {
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Select,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import { Field } from 'formik';
+import { FC } from 'react';
 import { difficultyLevels } from '../../../auth/config/constants';
-import { IInputFormProps } from '../../../auth/shared/@types/IInputFormProps';
+import { ISelectFormProps } from './DifficultyFormInput';
+import { TCategoriesResponse } from '../../@types/course';
 
-export interface ISelectFormProps extends IInputFormProps {
-  values: number;
-  onChange: (...args: any) => void;
-  fieldName: string;
-  placeholder?: string;
-  label?: string;
+interface ICategoryFormProps extends Omit<ISelectFormProps, 'values'> {
+  categories: TCategoriesResponse[];
+  values: string | undefined;
 }
 
-export const DifficultyFormInput: FC<ISelectFormProps> = ({
+export const CategoryFormInput: FC<ICategoryFormProps> = ({
   errorMessage,
   isInvalid,
   values,
   fieldName,
   label,
   placeholder,
+  categories,
   onChange,
 }) => {
   return (
@@ -37,11 +36,11 @@ export const DifficultyFormInput: FC<ISelectFormProps> = ({
         onChange={onChange}
         placeholder={placeholder ?? ''}
         variant='outline'>
-        {difficultyLevels.map((level, i) => (
+        {categories.map(({ id, title }) => (
           <option
-            key={i + 1}
-            value={i + 1}>
-            {level}
+            key={id}
+            value={id}>
+            {title}
           </option>
         ))}
       </Field>

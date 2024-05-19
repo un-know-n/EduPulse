@@ -8,7 +8,7 @@ const initialState: UserState = {
   id: '',
   name: '',
   description: '',
-  createdAt: new Date(),
+  createdAt: '' as unknown as Date,
   email: '',
   image: '',
   emailVerified: null,

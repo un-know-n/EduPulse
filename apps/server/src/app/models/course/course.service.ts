@@ -129,7 +129,7 @@ export class CourseService {
       },
     });
     if (!course)
-      throw new BadRequestException('Немає курсу з вказаним ідентифікатором!');
+      throw new BadRequestException('Немає курсу з вказаним ідентифікатором');
     return course;
   }
 
@@ -152,7 +152,7 @@ export class CourseService {
       },
     });
     if (!course)
-      throw new BadRequestException('Немає курсу з вказаним ідентифікатором!');
+      throw new BadRequestException('Немає курсу з вказаним ідентифікатором');
     return course;
   }
 
@@ -166,7 +166,12 @@ export class CourseService {
 
     return await this.prismaService.course.update({
       where: { id },
-      data: updatedCourse,
+      data: {
+        ...updatedCourse,
+        categoryId: {
+          set: updatedCourse.categoryId,
+        },
+      },
     });
   }
 
@@ -174,5 +179,9 @@ export class CourseService {
     return await this.prismaService.course.delete({
       where: { id },
     });
+  }
+
+  async getAllCategories() {
+    return await this.prismaService.category.findMany();
   }
 }

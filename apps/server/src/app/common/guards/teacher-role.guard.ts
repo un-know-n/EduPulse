@@ -16,7 +16,7 @@ export class TeacherRoleGuard implements CanActivate {
     const isTeacher = this.isTeacherRole(request);
 
     if (!isTeacher)
-      throw new ForbiddenException('Ви не можете виконати цю дію!');
+      throw new ForbiddenException('Ви не можете виконати цю дію');
 
     return true;
   }

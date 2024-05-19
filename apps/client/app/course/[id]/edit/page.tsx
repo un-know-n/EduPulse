@@ -20,7 +20,7 @@ export default function Page({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (user && data) {
       if (user.id !== data.creatorId) {
-        notify('Ви не є автором даного курсу!', 'error');
+        notify('Ви не є автором даного курсу', 'error');
         router.push(Routes.Dashboard);
         return;
       }

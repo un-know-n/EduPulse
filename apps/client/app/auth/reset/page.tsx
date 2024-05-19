@@ -84,8 +84,7 @@ export default function Page() {
             token: res.data.token,
           }));
           toast({
-            title:
-              'Перевірочний код було відправлено на вашу електронну пошту!',
+            title: 'Перевірочний код було відправлено на вашу електронну пошту',
             ...defaultToastOptions,
           });
 
@@ -98,7 +97,7 @@ export default function Page() {
       toast({
         title:
           e.response.data.message ||
-          'Неочікувана помилка під час відправки листа!',
+          'Неочікувана помилка під час відправки листа',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -120,7 +119,7 @@ export default function Page() {
       toast({
         title:
           e.response.data.message ||
-          'Неочікувана помилка під час перевірки токена!',
+          'Неочікувана помилка під час перевірки токена',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -137,7 +136,7 @@ export default function Page() {
         .then((res) => {
           console.log('handlePasswordReset SUCCESS: ', res);
           toast({
-            title: 'Пароль було змінено!',
+            title: 'Пароль було змінено',
             ...defaultToastOptions,
           });
           router.push(Routes.SignIn);
@@ -146,8 +145,7 @@ export default function Page() {
       console.log('handlePasswordReset ERROR: ', e);
       toast({
         title:
-          e.response.data.message ||
-          'Неочікувана помилка під час зміни пароля!',
+          e.response.data.message || 'Неочікувана помилка під час зміни пароля',
         ...defaultToastOptions,
         status: 'error',
       });

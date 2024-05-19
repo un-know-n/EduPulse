@@ -35,6 +35,11 @@ export class CourseController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  @Get('categories')
+  getAllCategories() {
+    return this.courseService.getAllCategories();
+  }
+
   @UseGuards(TeacherRoleGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))

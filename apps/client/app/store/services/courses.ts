@@ -6,6 +6,8 @@ import {
   sectionPrefix,
 } from '../../config/routing/routes';
 import {
+  TCategoriesResponse,
+  TCertificateResponse,
   TCourseResponse,
   TCourseWithAuthorResponse,
   TEnrollment,
@@ -109,8 +111,6 @@ export const coursesApi = createApi({
       Omit<TCreateSection, 'courseId'> & { id: string }
     >({
       query: ({ id, title }) => {
-        console.log('GIVEN TITLE ', title);
-
         return {
           url: `${sectionPrefix}/${id}`,
           method: 'PATCH',
@@ -174,10 +174,18 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: [courseTag, enrollmentTag],
     }),
+    getAllCategories: builder.query<TCategoriesResponse[], null>({
+      query: () => `${coursePrefix}/categories`,
+    }),
+    getCertificates: builder.query<TCertificateResponse[], string>({
+      query: (id) => `${enrollmentPrefix}/certificates/${id}`,
+    }),
   }),
 });
 
 export const {
+  useGetAllCategoriesQuery,
+  useGetCertificatesQuery,
   useGetCourseByIdQuery,
   useAddEnrollmentMutation,
   useLazyGetCourseByIdQuery,

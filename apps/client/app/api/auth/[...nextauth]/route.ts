@@ -29,7 +29,7 @@ async function refreshToken(token: JWT) {
       backendTokens: response.data,
     };
   } catch (e) {
-    throw Error('Expired token!');
+    throw Error('Термін дії токена закінчився');
   }
 }
 
@@ -87,7 +87,10 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session, account, profile }) {
       // If update current client session
-      if (trigger === 'update') return { ...token, ...session.user };
+      if (trigger === 'update') {
+        token.user = session.user;
+        return { ...token, ...session.user };
+      }
 
       // If the user logged in with third-party oauth providers
       if (user || !token.backendTokens) return { ...token, ...user };

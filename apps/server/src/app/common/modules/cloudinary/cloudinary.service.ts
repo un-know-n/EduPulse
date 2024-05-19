@@ -1,5 +1,3 @@
-import 'multer';
-
 import {
   BadRequestException,
   FileTypeValidator,

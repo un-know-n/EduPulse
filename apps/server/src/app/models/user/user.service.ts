@@ -21,7 +21,7 @@ export class UserService {
 
     if (user)
       throw new ConflictException(
-        'Користувач із такою електронною поштою вже існує!',
+        'Користувач із такою електронною поштою вже існує',
       );
     const newUser = await this.prismaService.user.create({
       data: {
@@ -72,10 +72,13 @@ export class UserService {
 
     if (imageUrl) updatedProfile['image'] = imageUrl;
 
-    return await this.prismaService.user.update({
-      where: { id },
-      data: updatedProfile,
-    });
+    const { password: hashedPassword, ...updatedProfileInfo } =
+      await this.prismaService.user.update({
+        where: { id },
+        data: updatedProfile,
+      });
+
+    return updatedProfileInfo;
   }
 
   async remove(id: string) {
