@@ -62,7 +62,7 @@ model UsersAssignedToCourse {
   courseId    String
   assignedAt  DateTime @default(now())
   expiresAt   DateTime
-  isCompleted Boolean  @default(false)
+  isCompleted Boolean  @default(true)
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
