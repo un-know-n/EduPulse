@@ -43,9 +43,8 @@ export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
             <PopoverBody>
               <Text
                 fontSize='18'
-                fontWeight='bold'
                 mb='10px'>
-                Теми
+                Категорії
               </Text>
               <Stack
                 direction='column'
@@ -60,9 +59,8 @@ export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
               </Stack>
               <Text
                 fontSize='18'
-                fontWeight='bold'
                 mb='10px'>
-                Ціна
+                Рівень складності
               </Text>
               <Stack direction='column'>
                 {priceText.map((text, index) => (

@@ -5,6 +5,7 @@ import userReducer from './reducers/user.slice';
 import lectureReducer from './reducers/lecture.slice';
 import videoReducer from './reducers/video.slice';
 import testReducer from './reducers/test.slice';
+import categoriesReducer from './reducers/categories.slice';
 import { userApi } from './services/user';
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   video: videoReducer,
   test: testReducer,
   user: userReducer,
+  categories: categoriesReducer,
   [coursesApi.reducerPath]: coursesApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
 });

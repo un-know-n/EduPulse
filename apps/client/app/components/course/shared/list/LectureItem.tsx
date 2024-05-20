@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { TLectureResponse } from '../../@types/course';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Box } from '@chakra-ui/react';
 import { UpdateLectureButton } from '../buttons/UpdateLectureButton';
+import { DeleteLectureButton } from '../buttons/DeleteLectureButton';
 
 export const LectureItem: FC<
   TLectureResponse & { bgColor?: string; index: string | number }
@@ -22,12 +23,18 @@ export const LectureItem: FC<
         <Text>
           {index}. {title}
         </Text>
-        <UpdateLectureButton
-          content={content}
-          sectionId={sectionId}
-          title={title}
-          id={id}
-        />
+        <Box>
+          <UpdateLectureButton
+            content={content}
+            sectionId={sectionId}
+            title={title}
+            id={id}
+          />
+          <DeleteLectureButton
+            lectureId={id}
+            ml={3}
+          />
+        </Box>
       </Flex>
 
       <Text>{content}</Text>

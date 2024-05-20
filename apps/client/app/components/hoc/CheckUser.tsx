@@ -14,11 +14,17 @@ import { useTypedDispatch, useTypedSelector } from '../../lib/hooks/redux';
 import jwt from 'jsonwebtoken';
 import { setUser } from '../../store/reducers/user.slice';
 import { ChooseRole } from '../shared/modals/ChooseRole';
+import {
+  useGetAllCategoriesQuery,
+  useLazyGetAllCategoriesQuery,
+} from '../../store/services/courses';
+import { setCategories } from '../../store/reducers/categories.slice';
 
 export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
   const { data: session, status, update } = useSession();
   const dispatch = useTypedDispatch();
   const user = useTypedSelector((state) => state.user);
+  const { categories } = useTypedSelector((state) => state.categories);
   const router = useRouter();
   const notify = useNotify();
   const {
@@ -26,6 +32,54 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
     onOpen: onRoleModalOpen,
     onClose: onRoleModalClose,
   } = useDisclosure();
+  const [
+    getAllCategories,
+    {
+      data: categoriesData,
+      isLoading: isLoadingCategories,
+      isSuccess: isSuccessCategories,
+      error: categoriesError,
+    },
+  ] = useLazyGetAllCategoriesQuery();
+
+  const handleRoleChange = async (role: string) => {
+    try {
+      await apiInstance.patch(`/user/${session?.user.id}`, { role });
+      notify(
+        `Ваш статус було змінено на "${translateRole(role as TRoles)}"!`,
+        'success',
+      );
+
+      await update({
+        ...session,
+        user: {
+          ...session?.user,
+          role,
+        },
+      });
+    } catch (e: any) {
+      notify(
+        e.response.data.message ||
+          "Неочікувана помилка! Спробуйте ще раз або зв'яжіться з службою підтримки!",
+        'error',
+      );
+    }
+
+    onRoleModalClose();
+  };
+
+  useEffect(() => {
+    if (!categories.length && status === 'authenticated')
+      getAllCategories(null);
+  }, [categories.length, status]);
+
+  useEffect(() => {
+    if (categoriesError)
+      notify('Сталася помилка при завантаженні категорій', 'error');
+    if (isSuccessCategories) {
+      dispatch(setCategories(categoriesData));
+    }
+  }, [categoriesError, isSuccessCategories]);
 
   useEffect(() => {
     console.log(session, status);
@@ -64,33 +118,7 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [session, status, session?.user.role]);
 
-  const handleRoleChange = async (role: string) => {
-    try {
-      await apiInstance.patch(`/user/${session?.user.id}`, { role });
-      notify(
-        `Ваш статус було змінено на "${translateRole(role as TRoles)}"!`,
-        'success',
-      );
-
-      await update({
-        ...session,
-        user: {
-          ...session?.user,
-          role,
-        },
-      });
-    } catch (e: any) {
-      notify(
-        e.response.data.message ||
-          "Неочікувана помилка! Спробуйте ще раз або зв'яжіться з службою підтримки!",
-        'error',
-      );
-    }
-
-    onRoleModalClose();
-  };
-
-  if (status === 'loading') return <Loading />;
+  if (status === 'loading' || isLoadingCategories) return <Loading />;
 
   return (
     <>

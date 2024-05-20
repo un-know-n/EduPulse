@@ -138,15 +138,22 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: [courseTag],
     }),
-    removeSection: builder.mutation<TCourseResponse, { id: string }>({
-      query: ({ id }) => ({
+    removeCourse: builder.mutation<TCourseResponse, string>({
+      query: (id) => ({
+        url: `${coursePrefix}/${id}`,
+        method: 'DELETE',
+      }),
+      // invalidatesTags: [courseTag],
+    }),
+    removeSection: builder.mutation<TCourseResponse, string>({
+      query: (id) => ({
         url: `${sectionPrefix}/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [courseTag],
     }),
-    removeLecture: builder.mutation<TCourseResponse, { id: string }>({
-      query: ({ id }) => ({
+    removeLecture: builder.mutation<TCourseResponse, string>({
+      query: (id) => ({
         url: `${lecturePrefix}/${id}`,
         method: 'DELETE',
       }),
@@ -185,6 +192,7 @@ export const coursesApi = createApi({
 
 export const {
   useGetAllCategoriesQuery,
+  useLazyGetAllCategoriesQuery,
   useGetCertificatesQuery,
   useGetCourseByIdQuery,
   useAddEnrollmentMutation,
@@ -198,6 +206,7 @@ export const {
   useUpdateSectionMutation,
   useRemoveLectureMutation,
   useRemoveSectionMutation,
+  useRemoveCourseMutation,
   useGetEnrollmentsByIdQuery,
   useGetCoursesQuery,
   useLazyGetCoursesQuery,

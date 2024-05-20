@@ -13,6 +13,7 @@ import {
 import { LectureItem } from './LectureItem';
 import { UpdateSectionButton } from '../buttons/UpdateSectionButton';
 import { CreateLectureButton } from '../buttons/CreateLectureButton';
+import { DeleteSectionButton } from '../buttons/DeleteSectionButton';
 
 export const SectionItem: FC<TSectionResponse & { index: string | number }> = ({
   id,
@@ -47,6 +48,7 @@ export const SectionItem: FC<TSectionResponse & { index: string | number }> = ({
               courseId={courseId}
               id={id}
             />
+            <DeleteSectionButton sectionId={id} />
           </Flex>
         </AccordionButton>
       </h2>

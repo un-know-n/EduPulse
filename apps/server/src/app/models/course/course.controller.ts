@@ -26,6 +26,7 @@ import {
   CloudinaryService,
   parseFilePipe,
 } from '../../common/modules/cloudinary/cloudinary.service';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('course')
 @UseGuards(JwtGuard)
@@ -36,6 +37,7 @@ export class CourseController {
   ) {}
 
   @Get('categories')
+  @Public()
   getAllCategories() {
     return this.courseService.getAllCategories();
   }

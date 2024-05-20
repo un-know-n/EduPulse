@@ -34,6 +34,9 @@ import { abbreviateNumber } from 'js-abbreviation-number';
 import { getFormattedTime } from '../../../lib/utils/time';
 import { CourseButton } from '../shared/buttons/CourseButton';
 
+import { useTypedDispatch, useTypedSelector } from '../../../lib/hooks/redux';
+import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
+
 export const Course: FC<TCourseResponse> = (props) => {
   return (
     <LayoutHeader title={props.title}>
@@ -171,6 +174,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
   UsersAssignedToCourse,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
+  const user = useTypedSelector((state) => state.user);
 
   const { colorMode } = useColorMode();
   const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
@@ -275,12 +279,22 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
           </Accordion>
         </Box>
         <Box textAlign={{ base: 'center', md: 'left' }}>
-          <CourseButton
-            id={id}
-            creatorId={creatorId}
-            enrollment={enrollment}
-            mb={5}
-          />
+          <Flex
+            flexDirection='column'
+            alignItems={{ base: 'center', md: 'flex-start' }}>
+            <CourseButton
+              id={id}
+              creatorId={creatorId}
+              enrollment={enrollment}
+              mb={3}
+            />
+            {user.id === creatorId ? (
+              <DeleteCourseButton
+                courseId={id}
+                mb={5}
+              />
+            ) : null}
+          </Flex>
 
           <Text
             {...textStyles}

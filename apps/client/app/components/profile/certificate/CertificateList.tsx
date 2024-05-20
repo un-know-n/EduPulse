@@ -81,6 +81,7 @@ export const CertificateList: FC<TProps> = ({ certificates }) => {
       </List>
       {selectedCertificate && (
         <Modal
+          size={{ base: 'xs', md: 'md' }}
           isOpen={!!selectedCertificate}
           onClose={handleCloseModal}>
           <ModalOverlay />

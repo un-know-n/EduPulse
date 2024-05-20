@@ -34,6 +34,7 @@ import { CreateSectionButton } from '../shared/buttons/CreateSectionButton';
 import CreateCoursePoster from '../../shared/posters/CreateCoursePoster';
 import Loading from '../../../loading';
 import { CategoryFormInput } from '../shared/inputs/CategoryFormInput';
+import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
 
 type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
@@ -137,9 +138,7 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   categoryId,
   id,
 }) => {
-  const { data: categoriesData, isLoading: isLoadingCategories } =
-    useGetAllCategoriesQuery(null);
-
+  const { categories } = useTypedSelector((state) => state.categories);
   const user = useTypedSelector((state) => state.user);
   const [
     createCourse,
@@ -192,7 +191,7 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
     purpose: purpose ?? '',
     description: description ?? '',
     difficultyLevel: difficultyLevel?.toString() ?? '1',
-    categoryId: categoryId?.toString(),
+    categoryId: categoryId?.toString() || categories[0].id.toString(),
     timeToPass: timeToPass
       ? moment.duration(timeToPass, 'seconds').asDays()
       : 1,
@@ -223,13 +222,6 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
       router.push(`/course/${createData.id}/edit`);
     } else if (isSuccessUpdate) notify('Курс оновлено', 'success');
   }, [isSuccessCreate, isSuccessUpdate]);
-
-  if (isLoadingCategories)
-    return (
-      <Center bg={backgroundColor}>
-        <Loading />
-      </Center>
-    );
 
   return (
     <Center bg={backgroundColor}>
@@ -295,14 +287,14 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                     />
                   </Flex>
 
-                  {categoriesData ? (
+                  {categories.length ? (
                     <CategoryFormInput
                       isInvalid={Boolean(
                         !!errors.categoryId && touched.categoryId,
                       )}
                       errorMessage={errors.categoryId ?? ''}
                       values={values.categoryId}
-                      categories={categoriesData}
+                      categories={categories}
                       fieldName={'categoryId'}
                       label={'Категорія курсу'}
                       onChange={handleChange}
@@ -331,9 +323,16 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                   <DefaultButton
                     isLoading={isLoadingCreate || isLoadingUpdate}
                     isDisabled={id ? isDisabledSubmitButton : false}
+                    mb={2}
                     w={'fit-content'}>
                     {id ? 'Оновити курс' : 'Створити курс'}
                   </DefaultButton>
+                  {id ? (
+                    <DeleteCourseButton
+                      courseId={id}
+                      type='button'
+                    />
+                  ) : null}
                 </VStack>
               </Flex>
             </form>
