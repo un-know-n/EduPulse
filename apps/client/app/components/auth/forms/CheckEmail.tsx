@@ -42,15 +42,13 @@ export const CheckEmail: FC<TProps> = ({
 
   return (
     <Box
-      p='50px'
-      color='black'
-      borderRadius='20'
-      bg='white'
-      maxW={650}>
+      p='30px'
+      color='#1D2734'
+      w={['auto', 500]}>
       <Container
         p={0}
         mb={8}>
-        <Heading>Перевірте свою електронну пошту</Heading>
+        <Heading fontSize={24}>Перевірте свою електронну пошту</Heading>
         <Text>
           Ми надіслали електронний лист із інформацією про скидання пароля на
           адресу {email}.

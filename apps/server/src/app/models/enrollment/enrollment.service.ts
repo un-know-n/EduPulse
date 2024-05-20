@@ -19,12 +19,12 @@ export class EnrollmentService {
         where: { userId, courseId },
       });
     if (exitstingEnrollment)
-      throw new BadRequestException('Ви вже зареєстровані на даний курс!');
+      throw new BadRequestException('Ви вже зареєстровані на даний курс');
 
     const isAuthor = await this.checkForCreator(userId, courseId);
     if (isAuthor)
       throw new BadRequestException(
-        'Автор курсу не може приєднатися до курсу, який він створив!',
+        'Автор курсу не може приєднатися до курсу, який він створив',
       );
 
     const expireTime = await this.convertTimeToPass(courseId);
@@ -78,7 +78,7 @@ export class EnrollmentService {
     const isAuthor = await this.checkForCreator(user.id, enrollment.courseId);
     if (!isAuthor)
       throw new BadRequestException(
-        'Ви не можете видалити запис про реєстрацію на курс, не будучи автором курсу!',
+        'Ви не можете видалити запис про реєстрацію на курс, не будучи автором курсу',
       );
 
     const [deletedEnrollment] = await this.prismaService.$transaction([
@@ -105,13 +105,42 @@ export class EnrollmentService {
 
     if (course.timeToPass)
       return moment().utc(true).add(course.timeToPass, 'seconds').toISOString();
-    else throw new BadRequestException('Курс не має терміну дії!');
+    else throw new BadRequestException('Курс не має терміну дії');
   }
 
   async checkForCreator(userId: string, courseId: string) {
     const course = await this.courseService.findOne(courseId);
 
     return userId === course.creatorId;
+  }
+
+  async getCertificates(userId: string) {
+    const completedCourses =
+      await this.prismaService.usersAssignedToCourse.findMany({
+        where: {
+          userId,
+          isCompleted: true,
+        },
+        select: {
+          course: {
+            select: {
+              title: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+              sections: { select: { test: true } },
+            },
+          },
+        },
+      });
+
+    return completedCourses.map(({ course }) => ({
+      author: course.user.name,
+      title: course.title,
+      mark: 100,
+    }));
   }
 
   findUserEnrollments(userId: string) {
@@ -150,7 +179,7 @@ export class EnrollmentService {
       });
     if (!enrollment)
       throw new BadRequestException(
-        'Немає реєстрації з вказаним ідентифікатором!',
+        'Немає реєстрації з вказаним ідентифікатором',
       );
     return enrollment;
   }

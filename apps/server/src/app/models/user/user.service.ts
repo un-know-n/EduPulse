@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../../prisma.service';
@@ -17,7 +21,7 @@ export class UserService {
 
     if (user)
       throw new ConflictException(
-        'Користувач із такою електронною поштою вже існує!',
+        'Користувач із такою електронною поштою вже існує',
       );
     const newUser = await this.prismaService.user.create({
       data: {
@@ -57,6 +61,24 @@ export class UserService {
         name,
       },
     });
+  }
+
+  async updateProfile(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    imageUrl?: string,
+  ) {
+    const { password, role, ...updatedProfile } = updateUserDto;
+
+    if (imageUrl) updatedProfile['image'] = imageUrl;
+
+    const { password: hashedPassword, ...updatedProfileInfo } =
+      await this.prismaService.user.update({
+        where: { id },
+        data: updatedProfile,
+      });
+
+    return updatedProfileInfo;
   }
 
   async remove(id: string) {

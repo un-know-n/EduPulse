@@ -20,6 +20,7 @@ import { TimeToPassFormInput } from '../shared/inputs/TimeToPassFormInput';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
   useCreateCourseMutation,
+  useGetAllCategoriesQuery,
   useUpdateCourseMutation,
 } from '../../../store/services/courses';
 import { useShowError } from '../../../lib/hooks/useShowError';
@@ -31,10 +32,14 @@ import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
 import { SectionItem } from '../shared/list/SectionItem';
 import { CreateSectionButton } from '../shared/buttons/CreateSectionButton';
 import CreateCoursePoster from '../../shared/posters/CreateCoursePoster';
+import Loading from '../../../loading';
+import { CategoryFormInput } from '../shared/inputs/CategoryFormInput';
+import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
 
 type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
 export const AlterCourse: FC<TAlterCourseProps> = ({ pageTitle, ...props }) => {
+  console.log('PROPS: ', props);
   return (
     <LayoutHeader title={pageTitle}>
       <CourseInfoForm {...props} />
@@ -87,6 +92,7 @@ const alterCourseSchema = object({
   difficultyLevel: string().refine((level) => ['1', '2', '3'].includes(level), {
     message: 'Складність може бути лише простою, середнью або високою',
   }),
+  categoryId: string().optional(),
   timeToPass: number({
     required_error: 'Введіть час на проходження курсу',
   })
@@ -129,8 +135,10 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   description,
   image,
   timeToPass,
+  categoryId,
   id,
 }) => {
+  const { categories } = useTypedSelector((state) => state.categories);
   const user = useTypedSelector((state) => state.user);
   const [
     createCourse,
@@ -168,6 +176,8 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   const onCourseUpdate = async (values: TInitialValues) => {
     const { difficultyLevel, timeToPass, ...body } = values;
 
+    console.log('update course: ', body);
+
     updateCourse({
       id: id ?? '',
       difficultyLevel: Number(difficultyLevel),
@@ -181,6 +191,7 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
     purpose: purpose ?? '',
     description: description ?? '',
     difficultyLevel: difficultyLevel?.toString() ?? '1',
+    categoryId: categoryId?.toString() || categories[0].id.toString(),
     timeToPass: timeToPass
       ? moment.duration(timeToPass, 'seconds').asDays()
       : 1,
@@ -201,15 +212,15 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
 
   useEffect(() => {
     const { file, ...restValues } = formik.values;
-    const noChange = checkObjectsEquality(restValues);
+    const noChange = checkObjectsEquality(restValues as any);
     setDisabledSubmitButton(file?.size ? false : noChange);
   }, [JSON.stringify(formik.values), JSON.stringify(initialFormValues)]);
 
   useEffect(() => {
     if (isSuccessCreate && createData) {
-      notify('Курс створено!', 'success');
+      notify('Курс створено', 'success');
       router.push(`/course/${createData.id}/edit`);
-    } else if (isSuccessUpdate) notify('Курс оновлено!', 'success');
+    } else if (isSuccessUpdate) notify('Курс оновлено', 'success');
   }, [isSuccessCreate, isSuccessUpdate]);
 
   return (
@@ -226,10 +237,11 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
             <form onSubmit={handleSubmit}>
               <Flex
                 justifyContent={'space-between'}
-                alignItems={'flex-start'}>
+                alignItems={{ base: 'center', md: 'flex-start' }}
+                flexDirection={{ base: 'column', md: 'row' }}>
                 <VStack
-                  w={'80%'}
-                  maxW={'600px'}
+                  w={{ base: 'full', md: '80%' }}
+                  maxW={{ base: 'full', md: '600px' }}
                   spacing={4}
                   align='flex-start'>
                   <TextFormInput
@@ -248,7 +260,8 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
 
                   <Flex
                     gap='3'
-                    w='full'>
+                    w='full'
+                    flexDirection={{ base: 'column', md: 'row' }}>
                     <DifficultyFormInput
                       isInvalid={Boolean(
                         !!errors.difficultyLevel && touched.difficultyLevel,
@@ -274,6 +287,20 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                     />
                   </Flex>
 
+                  {categories.length ? (
+                    <CategoryFormInput
+                      isInvalid={Boolean(
+                        !!errors.categoryId && touched.categoryId,
+                      )}
+                      errorMessage={errors.categoryId ?? ''}
+                      values={values.categoryId}
+                      categories={categories}
+                      fieldName={'categoryId'}
+                      label={'Категорія курсу'}
+                      onChange={handleChange}
+                    />
+                  ) : null}
+
                   <TextareaFormInput
                     isInvalid={Boolean(
                       !!errors.description && touched.description,
@@ -283,7 +310,9 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                     label={'Про курс (1028 символів)'}
                   />
                 </VStack>
-                <VStack align='center'>
+                <VStack
+                  align='center'
+                  py={{ base: '4', md: '0' }}>
                   <ImageUpload
                     isInvalid={Boolean(!!errors.file && touched.file)}
                     errorMessage={errors.file}
@@ -294,9 +323,16 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                   <DefaultButton
                     isLoading={isLoadingCreate || isLoadingUpdate}
                     isDisabled={id ? isDisabledSubmitButton : false}
+                    mb={2}
                     w={'fit-content'}>
                     {id ? 'Оновити курс' : 'Створити курс'}
                   </DefaultButton>
+                  {id ? (
+                    <DeleteCourseButton
+                      courseId={id}
+                      type='button'
+                    />
+                  ) : null}
                 </VStack>
               </Flex>
             </form>

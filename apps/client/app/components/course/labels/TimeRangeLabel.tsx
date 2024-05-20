@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, useBreakpointValue } from '@chakra-ui/react';
 import { FaRegClock } from 'react-icons/fa6';
 
 type TProps = {
@@ -8,9 +8,11 @@ type TProps = {
 };
 
 export const TimeRangeLabel: FC<TProps> = ({ startDate, endDate }) => {
+  const iconSize = useBreakpointValue({ base: '15px', md: '20px' });
+
   return (
     <Flex align='center'>
-      <FaRegClock size='20px' />
+      <FaRegClock size={iconSize} />
       <Text ml='10px'>
         {startDate} - {endDate}
       </Text>

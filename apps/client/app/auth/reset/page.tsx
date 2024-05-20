@@ -84,8 +84,7 @@ export default function Page() {
             token: res.data.token,
           }));
           toast({
-            title:
-              'Перевірочний код було відправлено на вашу електронну пошту!',
+            title: 'Перевірочний код було відправлено на вашу електронну пошту',
             ...defaultToastOptions,
           });
 
@@ -98,7 +97,7 @@ export default function Page() {
       toast({
         title:
           e.response.data.message ||
-          'Неочікувана помилка під час відправки листа!',
+          'Неочікувана помилка під час відправки листа',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -120,7 +119,7 @@ export default function Page() {
       toast({
         title:
           e.response.data.message ||
-          'Неочікувана помилка під час перевірки токена!',
+          'Неочікувана помилка під час перевірки токена',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -137,7 +136,7 @@ export default function Page() {
         .then((res) => {
           console.log('handlePasswordReset SUCCESS: ', res);
           toast({
-            title: 'Пароль було змінено!',
+            title: 'Пароль було змінено',
             ...defaultToastOptions,
           });
           router.push(Routes.SignIn);
@@ -146,8 +145,7 @@ export default function Page() {
       console.log('handlePasswordReset ERROR: ', e);
       toast({
         title:
-          e.response.data.message ||
-          'Неочікувана помилка під час зміни пароля!',
+          e.response.data.message || 'Неочікувана помилка під час зміни пароля',
         ...defaultToastOptions,
         status: 'error',
       });
@@ -157,20 +155,21 @@ export default function Page() {
   return (
     <ChakraProvider theme={theme}>
       <Flex
-        color='white'
         w='full'
         h='full'
-        gap={5}
         flexDirection='column'
         justifyContent='center'
         alignItems='center'>
         <LightMode>
           <Stepper
+            pt={{ base: '30px', md: '0' }}
+            px='30px'
             index={activeStep}
-            size='lg'
+            size={{ base: 'md', md: 'lg' }}
+            color='#1D2734'
             colorScheme='purple'
             orientation='vertical'
-            height='200px'
+            height={{ base: '230px', md: '200px' }}
             gap='0'>
             {steps.map((step, index) => (
               <Step key={index}>
@@ -182,7 +181,9 @@ export default function Page() {
                   />
                 </StepIndicator>
 
-                <Box flexShrink='0'>
+                <Box
+                  flexShrink='0'
+                  w={{ base: '90%', md: '100%' }}>
                   <StepTitle>{step.title}</StepTitle>
                   <StepDescription>{step.description}</StepDescription>
                 </Box>

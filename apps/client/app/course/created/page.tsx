@@ -7,6 +7,7 @@ import { Header } from '../../components/shared/header/Header';
 import NoCreatedCourses from '../../components/shared/posters/NoCreatedCourses';
 import { useUserRoleCheck } from '../../lib/hooks/useUserCheck';
 import { CoursesList } from '../../components/course/shared/list/CoursesList';
+import { Box } from '@chakra-ui/react';
 
 export default function Page() {
   const { data, error, isSuccess, isLoading } = useGetCreatedCoursesQuery(null);
@@ -17,10 +18,12 @@ export default function Page() {
 
   return (
     <Header title={'Створені курси'}>
-      <CoursesList
-        poster={<NoCreatedCourses />}
-        courses={data}
-      />
+      <Box mx='auto'>
+        <CoursesList
+          poster={<NoCreatedCourses />}
+          courses={data}
+        />
+      </Box>
     </Header>
   );
 }

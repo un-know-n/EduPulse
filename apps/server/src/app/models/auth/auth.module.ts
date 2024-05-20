@@ -5,6 +5,7 @@ import { UserService } from '../user/user.service';
 import { PrismaService } from '../../prisma.service';
 import { VerificationService } from '../verification/verification.service';
 import { AccountService } from '../account/account.service';
+import { CloudinaryService } from '../../common/modules/cloudinary/cloudinary.service';
 
 @Module({
   providers: [
@@ -13,6 +14,7 @@ import { AccountService } from '../account/account.service';
     PrismaService,
     VerificationService,
     AccountService,
+    CloudinaryService,
   ],
   controllers: [AuthController],
 })

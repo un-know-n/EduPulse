@@ -1,4 +1,10 @@
-import { IsIn, IsNumber, IsPositive, IsString } from 'class-validator';
+import {
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateCourseDto {
@@ -15,6 +21,11 @@ export class CreateCourseDto {
   @IsNumber()
   @IsIn([1, 2, 3])
   difficultyLevel: number;
+
+  @IsOptional()
+  @Transform((value) => Number(value.value))
+  @IsNumber()
+  categoryId: number;
 
   @IsString()
   purpose: string;

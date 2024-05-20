@@ -6,6 +6,8 @@ import {
   sectionPrefix,
 } from '../../config/routing/routes';
 import {
+  TCategoriesResponse,
+  TCertificateResponse,
   TCourseResponse,
   TCourseWithAuthorResponse,
   TEnrollment,
@@ -109,8 +111,6 @@ export const coursesApi = createApi({
       Omit<TCreateSection, 'courseId'> & { id: string }
     >({
       query: ({ id, title }) => {
-        console.log('GIVEN TITLE ', title);
-
         return {
           url: `${sectionPrefix}/${id}`,
           method: 'PATCH',
@@ -138,15 +138,22 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: [courseTag],
     }),
-    removeSection: builder.mutation<TCourseResponse, { id: string }>({
-      query: ({ id }) => ({
+    removeCourse: builder.mutation<TCourseResponse, string>({
+      query: (id) => ({
+        url: `${coursePrefix}/${id}`,
+        method: 'DELETE',
+      }),
+      // invalidatesTags: [courseTag],
+    }),
+    removeSection: builder.mutation<TCourseResponse, string>({
+      query: (id) => ({
         url: `${sectionPrefix}/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [courseTag],
     }),
-    removeLecture: builder.mutation<TCourseResponse, { id: string }>({
-      query: ({ id }) => ({
+    removeLecture: builder.mutation<TCourseResponse, string>({
+      query: (id) => ({
         url: `${lecturePrefix}/${id}`,
         method: 'DELETE',
       }),
@@ -174,10 +181,19 @@ export const coursesApi = createApi({
       }),
       invalidatesTags: [courseTag, enrollmentTag],
     }),
+    getAllCategories: builder.query<TCategoriesResponse[], null>({
+      query: () => `${coursePrefix}/categories`,
+    }),
+    getCertificates: builder.query<TCertificateResponse[], string>({
+      query: (id) => `${enrollmentPrefix}/certificates/${id}`,
+    }),
   }),
 });
 
 export const {
+  useGetAllCategoriesQuery,
+  useLazyGetAllCategoriesQuery,
+  useGetCertificatesQuery,
   useGetCourseByIdQuery,
   useAddEnrollmentMutation,
   useLazyGetCourseByIdQuery,
@@ -190,6 +206,7 @@ export const {
   useUpdateSectionMutation,
   useRemoveLectureMutation,
   useRemoveSectionMutation,
+  useRemoveCourseMutation,
   useGetEnrollmentsByIdQuery,
   useGetCoursesQuery,
   useLazyGetCoursesQuery,

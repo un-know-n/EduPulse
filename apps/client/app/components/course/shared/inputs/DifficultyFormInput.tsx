@@ -9,7 +9,7 @@ import { Field } from 'formik';
 import { difficultyLevels } from '../../../auth/config/constants';
 import { IInputFormProps } from '../../../auth/shared/@types/IInputFormProps';
 
-export interface IDifficultyFormProps extends IInputFormProps {
+export interface ISelectFormProps extends IInputFormProps {
   values: number;
   onChange: (...args: any) => void;
   fieldName: string;
@@ -17,7 +17,7 @@ export interface IDifficultyFormProps extends IInputFormProps {
   label?: string;
 }
 
-export const DifficultyFormInput: FC<IDifficultyFormProps> = ({
+export const DifficultyFormInput: FC<ISelectFormProps> = ({
   errorMessage,
   isInvalid,
   values,

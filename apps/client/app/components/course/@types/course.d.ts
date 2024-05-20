@@ -18,6 +18,7 @@ export type TCourseResponse = {
   createdAt: string;
   timeToPass: number;
   image: string;
+  categoryId?: number;
   difficultyLevel: TDifficultyLevel;
   numberOfPeopleEnrolled: number;
   sections: TSectionResponse[];
@@ -32,13 +33,26 @@ export type TSectionResponse = {
   lectures: TLectureResponse[];
 };
 
+export type TCertificateResponse = {
+  author: string;
+  title: string;
+  mark: number;
+};
+
+export type TCategoriesResponse = {
+  id: number;
+  title: string;
+};
+
 export type TUserResponse = {
   id: string;
   name: string;
+  description: string;
   email: string;
   emailVerified?: string;
   role: string;
-  image: string;
+  image?: string;
+  createdAt: string;
 };
 
 export type TEnrollmentResponse = TEnrollment & {

@@ -43,12 +43,10 @@ export const SignIn: FC = () => {
 
   return (
     <Box
-      p='60px'
-      w='80%'
-      maxW={600}
-      m='auto'
-      borderRadius='20'
-      bg='white'>
+      p='30px'
+      maxW='500px'
+      minW={['auto', 500]}
+      color='#1D2734'>
       <Container
         p={0}
         mb={5}>
@@ -80,7 +78,7 @@ export const SignIn: FC = () => {
               if (!value?.error) {
                 router.push(callbackUrl);
               } else {
-                setError('Облікові дані не збігаються!');
+                setError('Облікові дані не збігаються');
               }
             });
           }}>

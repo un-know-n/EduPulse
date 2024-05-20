@@ -10,10 +10,10 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import { RoleRadioGroup } from '../inputs/RoleRadioGroup';
 
 import { BiUserCheck } from 'react-icons/bi';
-import { baseRoles, TRoles } from '../../../auth/config/constants';
+import { baseRoles, TRoles } from '../../auth/config/constants';
+import { RoleRadioGroup } from '../inputs/RoleRadioGroup';
 
 interface IProps {
   chooseRole: (role: string) => void;

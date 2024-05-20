@@ -8,7 +8,7 @@ import {
   UseRadioProps,
 } from '@chakra-ui/react';
 
-import { translateRole, TRoles } from '../../../auth/config/constants';
+import { translateRole, TRoles } from '../../auth/config/constants';
 
 interface IProps extends RadioProps {
   options: TRoles[];

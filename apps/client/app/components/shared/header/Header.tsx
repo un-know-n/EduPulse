@@ -39,6 +39,7 @@ import {
   useColorMode,
   useColorModeValue,
   useDisclosure,
+  Tooltip,
 } from '@chakra-ui/react';
 import { themeColors } from '../../../config/UI/theme';
 import { signOut } from 'next-auth/react';
@@ -52,21 +53,23 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { RxDashboard } from 'react-icons/rx';
 import { DefaultMenuLink } from './links/DefaultMenuLink';
 import { useTypedSelector } from '../../../lib/hooks/redux';
-import { dashboardPrefix } from '../../../config/routing/routes';
-import { MdCheckCircle } from 'react-icons/md';
+import { Routes } from '../../../config/routing/routes';
+import { MdCheckCircle, MdLibraryBooks } from 'react-icons/md';
 import { TUserRoles } from '../../course/@types/course';
 import { GiGraduateCap } from 'react-icons/gi';
+import { useRouter } from 'next/navigation';
 
 type TProps = {
   title: string;
 };
 
 const dashboardLinks = [
-  { title: 'Досягнення', handler: () => redirect(dashboardPrefix) },
-  { title: 'Налаштування', handler: () => redirect(dashboardPrefix) },
+  { title: 'Профіль', link: Routes.ProfileView },
+  { title: 'Сертифікати', link: Routes.ProfileCertificate },
+  { title: 'Налаштування', link: Routes.ProfileSettings },
   { title: 'Вийти', handler: () => signOut() },
 ];
-//<GiGraduateCap />
+
 const burgerMenuLinks: {
   title: string;
   href: string;
@@ -75,14 +78,14 @@ const burgerMenuLinks: {
 }[] = [
   {
     title: 'Пошук курсів',
-    href: '/course/search',
+    href: `${Routes.SearchCourse}`,
     icon: <IoSearchOutline />,
     role: ['student', 'teacher'],
   },
   {
     title: 'Мої курси',
-    href: '/dashboard',
-    icon: <RxDashboard />,
+    href: `${Routes.Dashboard}`,
+    icon: <MdLibraryBooks />,
     role: ['student', 'teacher'],
   },
   {
@@ -93,19 +96,16 @@ const burgerMenuLinks: {
   },
   {
     title: 'Створити курс',
-    href: '/course/create',
+    href: `${Routes.CreateCourse}`,
     icon: <IoIosAddCircleOutline />,
     role: ['teacher'],
   },
 ];
 
-const authors = [
-  'Добровольський Євгеній',
-  'Мартинець Артем',
-  'Брюханов Олександр',
-];
+const authors = ['Добровольський Євгеній', 'Мартинець Артем'];
 
 export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
+  const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -162,7 +162,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
             <Button onClick={onOpen}>
               <HiMenuAlt1 />
             </Button>
-            <Heading fontSize={24}>{title}</Heading>
+            <Heading fontSize={{ base: 'auto', md: 24 }}>{title}</Heading>
           </Flex>
 
           <Flex alignItems={'center'}>
@@ -207,15 +207,25 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                   <Center>
                     <Avatar
                       size={'2xl'}
-                      src={
-                        user?.image ??
-                        'https://avatars.dicebear.com/api/male/username.svg'
-                      }
+                      cursor='pointer'
+                      src={user?.image ?? ''}
+                      onClick={() => router.push(Routes.ProfileView)}
                     />
                   </Center>
                   <br />
                   <Center>
-                    <p>{user?.name}</p>
+                    <Tooltip
+                      label={user?.name}
+                      placement='left-end'>
+                      <Heading
+                        size='md'
+                        cursor='pointer'
+                        onClick={() => router.push(Routes.ProfileView)}>
+                        {user?.name.length > 15
+                          ? `${user?.name.substring(0, 15)}...`
+                          : user?.name}
+                      </Heading>
+                    </Tooltip>
                   </Center>
                   <br />
                   <MenuDivider />
@@ -233,7 +243,9 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                     <MenuItem
                       as={Button}
                       key={item.title}
-                      onClick={item.handler}
+                      onClick={() =>
+                        item?.handler ? item.handler() : router.push(item.link)
+                      }
                       _hover={{
                         textDecoration: 'none',
                         bg: backgroundColor,

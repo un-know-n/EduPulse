@@ -17,6 +17,7 @@ import {
   Text,
   useColorMode,
   useColorModeValue,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { MdCheckCircle } from 'react-icons/md';
 import { FaRegBookmark } from 'react-icons/fa';
@@ -32,6 +33,9 @@ import moment from 'moment/moment';
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { getFormattedTime } from '../../../lib/utils/time';
 import { CourseButton } from '../shared/buttons/CourseButton';
+
+import { useTypedDispatch, useTypedSelector } from '../../../lib/hooks/redux';
+import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
 
 export const Course: FC<TCourseResponse> = (props) => {
   return (
@@ -91,11 +95,13 @@ const CourseInfo: FC<TCourseInfoProps> = ({
   const headingStyles =
     colorMode === 'light' ? headingStyleLight : headingStyleDark;
 
+  const iconSize = useBreakpointValue({ base: '15px', md: '20px' });
+
   return (
     <Center bg={backgroundColor}>
       <Flex
         p='5'
-        direction={['column-reverse', 'column-reverse', 'row']}
+        direction={['column', 'column', 'row']}
         justifyContent={['center', 'center', 'space-between']}
         {...ContainerOptions}>
         <Flex
@@ -115,18 +121,23 @@ const CourseInfo: FC<TCourseInfoProps> = ({
             </Text>
           </Box>
           <Flex
-            justifyContent='flex-start'
-            alignItems='center'
-            gap={5}>
-            <DifficultyLabel level={difficultyLevel} />
-            <TimeRangeLabel
-              startDate={startCourseDate}
-              endDate={endCourseDate}
-            />
-            <IconTextLabel
-              icon={<FaRegBookmark size='20px' />}
-              text={'Сертифікат'}
-            />
+            justifyContent={{ base: 'center', md: 'flex-start' }}
+            alignItems='center'>
+            <Box
+              display={{ base: 'block', md: 'flex' }}
+              flexDirection={{ base: 'column', md: 'row' }}
+              gap={{ base: '3', md: '5' }}
+              mb={{ base: '20px', md: '0' }}>
+              <DifficultyLabel level={difficultyLevel} />
+              <TimeRangeLabel
+                startDate={startCourseDate}
+                endDate={endCourseDate}
+              />
+              <IconTextLabel
+                icon={<FaRegBookmark size={iconSize} />}
+                text={'Сертифікат'}
+              />
+            </Box>
           </Flex>
         </Flex>
         <Flex
@@ -163,6 +174,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
   UsersAssignedToCourse,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
+  const user = useTypedSelector((state) => state.user);
 
   const { colorMode } = useColorMode();
   const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
@@ -173,7 +185,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
     <Center>
       <Flex
         p='5'
-        direction={'row'}
+        direction={{ base: 'column', md: 'row' }}
         justifyContent={'space-between'}
         {...ContainerOptions}>
         <Box
@@ -266,13 +278,23 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
             </AccordionItem>
           </Accordion>
         </Box>
-        <Box>
-          <CourseButton
-            id={id}
-            creatorId={creatorId}
-            enrollment={enrollment}
-            mb={5}
-          />
+        <Box textAlign={{ base: 'center', md: 'left' }}>
+          <Flex
+            flexDirection='column'
+            alignItems={{ base: 'center', md: 'flex-start' }}>
+            <CourseButton
+              id={id}
+              creatorId={creatorId}
+              enrollment={enrollment}
+              mb={3}
+            />
+            {user.id === creatorId ? (
+              <DeleteCourseButton
+                courseId={id}
+                mb={5}
+              />
+            ) : null}
+          </Flex>
 
           <Text
             {...textStyles}

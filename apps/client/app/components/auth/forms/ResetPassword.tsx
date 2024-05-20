@@ -15,7 +15,7 @@ type TProps = {
 
 const resetSchema = object({
   password: passwordValidator,
-  confirmPassword: string({ required_error: 'Confirm entered password' }),
+  confirmPassword: string({ required_error: 'Підтвердіть введений пароль' }),
 });
 type TResetFormInputs = TypeOf<typeof resetSchema>;
 
@@ -27,15 +27,13 @@ export const ResetPassword: FC<TProps> = ({ changeHandler }) => {
 
   return (
     <Box
-      p='40px'
-      color='black'
-      borderRadius='20'
-      bg='white'
-      maxW={650}>
+      p='30px'
+      color='#1D2734'
+      w={['auto', 500]}>
       <Container
         p={0}
         mb={8}>
-        <Heading>Змініть пароль</Heading>
+        <Heading fontSize={24}>Змініть пароль</Heading>
         <Text>
           Вигадайте складний пароль, використовуючи букви, символи та цифри і
           підтвердіть його зміну

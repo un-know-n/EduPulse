@@ -12,8 +12,9 @@ const AdvantageIcon: FC<{ icon: ReactElement }> = (props) => {
     <Flex
       justifyContent={'center'}
       alignItems={'center'}
-      backgroundColor={'#007AFF'}
+      backgroundColor={'#7662EA'}
       borderRadius='25px'
+      color='white'
       w={'30px'}
       h={'30px'}>
       {props.icon}
@@ -24,19 +25,16 @@ const AdvantageIcon: FC<{ icon: ReactElement }> = (props) => {
 export const AdvantageCard: FC<TProps> = (props) => {
   return (
     <Flex mb='30px'>
-      <Box mr='20px'>
+      <Box mr='15px'>
         <AdvantageIcon icon={props.icon} />
       </Box>
       <Flex flexDirection='column'>
-        <Heading 
-          fontSize='20px'>
+        <Text
+          fontSize='16'
+          fontWeight='medium'>
           {props.title}
-        </Heading>
-        <Text 
-          fontSize='16px'
-          fontWeight='regular'>
-          {props.description}
         </Text>
+        <Text fontSize='16'>{props.description}</Text>
       </Flex>
     </Flex>
   );

@@ -29,6 +29,11 @@ export class EnrollmentController {
     return this.enrollmentService.findUserEnrollments(userId);
   }
 
+  @Get('certificates/:userId')
+  getCertificates(@Param('userId') userId: string) {
+    return this.enrollmentService.getCertificates(userId);
+  }
+
   @Patch(':id')
   reset(@Param('id') id: string) {
     return this.enrollmentService.reset(id);

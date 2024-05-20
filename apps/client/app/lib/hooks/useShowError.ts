@@ -17,7 +17,7 @@ export const useShowError = (
     if (error) {
       if (includeRerouting) router.push(routePath ?? Routes.Dashboard);
       notify(
-        (error as any)?.data?.message ?? 'Сталася невідома помилка!',
+        (error as any)?.data?.message ?? 'Сталася невідома помилка',
         'error',
       );
     }

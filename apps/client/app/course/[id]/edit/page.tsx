@@ -20,7 +20,7 @@ export default function Page({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (user && data) {
       if (user.id !== data.creatorId) {
-        notify('Ви не є автором даного курсу!', 'error');
+        notify('Ви не є автором даного курсу', 'error');
         router.push(Routes.Dashboard);
         return;
       }
@@ -33,7 +33,7 @@ export default function Page({ params }: { params: { id: string } }) {
       {data && isCourseCreator ? (
         <AlterCourse
           {...data}
-          pageTitle={'Змінити інформацію про курс'}
+          pageTitle={'Змінити дані курсу'}
         />
       ) : (
         <Loading />
