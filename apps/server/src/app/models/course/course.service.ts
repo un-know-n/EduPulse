@@ -80,6 +80,83 @@ export class CourseService {
     });
   }
 
+  async searchCourses(
+    userId: string,
+    title: string,
+    categoryIds?: number[],
+    difficultyLevels?: number[],
+    orderBy: 'asc' | 'desc' = 'asc',
+    page = 1,
+    limit = 10,
+  ) {
+    const skip = (page - 1) * limit;
+
+    const [total, data] = await Promise.all([
+      this.prismaService.course.count({
+        where: {
+          title: {
+            contains: title,
+            mode: 'insensitive',
+          },
+          categoryId:
+            categoryIds && categoryIds.length > 0
+              ? { in: categoryIds }
+              : undefined,
+          difficultyLevel:
+            difficultyLevels && difficultyLevels.length > 0
+              ? { in: difficultyLevels }
+              : undefined,
+        },
+      }),
+      this.prismaService.course.findMany({
+        where: {
+          title: {
+            contains: title,
+            mode: 'insensitive',
+          },
+          categoryId:
+            categoryIds && categoryIds.length > 0
+              ? { in: categoryIds }
+              : undefined,
+          difficultyLevel:
+            difficultyLevels && difficultyLevels.length > 0
+              ? { in: difficultyLevels }
+              : undefined,
+        },
+        orderBy: {
+          createdAt: orderBy,
+        },
+        skip,
+        take: Number(limit),
+        include: {
+          category: true,
+          UsersAssignedToCourse: {
+            where: {
+              userId,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              email: true,
+              emailVerified: true,
+              name: true,
+              role: true,
+              image: true,
+            },
+          },
+          sections: {
+            include: {
+              lectures: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return { data, total };
+  }
+
   async findCreatedCourses(userId: string) {
     return await this.prismaService.course.findMany({
       where: {

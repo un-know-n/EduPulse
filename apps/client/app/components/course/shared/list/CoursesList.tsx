@@ -18,6 +18,7 @@ export const CoursesList: FC<TProps> = ({ isLoading, poster, courses }) => {
       {courses?.length ? (
         <Flex
           alignItems='center'
+          justifyContent='center'
           my={5}
           gap={4}
           flexWrap='wrap'>

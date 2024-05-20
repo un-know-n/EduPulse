@@ -15,14 +15,27 @@ import {
   PopoverBody,
   PopoverFooter,
 } from '@chakra-ui/react';
+import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
+import { difficultyLevels } from '../../auth/config/constants';
+import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 
 type TProps = {
-  topicsText: string[];
-  priceText: string[];
+  handleCancelClick: () => void;
+  selectedCategories: number[];
+  setSelectedCategories: (category: number) => void;
+  selectedLevels: number[];
+  setSelectedLevels: (category: number) => void;
 };
 
-export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
+export const Filters: FC<TProps> = ({
+  selectedCategories,
+  selectedLevels,
+  setSelectedCategories,
+  setSelectedLevels,
+  handleCancelClick,
+}) => {
   const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
+  const { categories } = useTypedSelector((state) => state.categories);
 
   if (isSmallScreen) {
     return (
@@ -49,11 +62,14 @@ export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
               <Stack
                 direction='column'
                 mb='20px'>
-                {topicsText.map((text, index) => (
+                {categories.map((category, index) => (
                   <Checkbox
-                    key={index}
+                    isChecked={selectedCategories.includes(category.id)}
+                    onChange={() => setSelectedCategories(category.id)}
+                    key={category.id}
+                    value={category.id}
                     colorScheme='purple'>
-                    {text}
+                    {category.title}
                   </Checkbox>
                 ))}
               </Stack>
@@ -63,28 +79,24 @@ export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
                 Рівень складності
               </Text>
               <Stack direction='column'>
-                {priceText.map((text, index) => (
+                {difficultyLevels.map((level, index) => (
                   <Checkbox
-                    key={index}
+                    isChecked={selectedLevels.includes(index + 1)}
+                    onChange={() => setSelectedLevels(index + 1)}
+                    key={index + 1}
+                    value={index + 1}
                     colorScheme='purple'>
-                    {text}
+                    {level}
                   </Checkbox>
                 ))}
               </Stack>
             </PopoverBody>
             <PopoverFooter>
-              <Button
-                w='full'
-                bg='purple.600'
-                color='white'
-                _hover={{
-                  bg: 'purple.800',
-                  transitionDuration: '.4s',
-                }}
-                type='submit'
-                variant='outline'>
+              <DefaultButton
+                onClick={handleCancelClick}
+                w={'fit-content'}>
                 Скасувати
-              </Button>
+              </DefaultButton>
             </PopoverFooter>
           </PopoverContent>
         </Popover>
@@ -103,16 +115,19 @@ export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
           fontSize='24'
           fontWeight='bold'
           mb='10px'>
-          Теми
+          Категорії
         </Text>
         <Stack
           direction='column'
           mb='20px'>
-          {topicsText.map((text, index) => (
+          {categories.map((category, index) => (
             <Checkbox
-              key={index}
+              isChecked={selectedCategories.includes(category.id)}
+              onChange={() => setSelectedCategories(category.id)}
+              key={category.id}
+              value={category.id}
               colorScheme='purple'>
-              {text}
+              {category.title}
             </Checkbox>
           ))}
         </Stack>
@@ -120,30 +135,27 @@ export const Filters: FC<TProps> = ({ topicsText, priceText }) => {
           fontSize='24'
           fontWeight='bold'
           mb='10px'>
-          Ціна
+          Рівень складності
         </Text>
         <Stack
           direction='column'
           mb='20px'>
-          {priceText.map((text, index) => (
+          {difficultyLevels.map((level, index) => (
             <Checkbox
-              key={index}
+              isChecked={selectedLevels.includes(index + 1)}
+              onChange={() => setSelectedLevels(index + 1)}
+              key={index + 1}
+              value={index + 1}
               colorScheme='purple'>
-              {text}
+              {level}
             </Checkbox>
           ))}
         </Stack>
-        <Button
-          bg='purple.600'
-          color='white'
-          _hover={{
-            bg: 'purple.800',
-            transitionDuration: '.4s',
-          }}
-          type='submit'
-          variant='outline'>
+        <DefaultButton
+          onClick={handleCancelClick}
+          w={'fit-content'}>
           Скасувати
-        </Button>
+        </DefaultButton>
       </Box>
     );
   }

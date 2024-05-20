@@ -3,7 +3,14 @@ import { useLazyGetCoursesQuery } from '../../store/services/courses';
 import { useShowError } from './useShowError';
 import { useAreObjectsEqual } from './useAreObjectsEqual';
 
-export type TSearchParams = { searchString?: string; orderBy?: 'asc' | 'desc' };
+export type TSearchParams = {
+  orderBy?: 'asc' | 'desc';
+  title?: string;
+  categoryIds?: number[];
+  difficultyLevels?: number[];
+  page?: number;
+  limit?: number;
+};
 
 export const useSearch = (initialValue: TSearchParams) => {
   const [previousSearchParams, setPreviousSearchParams] =
