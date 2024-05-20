@@ -19,6 +19,7 @@ import {
   useLazyGetAllCategoriesQuery,
 } from '../../store/services/courses';
 import { setCategories } from '../../store/reducers/categories.slice';
+import { TCategoriesResponse } from '../course/@types/course';
 
 export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
   const { data: session, status, update } = useSession();
@@ -77,7 +78,7 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
     if (categoriesError)
       notify('Сталася помилка при завантаженні категорій', 'error');
     if (isSuccessCategories) {
-      dispatch(setCategories(categoriesData));
+      dispatch(setCategories(categoriesData as TCategoriesResponse[]));
     }
   }, [categoriesError, isSuccessCategories]);
 
