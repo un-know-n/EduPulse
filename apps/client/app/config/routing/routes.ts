@@ -13,8 +13,8 @@ export enum Routes {
   Dashboard = dashboardPrefix,
   Course = coursePrefix,
   ProfileView = `${profilePrefix}/view`,
-  ProfileCertificate = `${profilePrefix}/certificate`,
-  ProfileSettings = `${profilePrefix}/edit`,
+  // ProfileCertificate = `${profilePrefix}/certificate`,
+  ProfileSettings = `${profilePrefix}/settings`,
   SearchCourse = `${coursePrefix}/search`,
   CreateCourse = `${coursePrefix}/create`,
 }

@@ -65,7 +65,7 @@ type TProps = {
 
 const dashboardLinks = [
   { title: 'Профіль', link: Routes.ProfileView },
-  { title: 'Сертифікати', link: Routes.ProfileCertificate },
+  // { title: 'Сертифікати', link: Routes.ProfileCertificate },
   { title: 'Налаштування', link: Routes.ProfileSettings },
   { title: 'Вийти', handler: () => signOut() },
 ];
@@ -87,12 +87,6 @@ const burgerMenuLinks: {
     href: `${Routes.Dashboard}`,
     icon: <MdLibraryBooks />,
     role: ['student', 'teacher'],
-  },
-  {
-    title: 'Створені курси',
-    href: '/course/created',
-    icon: <GiGraduateCap />,
-    role: ['teacher'],
   },
   {
     title: 'Створити курс',

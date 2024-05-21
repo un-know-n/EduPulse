@@ -1,7 +1,7 @@
 import React from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
+import { DefaultButton } from '../../../auth/shared/buttons/DefaultButton';
 
 interface CertificateProps {
   title: string;
@@ -9,14 +9,16 @@ interface CertificateProps {
   user: string;
   dateIssue: string;
   author: string;
+  buttonText?: string;
 }
 
-const CertificateGenerator: React.FC<CertificateProps> = ({
+const GenerateCertificateButton: React.FC<CertificateProps> = ({
   title,
   completion,
   user,
   dateIssue,
   author,
+  buttonText,
 }) => {
   const generateCertificate = () => {
     const certificateDiv = document.createElement('div');
@@ -135,9 +137,9 @@ const CertificateGenerator: React.FC<CertificateProps> = ({
     <DefaultButton
       mt='20px'
       onClick={generateCertificate}>
-      Завантажити сертифікат (PDF)
+      {buttonText || 'Завантажити сертифікат (PDF)'}
     </DefaultButton>
   );
 };
 
-export default CertificateGenerator;
+export default GenerateCertificateButton;

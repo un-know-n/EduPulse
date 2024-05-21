@@ -80,6 +80,95 @@ export class CourseService {
     });
   }
 
+  async searchCourses(
+    userId: string,
+    title: string,
+    categoryIds?: number[],
+    difficultyLevels?: number[],
+    orderBy: 'asc' | 'desc' = 'asc',
+    page = 1,
+    limit = 10,
+    isCreated = 0,
+  ) {
+    const skip = (page - 1) * limit;
+    const isCreatedCondition = isCreated
+      ? { creatorId: userId }
+      : { NOT: [{ creatorId: userId }] };
+
+    const [total, data] = await Promise.all([
+      this.prismaService.course.count({
+        where: {
+          ...isCreatedCondition,
+          title: {
+            contains: title,
+            mode: 'insensitive',
+          },
+          categoryId:
+            categoryIds && categoryIds.length > 0
+              ? { in: categoryIds }
+              : undefined,
+          difficultyLevel:
+            difficultyLevels && difficultyLevels.length > 0
+              ? { in: difficultyLevels }
+              : undefined,
+        },
+      }),
+      this.prismaService.course.findMany({
+        where: {
+          ...isCreatedCondition,
+          title: {
+            contains: title,
+            mode: 'insensitive',
+          },
+          categoryId:
+            categoryIds && categoryIds.length > 0
+              ? { in: categoryIds }
+              : undefined,
+          difficultyLevel:
+            difficultyLevels && difficultyLevels.length > 0
+              ? { in: difficultyLevels }
+              : undefined,
+        },
+        orderBy: {
+          createdAt: orderBy,
+        },
+        skip,
+        take: Number(limit),
+        include: {
+          category: true,
+          UsersAssignedToCourse: {
+            where: {
+              userId,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              email: true,
+              emailVerified: true,
+              name: true,
+              role: true,
+              image: true,
+            },
+          },
+          sections: {
+            include: {
+              lectures: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      data:
+        isCreated === 0
+          ? data.filter((course) => course.UsersAssignedToCourse.length)
+          : data,
+      total,
+    };
+  }
+
   async findCreatedCourses(userId: string) {
     return await this.prismaService.course.findMany({
       where: {
@@ -112,6 +201,11 @@ export class CourseService {
         UsersAssignedToCourse: {
           where: {
             userId,
+          },
+        },
+        user: {
+          select: {
+            name: true,
           },
         },
         sections: {

@@ -33,7 +33,7 @@ import NextLink from 'next/link';
 
 const infoLinks: { href: string; title: string }[] = [
   { href: `${Routes.ProfileView}`, title: 'Профіль' },
-  { href: `${Routes.ProfileCertificate}`, title: 'Сертифікати' },
+  // { href: `${Routes.ProfileCertificate}`, title: 'Сертифікати' },
   { href: `${Routes.ProfileSettings}`, title: 'Налаштування' },
 ];
 

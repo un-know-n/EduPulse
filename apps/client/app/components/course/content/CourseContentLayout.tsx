@@ -40,7 +40,7 @@ export const CourseContentLayout: FC<PropsWithChildren<TProps>> = ({
   return (
     <>
       <LayoutHeader title={headerTitle ?? 'Сторінка матеріалу'} />
-      {/* <Button onClick={() => setIsSelectionMaterialsOpen(true)}>
+      <Button onClick={() => setIsSelectionMaterialsOpen(true)}>
         Вибір матеріалу
       </Button>
       <SelectionMaterials
@@ -91,7 +91,7 @@ export const CourseContentLayout: FC<PropsWithChildren<TProps>> = ({
           </DrawerBody>
           <DrawerFooter></DrawerFooter>
         </DrawerContent>
-      </Drawer> */}
+      </Drawer>
       <Center>
         <CourseContentInfo
           courseName='Назва курса буде'

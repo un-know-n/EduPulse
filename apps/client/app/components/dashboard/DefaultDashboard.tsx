@@ -5,9 +5,10 @@ import {
   TCourseWithAuthorResponse,
   TEnrollmentResponse,
 } from '../course/@types/course';
-import { useConst } from '@chakra-ui/react';
+import { Center, useConst } from '@chakra-ui/react';
 import { CoursesList } from '../course/shared/list/CoursesList';
 import NoEnrollmentsPoster from '../shared/posters/NoEnrollmentsPoster';
+import { SearchDashboard } from './search/SearchDashboard';
 
 type TProps = {
   enrollments: TEnrollmentResponse[];
@@ -31,9 +32,12 @@ export const DefaultDashboard: FC<TProps> = ({ enrollments }) => {
   ) as unknown as TCourseWithAuthorResponse[];
 
   return (
-    <CoursesList
-      courses={courses}
-      poster={<NoEnrollmentsPoster />}
-    />
+    // <CoursesList
+    //   courses={courses}
+    //   poster={<NoEnrollmentsPoster />}
+    // />
+    <Center>
+      <SearchDashboard />
+    </Center>
   );
 };

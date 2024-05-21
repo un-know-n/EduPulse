@@ -59,10 +59,29 @@ export const coursesApi = createApi({
       query: (id) => `${coursePrefix}/${id}`,
       providesTags: [courseTag],
     }),
-    getCourses: builder.query<TCourseWithAuthorResponse[], TSearchParams>({
-      query: ({ orderBy, searchString }) =>
-        `${coursePrefix}?searchString=${searchString ?? ''}&orderBy=${
+    getCourses: builder.query<
+      { data: TCourseWithAuthorResponse[]; total: number },
+      TSearchParams
+    >({
+      query: ({
+        orderBy,
+        title,
+        categoryIds,
+        difficultyLevels,
+        limit,
+        page,
+        isCreated,
+      }) =>
+        `${coursePrefix}/search?title=${title ?? ''}&orderBy=${
           orderBy ?? ''
+        }&difficultyLevels=${
+          difficultyLevels?.length ? difficultyLevels.join(',') : ''
+        }&categoryIds=${
+          categoryIds?.length ? categoryIds.join(',') : ''
+        }&limit=${limit ?? ''}&page=${page ?? ''}${
+          typeof isCreated === 'boolean'
+            ? `&isCreated=${Number(!!isCreated)}`
+            : ''
         }`,
       providesTags: [courseTag],
     }),

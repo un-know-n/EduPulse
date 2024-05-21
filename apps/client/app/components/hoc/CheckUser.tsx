@@ -119,7 +119,8 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [session, status, session?.user.role]);
 
-  if (status === 'loading' || isLoadingCategories) return <Loading />;
+  if (status === 'loading' || isLoadingCategories || !categories.length)
+    return <Loading />;
 
   return (
     <>

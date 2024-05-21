@@ -38,6 +38,8 @@ import { useTypedDispatch, useTypedSelector } from '../../../lib/hooks/redux';
 import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
 
 export const Course: FC<TCourseResponse> = (props) => {
+  console.log('COURSE PROPS: ', props);
+
   return (
     <LayoutHeader title={props.title}>
       <CourseInfo {...props} />
@@ -163,7 +165,13 @@ const CourseInfo: FC<TCourseInfoProps> = ({
 
 type TCourseDescriptionProps = Pick<
   TCourseResponse,
-  'description' | 'sections' | 'UsersAssignedToCourse' | 'id' | 'creatorId'
+  | 'description'
+  | 'sections'
+  | 'UsersAssignedToCourse'
+  | 'id'
+  | 'creatorId'
+  | 'user'
+  | 'title'
 >;
 
 const CourseDescription: FC<TCourseDescriptionProps> = ({
@@ -171,6 +179,8 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
   description,
   sections,
   creatorId,
+  user: author,
+  title,
   UsersAssignedToCourse,
 }) => {
   const enrollment = UsersAssignedToCourse?.[0];
@@ -286,6 +296,11 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
               id={id}
               creatorId={creatorId}
               enrollment={enrollment}
+              certificate={{
+                author: author.name,
+                mark: 100,
+                title,
+              }}
               mb={3}
             />
             {user.id === creatorId ? (

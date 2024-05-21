@@ -98,6 +98,36 @@ export class CourseController {
     return this.courseService.findAll(user.id, searchString, orderBy);
   }
 
+  @Get('search')
+  async searchCourses(
+    @User() user: TUser,
+    @Query('title') title: string,
+    @Query('categoryIds') categoryIds?: string,
+    @Query('difficultyLevels') difficultyLevels?: string,
+    @Query('orderBy') orderBy?: 'asc' | 'desc',
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('isCreated') isCreated?: 0 | 1,
+  ) {
+    const categoryIdsArray = categoryIds
+      ? categoryIds.split(',').map(Number)
+      : undefined;
+    const difficultyLevelsArray = difficultyLevels
+      ? difficultyLevels.split(',').map(Number)
+      : undefined;
+
+    return this.courseService.searchCourses(
+      user.id,
+      title,
+      categoryIdsArray,
+      difficultyLevelsArray,
+      orderBy,
+      page,
+      limit,
+      isCreated,
+    );
+  }
+
   @Get('created')
   findCreatedCourses(@User() user: TUser) {
     return this.courseService.findCreatedCourses(user.id);

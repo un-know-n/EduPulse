@@ -183,6 +183,11 @@ export const CourseCard: FC<TProps> = ({
           id={id}
           creatorId={creatorId}
           enrollment={enrollment}
+          certificate={{
+            author,
+            title,
+            mark: 100,
+          }}
         />
       </CardFooter>
     </Card>
