@@ -203,6 +203,11 @@ export class CourseService {
             userId,
           },
         },
+        user: {
+          select: {
+            name: true,
+          },
+        },
         sections: {
           orderBy: {
             createdAt: 'asc',

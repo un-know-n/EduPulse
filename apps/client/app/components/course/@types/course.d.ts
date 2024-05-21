@@ -22,6 +22,7 @@ export type TCourseResponse = {
   difficultyLevel: TDifficultyLevel;
   numberOfPeopleEnrolled: number;
   sections: TSectionResponse[];
+  user: { name: string };
   UsersAssignedToCourse?: TEnrollment[];
 };
 

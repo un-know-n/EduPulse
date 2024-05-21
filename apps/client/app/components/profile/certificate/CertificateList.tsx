@@ -1,34 +1,16 @@
 import React, { FC, useState } from 'react';
-import {
-  Box,
-  Flex,
-  List,
-  ListIcon,
-  ListItem,
-  Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Stack,
-} from '@chakra-ui/react';
+import { Box, Flex, List, ListIcon, ListItem, Text } from '@chakra-ui/react';
 import { PiCertificateFill } from 'react-icons/pi';
-import CertificateGenerator from './CertificateGenerator';
 import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
 import { TCertificateResponse } from '../../course/@types/course';
-import moment from 'moment';
 import NoCertificatesPoster from '../../shared/posters/NoCertificatesPoster';
+import { CertificateModal } from '../../shared/certificate/modals/CertificateModal';
 
 type TProps = {
   certificates: TCertificateResponse[];
 };
 
 export const CertificateList: FC<TProps> = ({ certificates }) => {
-  const user = useTypedSelector((state) => state.user);
-
   const [selectedCertificate, setSelectedCertificate] =
     useState<TCertificateResponse | null>(null);
 
@@ -83,41 +65,11 @@ export const CertificateList: FC<TProps> = ({ certificates }) => {
             ))}
           </List>
           {selectedCertificate && (
-            <Modal
-              size={{ base: 'xs', md: 'md' }}
+            <CertificateModal
               isOpen={!!selectedCertificate}
-              onClose={handleCloseModal}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Отримання сертифікату</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <Stack
-                    spacing='5px'
-                    textAlign={'center'}>
-                    <Text
-                      fontSize={'20px'}
-                      fontWeight={'medium'}>
-                      Вітаємо із завершенням курсу!
-                    </Text>
-                    <Text
-                      fontSize={'24px'}
-                      fontWeight={'bold'}>
-                      «{selectedCertificate.title}»
-                    </Text>
-                  </Stack>
-                </ModalBody>
-                <ModalFooter>
-                  <CertificateGenerator
-                    title={selectedCertificate.title}
-                    completion={selectedCertificate.mark}
-                    user={user.name}
-                    dateIssue={moment().format('DD.MM.YYYY')}
-                    author={selectedCertificate.author}
-                  />
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+              onClose={handleCloseModal}
+              selectedCertificate={selectedCertificate}
+            />
           )}
         </>
       ) : (

@@ -9,6 +9,7 @@ import {
 export const useCourseButtonInfo = (
   courseId: string,
   userId: string,
+  handleCertificateModalOpen: () => void,
   enrollment?: TEnrollment,
 ) => {
   const [addEnrollment, { data, error }] = useAddEnrollmentMutation();
@@ -27,16 +28,16 @@ export const useCourseButtonInfo = (
       });
 
     if (enrollment) {
-      if (enrollment.isCompleted)
-        setButtonInfo({
-          title: 'Сертифікат',
-          callback: () => {},
-        });
-
       if (checkIfExpired(enrollment.expiresAt))
         setButtonInfo({
           title: 'Пройти знову',
           callback: () => resetEnrollment(enrollment.id),
+        });
+
+      if (enrollment.isCompleted)
+        setButtonInfo({
+          title: 'Сертифікат',
+          callback: () => handleCertificateModalOpen(),
         });
     }
   }, [enrollment]);
