@@ -23,6 +23,7 @@ import { CoursesList } from '../shared/list/CoursesList';
 import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
 import { difficultyLevels } from '../../auth/config/constants';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { levelsDictionary } from '../labels/DifficultyLabel';
 
 export type TFiltersList = { title: string; handler: () => void }[];
 
@@ -44,11 +45,16 @@ export const Search: FC = () => {
 
   const { categories } = useTypedSelector((state) => state.categories);
   const [selectedCategories, setSelectedCategories] = useState<number[]>(
-    (searchParamsURL.get('categoryIds') ?? '').split(',').map(Number) || [],
+    (searchParamsURL.get('categoryIds') ?? '')
+      .split(',')
+      .map(Number)
+      .filter((categoryId) => categoryId > 0) || [],
   );
   const [selectedLevels, setSelectedLevels] = useState<number[]>(
-    (searchParamsURL.get('difficultyLevels') ?? '').split(',').map(Number) ||
-      [],
+    (searchParamsURL.get('difficultyLevels') ?? '')
+      .split(',')
+      .map(Number)
+      .filter((level) => level > 0) || [],
   );
 
   const initialSearchParams: TSearchParams = {
@@ -132,6 +138,10 @@ export const Search: FC = () => {
       })),
     ];
   }, [selectedCategories, selectedLevels]);
+
+  useEffect(() => {
+    console.log('INITIAL SEARCH PARAMS: ', initialSearchParams);
+  }, []);
 
   useEffect(() => {
     setCurrentSearchParams((prev) => ({

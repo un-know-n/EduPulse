@@ -107,6 +107,7 @@ export class CourseController {
     @Query('orderBy') orderBy?: 'asc' | 'desc',
     @Query('page') page = 1,
     @Query('limit') limit = 10,
+    @Query('isCreated') isCreated?: 0 | 1,
   ) {
     const categoryIdsArray = categoryIds
       ? categoryIds.split(',').map(Number)
@@ -123,6 +124,7 @@ export class CourseController {
       orderBy,
       page,
       limit,
+      isCreated,
     );
   }
 

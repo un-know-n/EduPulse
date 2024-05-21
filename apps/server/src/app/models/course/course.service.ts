@@ -88,12 +88,17 @@ export class CourseService {
     orderBy: 'asc' | 'desc' = 'asc',
     page = 1,
     limit = 10,
+    isCreated = 0,
   ) {
     const skip = (page - 1) * limit;
+    const isCreatedCondition = isCreated
+      ? { creatorId: userId }
+      : { NOT: [{ creatorId: userId }] };
 
     const [total, data] = await Promise.all([
       this.prismaService.course.count({
         where: {
+          ...isCreatedCondition,
           title: {
             contains: title,
             mode: 'insensitive',
@@ -110,6 +115,7 @@ export class CourseService {
       }),
       this.prismaService.course.findMany({
         where: {
+          ...isCreatedCondition,
           title: {
             contains: title,
             mode: 'insensitive',
@@ -154,7 +160,13 @@ export class CourseService {
       }),
     ]);
 
-    return { data, total };
+    return {
+      data:
+        isCreated === 0
+          ? data.filter((course) => course.UsersAssignedToCourse.length)
+          : data,
+      total,
+    };
   }
 
   async findCreatedCourses(userId: string) {

@@ -89,12 +89,6 @@ const burgerMenuLinks: {
     role: ['student', 'teacher'],
   },
   {
-    title: 'Створені курси',
-    href: '/course/created',
-    icon: <GiGraduateCap />,
-    role: ['teacher'],
-  },
-  {
     title: 'Створити курс',
     href: `${Routes.CreateCourse}`,
     icon: <IoIosAddCircleOutline />,
