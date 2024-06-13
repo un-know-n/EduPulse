@@ -104,21 +104,22 @@ export const CourseContentInfo: FC<TProps> = ({
                 flex='1'
                 gap='10px'>
                 <IconButton
-                  colorScheme='teal'
+                  colorScheme='purple'
                   aria-label='Call Segun'
                   size='lg'
                   icon={<FaVideo />}
                   width='100%'
                 />
                 <IconButton
-                  colorScheme='teal'
+                  // colorScheme='teal'
+                  colorScheme='gray'
                   aria-label='Call Segun'
                   size='lg'
                   icon={<IoIosBookmarks />}
                   width='100%'
                 />
                 <IconButton
-                  colorScheme='teal'
+                  colorScheme='purple'
                   aria-label='Call Segun'
                   size='lg'
                   icon={<HiPencilAlt />}
@@ -136,9 +137,18 @@ export const CourseContentInfo: FC<TProps> = ({
               <CardLayout
                 materialName={materialName}
                 materialType='лекція'>
-                <CardLecture materialContent='Контент лекції' />
+                <CardLecture
+                  materialContent={`Короткі позначення у назвах уроків:
+(д) – додаткові уроки. Це більш докладне пояснення, або необов'язковий матеріал. Можна переглянути в прискореному режимі, потім або відразу промотати в кінець для того, щоб платформа зарахувала.
+
+(*) - необов'язкові завдання чи уроки.
+
+(**) - складні та необов'язкові завдання чи уроки.
+
+❗️- складні, але вкрай бажані для перегляду уроки.`}
+                />
               </CardLayout>
-              <CardLayout
+              {/* <CardLayout
                 materialName={materialName}
                 materialType='тест'>
                 <CardTest
@@ -154,7 +164,7 @@ export const CourseContentInfo: FC<TProps> = ({
                   videoURL='https://www.youtube.com/embed/n28xgaiXy8g'
                   materialContent='Бодряк кліп'
                 />
-              </CardLayout>
+              </CardLayout> */}
             </Stack>
           </TabPanel>
           <TabPanel>

@@ -1,13 +1,12 @@
-import React, { FC } from 'react';
-import { TSectionResponse } from '../../@types/course';
-import { IconButton, useDisclosure } from '@chakra-ui/react';
+import { useDisclosure, IconButton } from '@chakra-ui/react';
+import { FC } from 'react';
 import { MdOutlineSettingsSuggest } from 'react-icons/md';
-import { DefaultCourseModal } from '../modals/DefaultCourseModal';
-import { SectionForm } from '../forms/SectionForm';
+import { TTestResponse } from '../../../@types/course';
+import { SectionForm } from '../../forms/SectionForm';
+import { DefaultCourseModal } from '../../modals/DefaultCourseModal';
+import { TestForm } from '../../forms/TestForm';
 
-export const UpdateSectionButton: FC<
-  Omit<TSectionResponse, 'createdAt' | 'lectures'>
-> = (props) => {
+export const UpdateTestButton: FC<TTestResponse> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -22,10 +21,10 @@ export const UpdateSectionButton: FC<
       />
 
       <DefaultCourseModal
-        headerTitle='Змініть налаштування модуля'
+        headerTitle='Змініть налаштування тесту'
         onClose={onClose}
         isOpen={isOpen}>
-        <SectionForm
+        <TestForm
           {...props}
           onClose={onClose}
         />

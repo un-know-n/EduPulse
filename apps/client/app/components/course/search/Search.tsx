@@ -139,9 +139,9 @@ export const Search: FC = () => {
     ];
   }, [selectedCategories, selectedLevels]);
 
-  useEffect(() => {
-    console.log('INITIAL SEARCH PARAMS: ', initialSearchParams);
-  }, []);
+  // useEffect(() => {
+  //   console.log('INITIAL SEARCH PARAMS: ', initialSearchParams);
+  // }, []);
 
   useEffect(() => {
     setCurrentSearchParams((prev) => ({

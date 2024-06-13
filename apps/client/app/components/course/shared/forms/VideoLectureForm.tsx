@@ -1,30 +1,31 @@
-import { Nullable, TLectureResponse } from '../../@types/course';
-import React, { FC, useEffect, useState } from 'react';
-import {
-  useCreateLectureMutation,
-  useUpdateLectureMutation,
-} from '../../../../store/services/courses';
-import { useShowError } from '../../../../lib/hooks/useShowError';
-import { sectionSchema } from '../schemas/section';
-import { useAreObjectsEqual } from '../../../../lib/hooks/useAreObjectsEqual';
-import { FormikProvider, useFormik } from 'formik';
-import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { TextFormInput } from '../../../shared/inputs/TextFormInput';
 import { Flex } from '@chakra-ui/react';
+import { useAreObjectsEqual } from 'apps/client/app/lib/hooks/useAreObjectsEqual';
+import { useShowError } from 'apps/client/app/lib/hooks/useShowError';
+import {
+  useUpdateLectureMutation,
+  useCreateLectureMutation,
+} from 'apps/client/app/store/services/courses';
+import { useFormik, FormikProvider } from 'formik';
+import { FC, useState, useEffect } from 'react';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { DefaultButton } from '../../../auth/shared/buttons/DefaultButton';
-import { TInitialLectureValues, lectureSchema } from '../schemas/lecture';
-import { TextareaFormInput } from '../inputs/TextareaFormInput';
+import { TextFormInput } from '../../../shared/inputs/TextFormInput';
+import { Nullable, TLectureResponse } from '../../@types/course';
+import {
+  TInitialVideoLectureValues,
+  videoLectureSchema,
+} from '../schemas/video';
 
-type TProps = Nullable<Pick<TLectureResponse, 'id' | 'title' | 'content'>> &
+type TProps = Nullable<Pick<TLectureResponse, 'id' | 'title' | 'videoUrl'>> &
   Pick<TLectureResponse, 'sectionId'> & {
     onClose: () => void;
   };
 
-export const LectureForm: FC<TProps> = ({
+export const VideoLectureForm: FC<TProps> = ({
   sectionId,
   title,
   id,
-  content,
+  videoUrl,
   onClose,
 }) => {
   const [
@@ -46,32 +47,34 @@ export const LectureForm: FC<TProps> = ({
   const { notify } = useShowError(isUpdateError, false);
   useShowError(isCreateError, false);
 
-  const handleSectionSubmit = async (values: TInitialLectureValues) => {
+  const handleSectionSubmit = async (values: TInitialVideoLectureValues) => {
     if (id) {
       return updateLecture({
         id,
         title: values.title,
-        content: values.content,
+        videoUrl: values.videoUrl,
+        content: '',
       });
     }
     createLecture({
       title: values.title,
-      content: values.content,
+      videoUrl: values.videoUrl,
+      content: '',
       sectionId,
     });
   };
 
   const initialFormValues = {
     title: title ?? '',
-    content: content ?? '',
+    videoUrl: videoUrl ?? '',
   };
   const checkObjectsEquality = useAreObjectsEqual(initialFormValues);
   const [isDisabledSubmitButton, setDisabledSubmitButton] = useState(false);
 
-  const formik = useFormik<TInitialLectureValues>({
+  const formik = useFormik<TInitialVideoLectureValues>({
     initialValues: initialFormValues,
     validateOnBlur: false,
-    validationSchema: toFormikValidationSchema(lectureSchema),
+    validationSchema: toFormikValidationSchema(videoLectureSchema),
     onSubmit: (data) => handleSectionSubmit(data),
   });
 
@@ -84,10 +87,10 @@ export const LectureForm: FC<TProps> = ({
 
   useEffect(() => {
     if (isSuccessCreate) {
-      notify('Лекцію створено', 'success');
+      notify('Відеоматеріал створено', 'success');
       onClose();
     } else if (isSuccessUpdate) {
-      notify('Лекцію оновлено', 'success');
+      notify('Відеоматеріал оновлено', 'success');
       onClose();
     }
   }, [isSuccessCreate, isSuccessUpdate]);
@@ -99,14 +102,14 @@ export const LectureForm: FC<TProps> = ({
           isInvalid={Boolean(!!errors.title && touched.title)}
           errorMessage={errors.title ?? ''}
           fieldName='title'
-          label={'Назва лекції (64 символи)'}
+          label={'Назва відеоматеріалу (64 символи)'}
         />
 
-        <TextareaFormInput
-          isInvalid={Boolean(!!errors.content && touched.content)}
-          errorMessage={errors.content ?? ''}
-          fieldName='content'
-          label={'Опис лекції (1028 символів)'}
+        <TextFormInput
+          isInvalid={Boolean(!!errors.videoUrl && touched.videoUrl)}
+          errorMessage={errors.videoUrl ?? ''}
+          fieldName='videoUrl'
+          label={'Посилання на відео'}
         />
 
         <Flex

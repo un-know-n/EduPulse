@@ -19,7 +19,6 @@ import {
 import { CourseContentInfo } from '../content/CourseContentInfo';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { FaLock } from 'react-icons/fa';
-import { SelectionMaterials } from '../test/SelectionMaterials';
 type TProps = {
   headerTitle?: string;
   items: string[];
@@ -34,25 +33,17 @@ export const CourseContentLayout: FC<PropsWithChildren<TProps>> = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
-  const [isSelectionMaterialsOpen, setIsSelectionMaterialsOpen] =
-    useState(false);
 
   return (
     <>
       <LayoutHeader title={headerTitle ?? 'Сторінка матеріалу'} />
-      <Button onClick={() => setIsSelectionMaterialsOpen(true)}>
-        Вибір матеріалу
-      </Button>
-      <SelectionMaterials
-        isOpen={isSelectionMaterialsOpen}
-        onClose={() => setIsSelectionMaterialsOpen(false)}
-      />
-      <Button
+
+      {/* <Button
         ref={btnRef}
         colorScheme='teal'
         onClick={onOpen}>
         Список
-      </Button>
+      </Button> */}
       <Drawer
         isOpen={isOpen}
         placement='left'
@@ -94,9 +85,9 @@ export const CourseContentLayout: FC<PropsWithChildren<TProps>> = ({
       </Drawer>
       <Center>
         <CourseContentInfo
-          courseName='Назва курса буде'
-          moduleName='Назва модуля буде'
-          materialName='Назва матеріалу буде'
+          courseName='Front-end developer'
+          moduleName='Підготовка до роботи'
+          materialName='Умовні позначення та матеріали'
         />
       </Center>
       {children}

@@ -1,7 +1,7 @@
 import { useRemoveLectureMutation } from 'apps/client/app/store/services/courses';
 import React, { FC } from 'react';
-import { GeneralDeleteButton } from './GeneralDeleteButton';
 import { ButtonProps } from '@chakra-ui/react';
+import { GeneralDeleteButton } from '../general/GeneralDeleteButton';
 
 type Props = {
   lectureId: string;

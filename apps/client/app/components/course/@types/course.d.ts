@@ -32,6 +32,29 @@ export type TSectionResponse = {
   courseId: string;
   createdAt: string;
   lectures: TLectureResponse[];
+  tests: TTestResponse[];
+};
+
+export type TTestResponse = {
+  id: string;
+  title: string;
+  timeToPass: number;
+  totalAttempts: number;
+  sectionId: string;
+  createdAt: string;
+  questions: TQuestionResponse[];
+};
+
+type TQuestionResponse = {
+  text: string;
+  points: number;
+  isMultipleChoice: boolean;
+  answers: TAnswerResponse[];
+};
+
+type TAnswerResponse = {
+  text: string;
+  isCorrect: boolean;
 };
 
 export type TCertificateResponse = {
@@ -67,7 +90,7 @@ export type TCourseWithAuthorResponse = TCourseResponse & {
 export type TLectureResponse = Record<
   'id' | 'title' | 'content' | 'createdAt' | 'sectionId',
   string
->;
+> & { videoUrl?: string };
 
 export type TUserRoles = 'student' | 'teacher';
 

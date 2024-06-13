@@ -4,6 +4,7 @@ export const coursePrefix = '/course';
 export const enrollmentPrefix = '/enrollment';
 export const sectionPrefix = '/section';
 export const lecturePrefix = '/lecture';
+export const testPrefix = '/test';
 export const profilePrefix = '/profile';
 
 export enum Routes {

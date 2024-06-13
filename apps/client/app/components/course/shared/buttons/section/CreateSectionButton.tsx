@@ -1,16 +1,18 @@
 import React, { FC } from 'react';
-import { TLectureResponse } from '../../@types/course';
+
 import {
   Button,
   ButtonGroup,
   IconButton,
   useDisclosure,
 } from '@chakra-ui/react';
-import { DefaultCourseModal } from '../modals/DefaultCourseModal';
-import { LectureForm } from '../forms/LectureForm';
-import { IoIosAddCircleOutline } from 'react-icons/io';
 
-export const CreateLectureButton: FC<Pick<TLectureResponse, 'sectionId'>> = (
+import { IoIosAddCircleOutline } from 'react-icons/io';
+import { TSectionResponse } from '../../../@types/course';
+import { SectionForm } from '../../forms/SectionForm';
+import { DefaultCourseModal } from '../../modals/DefaultCourseModal';
+
+export const CreateSectionButton: FC<Pick<TSectionResponse, 'courseId'>> = (
   props,
 ) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,7 +28,7 @@ export const CreateLectureButton: FC<Pick<TLectureResponse, 'sectionId'>> = (
         }}
         colorScheme={'purple'}
         variant='outline'>
-        <Button>Додати лекцію</Button>
+        <Button>Додати модуль</Button>
         <IconButton
           aria-label='Add to friends'
           icon={<IoIosAddCircleOutline />}
@@ -34,10 +36,10 @@ export const CreateLectureButton: FC<Pick<TLectureResponse, 'sectionId'>> = (
       </ButtonGroup>
 
       <DefaultCourseModal
-        headerTitle='Створіть лекцію'
+        headerTitle='Створіть модуль'
         onClose={onClose}
         isOpen={isOpen}>
-        <LectureForm
+        <SectionForm
           {...props}
           onClose={onClose}
         />

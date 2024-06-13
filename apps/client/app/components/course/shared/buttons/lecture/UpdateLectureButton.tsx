@@ -1,9 +1,10 @@
 import { MdOutlineSettingsSuggest } from 'react-icons/md';
 import { IconButton, useDisclosure } from '@chakra-ui/react';
 import React, { FC } from 'react';
-import { TLectureResponse } from '../../@types/course';
-import { DefaultCourseModal } from '../modals/DefaultCourseModal';
-import { LectureForm } from '../forms/LectureForm';
+import { TLectureResponse } from '../../../@types/course';
+import { LectureForm } from '../../forms/LectureForm';
+import { DefaultCourseModal } from '../../modals/DefaultCourseModal';
+import { VideoLectureForm } from '../../forms/VideoLectureForm';
 
 export const UpdateLectureButton: FC<Omit<TLectureResponse, 'createdAt'>> = (
   props,
@@ -25,10 +26,17 @@ export const UpdateLectureButton: FC<Omit<TLectureResponse, 'createdAt'>> = (
         headerTitle='Змініть вміст лекції'
         onClose={onClose}
         isOpen={isOpen}>
-        <LectureForm
-          {...props}
-          onClose={onClose}
-        />
+        {props?.videoUrl ? (
+          <VideoLectureForm
+            {...props}
+            onClose={onClose}
+          />
+        ) : (
+          <LectureForm
+            {...props}
+            onClose={onClose}
+          />
+        )}
       </DefaultCourseModal>
     </>
   );

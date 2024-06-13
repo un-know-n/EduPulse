@@ -7,12 +7,12 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { FaTrashAlt } from 'react-icons/fa';
-import { DeleteModal } from '../modals/DeleteModal';
 
 import { useShowError } from 'apps/client/app/lib/hooks/useShowError';
 import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { Routes } from 'apps/client/app/config/routing/routes';
+import { DeleteModal } from '../../modals/DeleteModal';
 
 type Props = {
   headerTitle: string;

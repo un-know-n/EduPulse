@@ -12,18 +12,18 @@ import {
 } from '@chakra-ui/react';
 import { useField } from 'formik';
 
-interface ITimeToPassFormProps extends NumberInputProps {
+interface IProps extends NumberInputProps {
   fieldName: string;
   placeholder?: string;
   label?: string;
-  value: number;
+  // value: number;
   isInvalid: boolean;
   errorMessage: string;
   min: number;
   max: number;
 }
 
-export const TimeToPassFormInput: FC<ITimeToPassFormProps> = ({
+export const FormNumberInput: FC<IProps> = ({
   errorMessage,
   isInvalid,
   fieldName,
@@ -48,18 +48,22 @@ export const TimeToPassFormInput: FC<ITimeToPassFormProps> = ({
         size='md'
         placeholder={placeholder ?? ''}
         variant={'outline'}
-        value={props.value}
-        maxW={24}
         min={min}
-        max={max}>
+        max={max}
+        {...props}
+        onChange={(value) => {
+          const numberValue = parseInt(value);
+          const parsedValue = Number.isNaN(numberValue) ? min : numberValue;
+          // if (value > max -> max || value < min -> min) OR GIVEN VALUE
+          const transformedValue =
+            parsedValue < min ? min : parsedValue > max ? max : parsedValue;
+
+          setValue(transformedValue);
+        }}>
         <NumberInputField />
         <NumberInputStepper>
-          <NumberIncrementStepper
-            onClick={() => (value + 1 <= max ? setValue(value + 1) : null)}
-          />
-          <NumberDecrementStepper
-            onClick={() => (value - 1 >= min ? setValue(value - 1) : null)}
-          />
+          <NumberIncrementStepper />
+          <NumberDecrementStepper />
         </NumberInputStepper>
       </NumberInput>
 

@@ -1,8 +1,7 @@
 import { ButtonProps } from '@chakra-ui/react';
 import { useRemoveSectionMutation } from 'apps/client/app/store/services/courses';
 import React, { FC } from 'react';
-import { GeneralDeleteButton } from './GeneralDeleteButton';
-
+import { GeneralDeleteButton } from '../general/GeneralDeleteButton';
 type Props = {
   sectionId: string;
 };
