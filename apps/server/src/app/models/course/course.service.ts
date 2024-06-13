@@ -74,6 +74,7 @@ export class CourseService {
         sections: {
           include: {
             lectures: true,
+            tests: true,
           },
         },
       },
@@ -154,6 +155,7 @@ export class CourseService {
           sections: {
             include: {
               lectures: true,
+              tests: true,
             },
           },
         },
@@ -188,6 +190,7 @@ export class CourseService {
         sections: {
           include: {
             lectures: true,
+            tests: true,
           },
         },
       },
@@ -218,6 +221,7 @@ export class CourseService {
                 createdAt: 'asc',
               },
             },
+            tests: { include: { questions: { include: { answers: true } } } },
           },
         },
       },
@@ -237,6 +241,11 @@ export class CourseService {
           },
           include: {
             lectures: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
+            tests: {
               orderBy: {
                 createdAt: 'asc',
               },

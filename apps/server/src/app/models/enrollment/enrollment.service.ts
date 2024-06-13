@@ -130,7 +130,6 @@ export class EnrollmentService {
                   name: true,
                 },
               },
-              sections: { select: { test: true } },
             },
           },
         },
@@ -164,6 +163,7 @@ export class EnrollmentService {
             sections: {
               include: {
                 lectures: true,
+                tests: true,
               },
             },
           },

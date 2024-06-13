@@ -17,6 +17,7 @@ import { CloudinaryModule } from './common/modules/cloudinary/cloudinary.module'
 import { EnrollmentModule } from './models/enrollment/enrollment.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { EXPIRE_TIME } from './models/auth/auth.service';
+import { TestModule } from './models/test/test.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EXPIRE_TIME } from './models/auth/auth.service';
     CourseModule,
     SectionModule,
     LectureModule,
+    TestModule,
     EnrollmentModule,
     CloudinaryModule,
   ],
