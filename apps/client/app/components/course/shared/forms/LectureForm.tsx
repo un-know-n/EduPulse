@@ -12,11 +12,13 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { TextFormInput } from '../../../shared/inputs/TextFormInput';
 import { Flex } from '@chakra-ui/react';
 import { DefaultButton } from '../../../auth/shared/buttons/DefaultButton';
-import { TInitialLectureValues } from '../schemas/lecture';
+import { TInitialLectureValues, lectureSchema } from '../schemas/lecture';
 import { TextareaFormInput } from '../inputs/TextareaFormInput';
 
 type TProps = Nullable<Pick<TLectureResponse, 'id' | 'title' | 'content'>> &
-  Pick<TLectureResponse, 'sectionId'> & { onClose: () => void };
+  Pick<TLectureResponse, 'sectionId'> & {
+    onClose: () => void;
+  };
 
 export const LectureForm: FC<TProps> = ({
   sectionId,
@@ -69,7 +71,7 @@ export const LectureForm: FC<TProps> = ({
   const formik = useFormik<TInitialLectureValues>({
     initialValues: initialFormValues,
     validateOnBlur: false,
-    validationSchema: toFormikValidationSchema(sectionSchema),
+    validationSchema: toFormikValidationSchema(lectureSchema),
     onSubmit: (data) => handleSectionSubmit(data),
   });
 
@@ -102,9 +104,9 @@ export const LectureForm: FC<TProps> = ({
 
         <TextareaFormInput
           isInvalid={Boolean(!!errors.content && touched.content)}
-          errorMessage={errors.title ?? ''}
+          errorMessage={errors.content ?? ''}
           fieldName='content'
-          label={'Вміст лекції (1028 символів)'}
+          label={'Опис лекції (1028 символів)'}
         />
 
         <Flex

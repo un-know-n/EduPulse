@@ -4,6 +4,7 @@ import {
   enrollmentPrefix,
   lecturePrefix,
   sectionPrefix,
+  testPrefix,
 } from '../../config/routing/routes';
 import {
   TCategoriesResponse,
@@ -12,10 +13,21 @@ import {
   TCourseWithAuthorResponse,
   TEnrollment,
   TEnrollmentResponse,
+  TLectureResponse,
+  TTestResponse,
+  TSectionResponse,
+  TCourseContentResponse,
+  TCourseMaterialResponse,
+  TTestMaterialRequest,
 } from '../../components/course/@types/course';
 import { RootState } from '../store';
 import { objectToFormData } from '../../lib/utils/objectToFormData';
 import { TSearchParams } from '../../lib/hooks/useSearch';
+import { MaterialTypes } from '../../components/course/config/constants';
+import {
+  TCourseStatisticsResponse,
+  TCourseDatesResponse,
+} from '../../components/course/@types/course';
 
 type TCreateCourse = {
   file?: File;
@@ -36,10 +48,15 @@ type TCreateLecture = {
   sectionId: string;
   title: string;
   content: string;
+  videoUrl?: string;
 };
+
+type TCreateTest = Omit<TTestResponse, 'id' | 'createdAt'>;
 
 const courseTag = 'Courses';
 const enrollmentTag = 'Enrollments';
+const materialTag = 'Material';
+const courseStatisticsTag = 'CourseStatistics';
 
 export const coursesApi = createApi({
   reducerPath: 'coursesApi',
@@ -53,7 +70,7 @@ export const coursesApi = createApi({
       return headers;
     },
   }),
-  tagTypes: [courseTag, enrollmentTag],
+  tagTypes: [courseTag, enrollmentTag, materialTag, courseStatisticsTag],
   endpoints: (builder) => ({
     getCourseById: builder.query<TCourseResponse, string>({
       query: (id) => `${coursePrefix}/${id}`,
@@ -89,6 +106,38 @@ export const coursesApi = createApi({
       query: () => `${coursePrefix}/created`,
       providesTags: [courseTag],
     }),
+    getCourseContent: builder.query<TCourseContentResponse, string>({
+      query: (id) => `${coursePrefix}/${id}/content`,
+    }),
+    getCourseStatistics: builder.query<TCourseStatisticsResponse, string>({
+      query: (id) => `${coursePrefix}/${id}/statistics`,
+      providesTags: [courseStatisticsTag],
+    }),
+    getCourseDates: builder.query<TCourseDatesResponse, string>({
+      query: (id) => `${coursePrefix}/${id}/dates`,
+      providesTags: [courseStatisticsTag],
+    }),
+    getCourseMaterialById: builder.query<
+      TCourseMaterialResponse,
+      {
+        courseId: string;
+        sectionId: string;
+        materialId: string;
+        type: Omit<keyof typeof MaterialTypes, 'VIDEO'>;
+      }
+    >({
+      query: ({ courseId, materialId, sectionId, type }) =>
+        `${coursePrefix}/${courseId}/material/${sectionId}/${materialId}?type=${type}`,
+      providesTags: [materialTag],
+    }),
+    passCourseTest: builder.mutation<void, TTestMaterialRequest>({
+      query: ({ testId, answers }) => ({
+        url: `${testPrefix}/${testId}`,
+        method: 'POST',
+        body: { answers },
+      }),
+      invalidatesTags: [materialTag, courseStatisticsTag],
+    }),
     createCourse: builder.mutation<TCourseResponse, TCreateCourse>({
       query: ({ file, ...body }) => {
         const formData = objectToFormData(body);
@@ -117,7 +166,7 @@ export const coursesApi = createApi({
       },
       invalidatesTags: [courseTag],
     }),
-    createSection: builder.mutation<TCourseResponse, TCreateSection>({
+    createSection: builder.mutation<TSectionResponse, TCreateSection>({
       query: ({ courseId, title }) => ({
         url: `${sectionPrefix}?courseId=${courseId}`,
         method: 'POST',
@@ -126,7 +175,7 @@ export const coursesApi = createApi({
       invalidatesTags: [courseTag],
     }),
     updateSection: builder.mutation<
-      TCourseResponse,
+      TSectionResponse,
       Omit<TCreateSection, 'courseId'> & { id: string }
     >({
       query: ({ id, title }) => {
@@ -138,7 +187,27 @@ export const coursesApi = createApi({
       },
       invalidatesTags: [courseTag],
     }),
-    createLecture: builder.mutation<TCourseResponse, TCreateLecture>({
+
+    createTest: builder.mutation<TTestResponse, TCreateTest>({
+      query: ({ sectionId, ...body }) => ({
+        url: `${testPrefix}?sectionId=${sectionId}`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [courseTag],
+    }),
+    updateTest: builder.mutation<
+      TTestResponse,
+      Omit<TCreateTest, 'sectionId'> & { id: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `${testPrefix}/${id}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: [courseTag],
+    }),
+    createLecture: builder.mutation<TLectureResponse, TCreateLecture>({
       query: ({ sectionId, ...body }) => ({
         url: `${lecturePrefix}?sectionId=${sectionId}`,
         method: 'POST',
@@ -147,7 +216,7 @@ export const coursesApi = createApi({
       invalidatesTags: [courseTag],
     }),
     updateLecture: builder.mutation<
-      TCourseResponse,
+      TLectureResponse,
       Omit<TCreateLecture, 'sectionId'> & { id: string }
     >({
       query: ({ id, ...body }) => ({
@@ -164,14 +233,21 @@ export const coursesApi = createApi({
       }),
       // invalidatesTags: [courseTag],
     }),
-    removeSection: builder.mutation<TCourseResponse, string>({
+    removeSection: builder.mutation<TSectionResponse, string>({
       query: (id) => ({
         url: `${sectionPrefix}/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [courseTag],
     }),
-    removeLecture: builder.mutation<TCourseResponse, string>({
+    removeTest: builder.mutation<TTestResponse, string>({
+      query: (id) => ({
+        url: `${testPrefix}/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [courseTag],
+    }),
+    removeLecture: builder.mutation<TLectureResponse, string>({
       query: (id) => ({
         url: `${lecturePrefix}/${id}`,
         method: 'DELETE',
@@ -214,16 +290,24 @@ export const {
   useLazyGetAllCategoriesQuery,
   useGetCertificatesQuery,
   useGetCourseByIdQuery,
+  useGetCourseContentQuery,
+  useGetCourseDatesQuery,
+  useGetCourseStatisticsQuery,
+  useLazyGetCourseMaterialByIdQuery,
+  usePassCourseTestMutation,
   useAddEnrollmentMutation,
   useLazyGetCourseByIdQuery,
   useResetEnrollmentMutation,
   useCreateCourseMutation,
   useCreateLectureMutation,
+  useCreateTestMutation,
   useCreateSectionMutation,
   useUpdateCourseMutation,
+  useUpdateTestMutation,
   useUpdateLectureMutation,
   useUpdateSectionMutation,
   useRemoveLectureMutation,
+  useRemoveTestMutation,
   useRemoveSectionMutation,
   useRemoveCourseMutation,
   useGetEnrollmentsByIdQuery,

@@ -1,12 +1,14 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { TLectureResponse } from '../../@types/course';
 import { Flex, Text, Box } from '@chakra-ui/react';
-import { UpdateLectureButton } from '../buttons/UpdateLectureButton';
-import { DeleteLectureButton } from '../buttons/DeleteLectureButton';
+import { DeleteLectureButton } from '../buttons/lecture/DeleteLectureButton';
+import { UpdateLectureButton } from '../buttons/lecture/UpdateLectureButton';
+import { FaBookBookmark, FaVideo } from 'react-icons/fa6';
+import { MaterialIcon } from '../icons/MaterialIcon';
 
 export const LectureItem: FC<
   TLectureResponse & { bgColor?: string; index: string | number }
-> = ({ title, id, content, sectionId, index, bgColor }) => {
+> = ({ title, id, content, sectionId, index, bgColor, videoUrl }) => {
   return (
     <Flex
       w={'full'}
@@ -20,11 +22,20 @@ export const LectureItem: FC<
         w={'full'}
         alignItems={'center'}
         justifyContent={'space-between'}>
-        <Text>
-          {index}. {title}
-        </Text>
+        <Flex
+          alignItems={'center'}
+          gap={3}>
+          {videoUrl ? (
+            <MaterialIcon type='VIDEO' />
+          ) : (
+            <MaterialIcon type='LECTURE' />
+          )}
+          <Text>{title}</Text>
+        </Flex>
+
         <Box>
           <UpdateLectureButton
+            videoUrl={videoUrl}
             content={content}
             sectionId={sectionId}
             title={title}
@@ -36,8 +47,6 @@ export const LectureItem: FC<
           />
         </Box>
       </Flex>
-
-      <Text>{content}</Text>
     </Flex>
   );
 };

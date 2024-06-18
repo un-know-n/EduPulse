@@ -13,11 +13,12 @@ import {
   List,
   ListIcon,
   ListItem,
-  OrderedList,
+  Link,
   Text,
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
+  useConst,
 } from '@chakra-ui/react';
 import { MdCheckCircle } from 'react-icons/md';
 import { FaRegBookmark } from 'react-icons/fa';
@@ -33,9 +34,15 @@ import moment from 'moment/moment';
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { getFormattedTime } from '../../../lib/utils/time';
 import { CourseButton } from '../shared/buttons/CourseButton';
+import NextLink from 'next/link';
 
 import { useTypedDispatch, useTypedSelector } from '../../../lib/hooks/redux';
 import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
+import { getUkrainianPluralWord } from 'apps/client/app/lib/utils/getUkrainianPluralWord';
+import { getSortedMaterialItems } from 'apps/client/app/lib/utils/getSortedMaterialItems';
+import { MaterialIcon } from '../shared/icons/MaterialIcon';
+import { MaterialTypes } from '../config/constants';
+import { coursePrefix } from 'apps/client/app/config/routing/routes';
 
 export const Course: FC<TCourseResponse> = (props) => {
   console.log('COURSE PROPS: ', props);
@@ -186,6 +193,11 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
   const enrollment = UsersAssignedToCourse?.[0];
   const user = useTypedSelector((state) => state.user);
 
+  const [totalLectures, totalTests] = useConst(() => [
+    sections.reduce((acc, section) => (acc += section.lectures.length), 0),
+    sections.reduce((acc, section) => (acc += section.tests.length), 0),
+  ]);
+
   const { colorMode } = useColorMode();
   const textStyles = colorMode === 'light' ? textStyleLight : textStyleDark;
   const headingStyles =
@@ -195,7 +207,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
     <Center>
       <Flex
         p='5'
-        direction={{ base: 'column', md: 'row' }}
+        direction={{ base: 'column-reverse', md: 'row' }}
         justifyContent={'space-between'}
         {...ContainerOptions}>
         <Box
@@ -204,7 +216,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
           <Heading
             {...headingStyles}
             mb={5}>
-            ПРО КУРС
+            Про курс
           </Heading>
           <Text
             {...textStyles}
@@ -214,7 +226,7 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
           <Heading
             {...headingStyles}
             mb={5}>
-            ПРОГРАМА КУРСУ
+            Програма курсу
           </Heading>
           <Accordion
             defaultIndex={[0]}
@@ -225,67 +237,83 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
               <AccordionItem
                 key={section.id}
                 w='full'>
-                <AccordionButton>
-                  <Box
-                    {...textStyles}
-                    as='span'
-                    flex='1'
-                    textAlign='left'>
-                    {section.title}
-                  </Box>
-                  <AccordionIcon />
+                <AccordionButton
+                  backdropFilter='auto'
+                  backdropBrightness='95%'>
+                  <Flex
+                    w={'full'}
+                    justifyContent={'space-between'}>
+                    <Box
+                      {...textStyles}
+                      as='span'
+                      flex='1'
+                      maxW={'60%'}
+                      textAlign='left'>
+                      <Text isTruncated>{section.title}</Text>
+                    </Box>
+                    <Flex>
+                      <Flex display={{ base: 'none', md: 'flex' }}>
+                        <Text>{`${
+                          section.lectures.length
+                        } ${getUkrainianPluralWord(
+                          'лекції',
+                          section.lectures.length,
+                        )}`}</Text>
+
+                        <Text mx={2}>•</Text>
+                        <Text>{`${
+                          section.tests.length
+                        } ${getUkrainianPluralWord(
+                          'тести',
+                          section.tests.length,
+                        )}`}</Text>
+                      </Flex>
+                      <AccordionIcon />
+                    </Flex>
+                  </Flex>
                 </AccordionButton>
 
                 <AccordionPanel pb={4}>
-                  <OrderedList {...textStyles}>
-                    {section.lectures.map((lecture, i) => (
+                  <List spacing={3}>
+                    {getSortedMaterialItems(
+                      section.lectures,
+                      section.tests,
+                    ).map((material) => (
                       <ListItem
-                        key={lecture.id}
-                        mb={3}>
-                        <Heading
-                          as='h4'
-                          size='md'>
-                          (Тема {i + 1}) {lecture.title}
-                        </Heading>
-                        {enrollment ? <Text>{lecture.content}</Text> : null}
+                        display={'flex'}
+                        alignItems={'center'}
+                        key={material.id}>
+                        <ListIcon
+                          color={
+                            material.type === MaterialTypes.TEST
+                              ? 'gray.500'
+                              : 'purple.500'
+                          }>
+                          <MaterialIcon
+                            type={material.type}
+                            size={'24px'}
+                          />
+                        </ListIcon>
+                        {enrollment ? (
+                          <Link
+                            as={NextLink}
+                            href={`${coursePrefix}/${id}/content?sectionId=${section.id}&materialId=${material.id}`}
+                            color='#9872EA'>
+                            {material.title}
+                          </Link>
+                        ) : (
+                          <Text
+                            as='h4'
+                            size='md'>
+                            {material.title}
+                          </Text>
+                        )}
                       </ListItem>
                     ))}
-                  </OrderedList>
-                  <Flex
-                    justifyContent={'flex-start'}
-                    alignItems={'center'}
-                    gap={2}>
-                    <MdCheckCircle color='38A169' />
-                    <Text>Тест</Text>
-                  </Flex>
+                  </List>
                 </AccordionPanel>
               </AccordionItem>
             ))}
-
-            <AccordionItem>
-              <AccordionButton>
-                <Box
-                  {...textStyles}
-                  as='span'
-                  flex='1'
-                  textAlign='left'>
-                  Сертифікат
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-
-              <AccordionPanel pb={4}>
-                <List>
-                  <ListItem {...textStyles}>
-                    <ListIcon
-                      as={MdCheckCircle}
-                      color='green.500'
-                    />
-                    Сертифікат
-                  </ListItem>
-                </List>
-              </AccordionPanel>
-            </AccordionItem>
           </Accordion>
         </Box>
         <Box textAlign={{ base: 'center', md: 'left' }}>
@@ -319,16 +347,15 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
           <Text
             {...textStyles}
             mb={2}>
-            {sections.reduce(
-              (acc, section) => (acc += section.lectures.length),
-              0,
-            )}{' '}
-            лекцій(-ї)
+            {`${totalLectures} ${getUkrainianPluralWord(
+              'лекції',
+              totalLectures,
+            )}`}
           </Text>
           <Text
             {...textStyles}
             mb={2}>
-            {sections.length} тест(-и)
+            {`${totalTests} ${getUkrainianPluralWord('тести', totalTests)}`}
           </Text>
         </Box>
       </Flex>

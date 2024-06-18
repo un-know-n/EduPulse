@@ -7,25 +7,21 @@ import { PrismaService } from '../../prisma.service';
 export class LectureService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(sectionId: string, { title, content }: CreateLectureDto) {
+  async create(sectionId: string, data: CreateLectureDto) {
     return await this.prismaService.lecture.create({
       data: {
         section: { connect: { id: sectionId } },
-        title,
-        content,
+        ...data,
       },
     });
   }
 
-  async update(id: string, { title, content }: UpdateLectureDto) {
+  async update(id: string, data: UpdateLectureDto) {
     return await this.prismaService.lecture.update({
       where: {
         id,
       },
-      data: {
-        title,
-        content,
-      },
+      data,
     });
   }
 

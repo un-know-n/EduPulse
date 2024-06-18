@@ -16,7 +16,7 @@ import { FormikProvider, useFormik } from 'formik';
 import { TextFormInput } from '../../shared/inputs/TextFormInput';
 import { TextareaFormInput } from '../shared/inputs/TextareaFormInput';
 import { DifficultyFormInput } from '../shared/inputs/DifficultyFormInput';
-import { TimeToPassFormInput } from '../shared/inputs/TimeToPassFormInput';
+import { FormNumberInput } from '../shared/inputs/FormNumberInput';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
   useCreateCourseMutation,
@@ -30,16 +30,17 @@ import { DefaultButton } from '../../auth/shared/buttons/DefaultButton';
 import moment from 'moment/moment';
 import { useAreObjectsEqual } from '../../../lib/hooks/useAreObjectsEqual';
 import { SectionItem } from '../shared/list/SectionItem';
-import { CreateSectionButton } from '../shared/buttons/CreateSectionButton';
+
 import CreateCoursePoster from '../../shared/posters/CreateCoursePoster';
 import Loading from '../../../loading';
 import { CategoryFormInput } from '../shared/inputs/CategoryFormInput';
 import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
+import { CreateSectionButton } from '../shared/buttons/section/CreateSectionButton';
 
 type TAlterCourseProps = Nullable<TCourseResponse> & { pageTitle: string };
 
 export const AlterCourse: FC<TAlterCourseProps> = ({ pageTitle, ...props }) => {
-  console.log('PROPS: ', props);
+  // console.log('PROPS: ', props);
   return (
     <LayoutHeader title={pageTitle}>
       <CourseInfoForm {...props} />
@@ -176,7 +177,7 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
   const onCourseUpdate = async (values: TInitialValues) => {
     const { difficultyLevel, timeToPass, ...body } = values;
 
-    console.log('update course: ', body);
+    // console.log('update course: ', body);
 
     updateCourse({
       id: id ?? '',
@@ -273,14 +274,13 @@ const CourseInfoForm: FC<TCourseInfoTableProps> = ({
                       onChange={handleChange}
                     />
 
-                    <TimeToPassFormInput
+                    <FormNumberInput
                       isInvalid={Boolean(
                         !!errors.timeToPass && touched.timeToPass,
                       )}
                       errorMessage={errors.timeToPass ?? ''}
                       fieldName='timeToPass'
-                      onChange={handleChange}
-                      value={values.timeToPass}
+                      maxW={24}
                       min={1}
                       max={30}
                       label={'Час на проходження курсу (днів)'}

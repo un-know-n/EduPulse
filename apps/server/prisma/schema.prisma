@@ -36,13 +36,13 @@ model User {
   password          String?
   role              String?
   image             String?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime            @default(now())
   accounts          Account[]
   VerificationToken VerificationToken[]
   createdCourses    Course[]
 
   UsersAssignedToCourse UsersAssignedToCourse[]
-  FavoriteCourses FavoriteCourses[]
+  FavoriteCourses       FavoriteCourses[]
 }
 
 model VerificationToken {
@@ -56,29 +56,9 @@ model VerificationToken {
   @@unique([id, token])
 }
 
-model UsersAssignedToCourse {
-  id          String   @id @default(cuid())  
-  userId      String
-  courseId    String
-  assignedAt  DateTime @default(now())
-  expiresAt   DateTime
-  isCompleted Boolean  @default(true)
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
-
-model FavoriteCourses {
-  id String @id @default(cuid())
-  userId      String
-  courseId    String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
-
 model Category {
-  id                     Int    @id @default(autoincrement())
-  title String
+  id     Int      @id @default(autoincrement())
+  title  String
   course Course[]
 }
 
@@ -90,6 +70,7 @@ model Course {
   creatorId              String
   categoryId             Int?
   createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt @default(now())
   timeToPass             Int
   image                  String?
   difficultyLevel        Int
@@ -97,9 +78,9 @@ model Course {
   sections               Section[]
 
   user                  User                    @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  category Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category              Category?               @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   UsersAssignedToCourse UsersAssignedToCourse[]
-  FavoriteCourses FavoriteCourses[]
+  FavoriteCourses       FavoriteCourses[]
 }
 
 model Section {
@@ -108,7 +89,7 @@ model Section {
   courseId  String
   createdAt DateTime  @default(now())
   lectures  Lecture[]
-  test     Test?
+  tests     Test[]
 
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -125,32 +106,73 @@ model Lecture {
 }
 
 model Test {
-  id        String     @id @default(cuid())
-  title     String
-  mark Int @default(0)
-  isCompleted Boolean @default(false)
-  questions Question[]
-  sectionId  String     @unique
+  id            String       @id @default(cuid())
+  title         String
+  timeToPass    Int          @default(60000)
+  totalAttempts Int          @default(2)
+  createdAt     DateTime     @default(now())
+  questions     Question[]
+  sectionId     String
+  testResult    TestResult[]
 
   section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Question {
-  id             String   @id @default(cuid())
-  text           String
-  points         Int
-  multipleChoice Boolean
-  answers        Answer[]
-  testId         String
+  id               String   @id @default(cuid())
+  text             String
+  points           Int
+  isMultipleChoice Boolean
+  answers          Answer[]
+  testId           String
 
-  test           Test     @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  test Test @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Answer {
-  id         String   @id @default(cuid())
+  id         String  @id @default(cuid())
   text       String
   questionId String
   isCorrect  Boolean
 
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model TestResult {
+  id             String  @id @default(cuid())
+  score          Int     @default(0)
+  isCompleted    Boolean @default(false)
+  currentAttempt Int
+  enrollmentId   String
+  testId         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+  UsersAssignedToCourse UsersAssignedToCourse @relation(fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  test Test @relation(fields: [testId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model UsersAssignedToCourse {
+  id          String       @id @default(cuid())
+  userId      String
+  courseId    String
+  assignedAt  DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt @default(now())
+  expiresAt   DateTime
+  isCompleted Boolean      @default(false)
+  isFailed    Boolean      @default(false)
+  testResult  TestResult[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model FavoriteCourses {
+  id       String @id @default(cuid())
+  userId   String
+  courseId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

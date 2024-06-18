@@ -41,3 +41,52 @@ ul {
   color: rgb(120, 70, 229);
   transition-duration: 0.4s;
 }
+
+/* For WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px; /* For horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(163, 163, 163);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(163, 163, 163) transparent;
+}
+
+/* Optional: To ensure consistent scrollbar styles across different elements */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(163, 163, 163) transparent;
+}
+
+/* Edge and IE don't support the CSS custom properties, 
+   so the following is needed for consistent scrollbar styles: */
+::-ms-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-ms-scrollbar-track {
+  background: none;
+}
+
+::-ms-scrollbar-thumb {
+  background-color: rgb(163, 163, 163);
+}
+
+::-ms-scrollbar-button {
+  display: none;
+}

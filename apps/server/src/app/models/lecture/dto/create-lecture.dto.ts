@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreateLectureDto {
   @IsString()
@@ -6,4 +6,8 @@ export class CreateLectureDto {
 
   @IsString()
   content: string;
+
+  @IsOptional()
+  @IsString()
+  videoUrl: string;
 }

@@ -1,24 +1,64 @@
-import React, { FC } from 'react';
-import { CourseContentLayout } from '../content/CourseContentLayout';
-import { CommentsContentLayout } from '../comments/CommentsContentLayout';
+'use client';
 
-export const CourseContent: FC = () => {
-  return (
-    <CourseContentLayout
-      items={['Назва модуля буде', 'Дадада']}
-      subitems={[
-        ['Назва матеріалу буде', 'аіваіва', 'аіваіва'],
-        ['аіваіва', 'аіваіва'],
-      ]}>
-      <CourseContentComment />
-    </CourseContentLayout>
-  );
+import React, { FC, useEffect } from 'react';
+
+import { CommentsContentLayout } from '../content/comments/CommentsContentLayout';
+
+import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
+
+import { CourseContentInfo } from '../content/tabs/CourseContentInfo';
+import { Header } from '../../shared/header/Header';
+import { ContentMaterialList } from '../content/list/ContentMaterialList';
+import { useShowError } from 'apps/client/app/lib/hooks/useShowError';
+
+import {
+  useGetCourseByIdQuery,
+  useGetCourseContentQuery,
+} from 'apps/client/app/store/services/courses';
+import { Center, Flex } from '@chakra-ui/react';
+import Loading from 'apps/client/app/loading';
+
+type TProps = {
+  id: string;
 };
 
-export const CourseContentComment: FC = () => {
+export const CourseContent: FC<TProps> = ({ id }) => {
+  const user = useTypedSelector((state) => state.user);
+  const { data, error } = useGetCourseContentQuery(id);
+  useShowError(error);
+
+  useEffect(() => {
+    console.log('DATAAAAAAAAA: ', data);
+  });
+
   return (
-    <CommentsContentLayout
-      imageUrl=''
-      quantityComment={1233}></CommentsContentLayout>
+    <>
+      {data ? (
+        <Header
+          title={`Матеріали курсу "${data.title}"`}
+          additionalDrawerContent={
+            <ContentMaterialList
+              courseId={id}
+              sections={data.sections}
+            />
+          }>
+          <Flex
+            justifyContent={'center'}
+            alignItems={'flex-start'}
+            minH={'50vh'}>
+            <CourseContentInfo
+              courseTitle={data.title}
+              courseId={id}
+              sections={data.sections}
+            />
+          </Flex>
+          <CommentsContentLayout
+            imageUrl={user.image ?? ''}
+            quantityComment={0}></CommentsContentLayout>
+        </Header>
+      ) : (
+        <Loading />
+      )}
+    </>
   );
 };

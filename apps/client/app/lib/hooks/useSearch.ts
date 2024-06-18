@@ -39,7 +39,7 @@ export const useSearch = (initialValue: TSearchParams) => {
   );
 
   const handleSearch = (isCreated?: boolean) => {
-    console.log(typeof isCreated === 'boolean', isCreated);
+    // console.log(typeof isCreated === 'boolean', isCreated);
     if (!isDisabledSearchButton || typeof isCreated === 'boolean') {
       setPreviousSearchParams(currentSearchParams);
       getCoursesByParams({ ...currentSearchParams, isCreated });
