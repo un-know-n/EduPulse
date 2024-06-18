@@ -13,7 +13,7 @@ import {
   List,
   ListIcon,
   ListItem,
-  OrderedList,
+  Link,
   Text,
   useColorMode,
   useColorModeValue,
@@ -34,6 +34,7 @@ import moment from 'moment/moment';
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { getFormattedTime } from '../../../lib/utils/time';
 import { CourseButton } from '../shared/buttons/CourseButton';
+import NextLink from 'next/link';
 
 import { useTypedDispatch, useTypedSelector } from '../../../lib/hooks/redux';
 import { DeleteCourseButton } from '../shared/buttons/DeleteCourseButton';
@@ -41,9 +42,10 @@ import { getUkrainianPluralWord } from 'apps/client/app/lib/utils/getUkrainianPl
 import { getSortedMaterialItems } from 'apps/client/app/lib/utils/getSortedMaterialItems';
 import { MaterialIcon } from '../shared/icons/MaterialIcon';
 import { MaterialTypes } from '../config/constants';
+import { coursePrefix } from 'apps/client/app/config/routing/routes';
 
 export const Course: FC<TCourseResponse> = (props) => {
-  // console.log('COURSE PROPS: ', props);
+  console.log('COURSE PROPS: ', props);
 
   return (
     <LayoutHeader title={props.title}>
@@ -273,17 +275,6 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
 
                 <AccordionPanel pb={4}>
                   <List spacing={3}>
-                    {/* {section.lectures.map((lecture, i) => (
-                      <ListItem key={lecture.id}>
-                        <Heading
-                          as='h4'
-                          size='md'>
-                          (Тема {i + 1}) {lecture.title}
-                        </Heading>
-                        {enrollment ? <Text>{lecture.content}</Text> : null}
-                      </ListItem>
-                    ))} */}
-
                     {getSortedMaterialItems(
                       section.lectures,
                       section.tests,
@@ -303,12 +294,20 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
                             size={'24px'}
                           />
                         </ListIcon>
-                        <Text
-                          as='h4'
-                          size='md'>
-                          {material.title}
-                        </Text>
-                        {/* {enrollment ? <Text>{lecture.content}</Text> : null} */}
+                        {enrollment ? (
+                          <Link
+                            as={NextLink}
+                            href={`${coursePrefix}/${id}/content?sectionId=${section.id}&materialId=${material.id}`}
+                            color='#9872EA'>
+                            {material.title}
+                          </Link>
+                        ) : (
+                          <Text
+                            as='h4'
+                            size='md'>
+                            {material.title}
+                          </Text>
+                        )}
                       </ListItem>
                     ))}
                   </List>

@@ -16,10 +16,18 @@ import {
   TLectureResponse,
   TTestResponse,
   TSectionResponse,
+  TCourseContentResponse,
+  TCourseMaterialResponse,
+  TTestMaterialRequest,
 } from '../../components/course/@types/course';
 import { RootState } from '../store';
 import { objectToFormData } from '../../lib/utils/objectToFormData';
 import { TSearchParams } from '../../lib/hooks/useSearch';
+import { MaterialTypes } from '../../components/course/config/constants';
+import {
+  TCourseStatisticsResponse,
+  TCourseDatesResponse,
+} from '../../components/course/@types/course';
 
 type TCreateCourse = {
   file?: File;
@@ -47,6 +55,8 @@ type TCreateTest = Omit<TTestResponse, 'id' | 'createdAt'>;
 
 const courseTag = 'Courses';
 const enrollmentTag = 'Enrollments';
+const materialTag = 'Material';
+const courseStatisticsTag = 'CourseStatistics';
 
 export const coursesApi = createApi({
   reducerPath: 'coursesApi',
@@ -60,7 +70,7 @@ export const coursesApi = createApi({
       return headers;
     },
   }),
-  tagTypes: [courseTag, enrollmentTag],
+  tagTypes: [courseTag, enrollmentTag, materialTag, courseStatisticsTag],
   endpoints: (builder) => ({
     getCourseById: builder.query<TCourseResponse, string>({
       query: (id) => `${coursePrefix}/${id}`,
@@ -95,6 +105,38 @@ export const coursesApi = createApi({
     getCreatedCourses: builder.query<TCourseWithAuthorResponse[], null>({
       query: () => `${coursePrefix}/created`,
       providesTags: [courseTag],
+    }),
+    getCourseContent: builder.query<TCourseContentResponse, string>({
+      query: (id) => `${coursePrefix}/${id}/content`,
+    }),
+    getCourseStatistics: builder.query<TCourseStatisticsResponse, string>({
+      query: (id) => `${coursePrefix}/${id}/statistics`,
+      providesTags: [courseStatisticsTag],
+    }),
+    getCourseDates: builder.query<TCourseDatesResponse, string>({
+      query: (id) => `${coursePrefix}/${id}/dates`,
+      providesTags: [courseStatisticsTag],
+    }),
+    getCourseMaterialById: builder.query<
+      TCourseMaterialResponse,
+      {
+        courseId: string;
+        sectionId: string;
+        materialId: string;
+        type: Omit<keyof typeof MaterialTypes, 'VIDEO'>;
+      }
+    >({
+      query: ({ courseId, materialId, sectionId, type }) =>
+        `${coursePrefix}/${courseId}/material/${sectionId}/${materialId}?type=${type}`,
+      providesTags: [materialTag],
+    }),
+    passCourseTest: builder.mutation<void, TTestMaterialRequest>({
+      query: ({ testId, answers }) => ({
+        url: `${testPrefix}/${testId}`,
+        method: 'POST',
+        body: { answers },
+      }),
+      invalidatesTags: [materialTag, courseStatisticsTag],
     }),
     createCourse: builder.mutation<TCourseResponse, TCreateCourse>({
       query: ({ file, ...body }) => {
@@ -248,6 +290,11 @@ export const {
   useLazyGetAllCategoriesQuery,
   useGetCertificatesQuery,
   useGetCourseByIdQuery,
+  useGetCourseContentQuery,
+  useGetCourseDatesQuery,
+  useGetCourseStatisticsQuery,
+  useLazyGetCourseMaterialByIdQuery,
+  usePassCourseTestMutation,
   useAddEnrollmentMutation,
   useLazyGetCourseByIdQuery,
   useResetEnrollmentMutation,

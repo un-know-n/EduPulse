@@ -15,8 +15,11 @@ import {
   TInitialVideoLectureValues,
   videoLectureSchema,
 } from '../schemas/video';
+import { TextareaFormInput } from '../inputs/TextareaFormInput';
 
-type TProps = Nullable<Pick<TLectureResponse, 'id' | 'title' | 'videoUrl'>> &
+type TProps = Nullable<
+  Pick<TLectureResponse, 'id' | 'title' | 'videoUrl' | 'content'>
+> &
   Pick<TLectureResponse, 'sectionId'> & {
     onClose: () => void;
   };
@@ -25,6 +28,7 @@ export const VideoLectureForm: FC<TProps> = ({
   sectionId,
   title,
   id,
+  content,
   videoUrl,
   onClose,
 }) => {
@@ -53,19 +57,20 @@ export const VideoLectureForm: FC<TProps> = ({
         id,
         title: values.title,
         videoUrl: values.videoUrl,
-        content: '',
+        content: values.content,
       });
     }
     createLecture({
       title: values.title,
       videoUrl: values.videoUrl,
-      content: '',
+      content: values.content,
       sectionId,
     });
   };
 
   const initialFormValues = {
     title: title ?? '',
+    content: content ?? '',
     videoUrl: videoUrl ?? '',
   };
   const checkObjectsEquality = useAreObjectsEqual(initialFormValues);
@@ -110,6 +115,13 @@ export const VideoLectureForm: FC<TProps> = ({
           errorMessage={errors.videoUrl ?? ''}
           fieldName='videoUrl'
           label={'Посилання на відео'}
+        />
+
+        <TextareaFormInput
+          isInvalid={Boolean(!!errors.content && touched.content)}
+          errorMessage={errors.content ?? ''}
+          fieldName='content'
+          label={'Опис до відеоматеріалу (1028 символів)'}
         />
 
         <Flex

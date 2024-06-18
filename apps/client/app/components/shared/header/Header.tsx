@@ -40,10 +40,12 @@ import {
   useColorModeValue,
   useDisclosure,
   Tooltip,
+  useConst,
+  IconButton,
 } from '@chakra-ui/react';
 import { themeColors } from '../../../config/UI/theme';
 import { signOut } from 'next-auth/react';
-import { FC, PropsWithChildren, ReactElement } from 'react';
+import { FC, PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import { BsFillMoonStarsFill, BsFillSunFill } from 'react-icons/bs';
 import { IoIosAddCircleOutline, IoMdNotifications } from 'react-icons/io';
@@ -61,6 +63,9 @@ import { useRouter } from 'next/navigation';
 
 type TProps = {
   title: string;
+  additionalDrawerContent?: ReactNode | undefined;
+  additionalDrawerFooterContent?: ReactNode | undefined;
+  drawerTitle?: string;
 };
 
 const dashboardLinks = [
@@ -98,7 +103,13 @@ const burgerMenuLinks: {
 
 const authors = ['Добровольський Євгеній', 'Мартинець Артем'];
 
-export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
+export const Header: FC<PropsWithChildren<TProps>> = ({
+  title,
+  children,
+  additionalDrawerContent,
+  additionalDrawerFooterContent,
+  drawerTitle,
+}) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -110,6 +121,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
   const backgroundColor = useColorModeValue(...themeColors);
 
   const user = useTypedSelector((state) => state.user);
+  const headerHeight = useConst(64); //height in px;
 
   return (
     <>
@@ -147,16 +159,22 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
         bg={backgroundColor}
         px={4}>
         <Flex
-          h={16}
+          h={`${headerHeight}px`}
           alignItems={'center'}
           justifyContent={'space-between'}>
           <Flex
             gap={3}
             alignItems='center'>
-            <Button onClick={onOpen}>
-              <HiMenuAlt1 />
-            </Button>
-            <Heading fontSize={{ base: 'auto', md: 24 }}>{title}</Heading>
+            <IconButton
+              onClick={onOpen}
+              aria-label='Open menu'
+              icon={<HiMenuAlt1 size={'20px'} />}
+            />
+            <Heading
+              noOfLines={2}
+              fontSize={{ base: 'auto', md: 24 }}>
+              {title}
+            </Heading>
           </Flex>
 
           <Flex alignItems={'center'}>
@@ -260,7 +278,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Меню</DrawerHeader>
+          <DrawerHeader>{drawerTitle ?? 'Меню'}</DrawerHeader>
 
           <DrawerBody>
             {burgerMenuLinks.map((link) =>
@@ -275,12 +293,15 @@ export const Header: FC<PropsWithChildren<TProps>> = ({ title, children }) => {
                 </DefaultMenuLink>
               ) : null,
             )}
+            <Box>{additionalDrawerContent}</Box>
           </DrawerBody>
 
-          <DrawerFooter></DrawerFooter>
+          <DrawerFooter>
+            <Box>{additionalDrawerFooterContent}</Box>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
-      <Box>{children}</Box>
+      <Box minH={`calc(100vh - ${headerHeight}px)`}>{children}</Box>
     </>
   );
 };

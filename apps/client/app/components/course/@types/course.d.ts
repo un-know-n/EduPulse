@@ -1,4 +1,5 @@
 import { TDifficultyLevel } from '../labels/DifficultyLabel';
+import { MaterialTypes } from '../config/constants';
 
 export type TEnrollment = {
   id: string;
@@ -7,6 +8,8 @@ export type TEnrollment = {
   assignedAt: string;
   expiresAt: string;
   isCompleted: boolean;
+  isFailed: boolean;
+  updatedAt: string;
 };
 
 export type TCourseResponse = {
@@ -46,6 +49,7 @@ export type TTestResponse = {
 };
 
 type TQuestionResponse = {
+  id: string;
   text: string;
   points: number;
   isMultipleChoice: boolean;
@@ -53,6 +57,7 @@ type TQuestionResponse = {
 };
 
 type TAnswerResponse = {
+  id: string;
   text: string;
   isCorrect: boolean;
 };
@@ -91,6 +96,73 @@ export type TLectureResponse = Record<
   'id' | 'title' | 'content' | 'createdAt' | 'sectionId',
   string
 > & { videoUrl?: string };
+
+export type TCourseContentResponse = {
+  title: string;
+  id: string;
+  sections: {
+    title: string;
+    id: string;
+    materials: {
+      id: string;
+      title: string;
+      type: keyof typeof MaterialTypes;
+    }[];
+  }[];
+};
+
+export type TCourseStatisticsResponse = {
+  currentCourseProgress: number;
+  minimalCourseProgress: number;
+  sectionsDetails: {
+    sectionTitle: string;
+    totalTests: number;
+    passedTests: number;
+    totalPoints: number;
+    receivedPoints: number;
+    progressInPercents: number;
+  }[];
+  detailedEvaluations: {
+    sectionTitle: string;
+    sectionId: string;
+    tests: {
+      id: string;
+      title: string;
+      receivedPoints?: number;
+      totalPoints?: number;
+    }[];
+  }[];
+};
+
+export type TCourseDatesResponse = {
+  dates: {
+    date: string;
+    description: string;
+    isActive: boolean;
+  }[];
+};
+
+export type TCourseMaterialResponse = {
+  type: keyof typeof MaterialTypes;
+  material: TTestMaterial | TLectureResponse;
+};
+
+export type TTestMaterial = TTestResponse & { result: TTestResultResponse };
+
+type TTestResultResponse = {
+  score: number;
+  currentAttempt: number;
+  isCompleted: boolean;
+  correctAnswers: TQuestionResponse[];
+};
+
+export type TTestMaterialRequest = {
+  testId: string;
+  answers: {
+    questionId: string;
+    selectedAnswers: string[];
+  }[];
+};
 
 export type TUserRoles = 'student' | 'teacher';
 

@@ -14,12 +14,13 @@ import {
   FormErrorMessage,
   FormControl,
 } from '@chakra-ui/react';
-import { useTypedSelector } from '../../../lib/hooks/redux';
+import { useTypedSelector } from '../../../../lib/hooks/redux';
 import { CommentsContent } from './CommentsContent';
 import { FaChevronRight } from 'react-icons/fa';
 import { FaChevronLeft } from 'react-icons/fa';
 import { Formik, Form, Field } from 'formik';
 import { z, ZodError } from 'zod';
+import { getUkrainianPluralWord } from 'apps/client/app/lib/utils/getUkrainianPluralWord';
 
 const userCommentSchema = z
   .string()
@@ -71,28 +72,9 @@ export const CommentsContentLayout: FC<TProps> = ({
     <>
       <Center bg={backgroundColor}>
         <Box
-          p='25px'
+          p='20px'
           maxWidth={1200}
           w={'full'}>
-          <Box
-            display='flex'
-            justifyContent='flex-end'
-            alignItems='center'
-            mb='20px'
-            gap='10px'>
-            <IconButton
-              colorScheme='purple'
-              aria-label='Done'
-              size='md'
-              icon={<FaChevronLeft />}
-            />
-            <IconButton
-              colorScheme='purple'
-              aria-label='Done'
-              size='md'
-              icon={<FaChevronRight />}
-            />
-          </Box>
           <Flex
             flexDirection='row'
             justifyContent='space-between'
@@ -102,7 +84,8 @@ export const CommentsContentLayout: FC<TProps> = ({
               fontSize={{ base: '16', md: '24' }}
               mb={{ base: '2', md: '0' }}
               fontWeight='bold'>
-              {quantityComment} Коментарів
+              {quantityComment}{' '}
+              {getUkrainianPluralWord('коментарі', quantityComment)}
             </Text>
             <Select w='fiil-content'>
               <option value='option1'>Найпопулярніші</option>

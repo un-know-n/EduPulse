@@ -2,7 +2,7 @@ import { object, string } from 'zod';
 
 export type TInitialVideoLectureValues = {
   title: string;
-  // content: string;
+  content: string;
   videoUrl: string;
 };
 
@@ -17,16 +17,16 @@ export const videoLectureSchema = object({
     .max(64, {
       message: 'Назва занадто довга',
     }),
-  // content: string({
-  //   required_error: 'Введіть вміст лекції',
-  // })
-  //   .trim()
-  //   .min(1, {
-  //     message: 'Вміст не може бути порожнім',
-  //   })
-  //   .max(1028, {
-  //     message: 'Вміст занадто довгий',
-  //   }),
+  content: string({
+    required_error: 'Введіть вміст лекції',
+  })
+    .trim()
+    .min(1, {
+      message: 'Вміст не може бути порожнім',
+    })
+    .max(1028, {
+      message: 'Вміст занадто довгий',
+    }),
   videoUrl: string({
     required_error: 'Введіть посилання на відео',
   })

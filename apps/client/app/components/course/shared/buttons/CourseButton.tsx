@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   TCertificateResponse,
   TCourseResponse,
@@ -27,7 +27,12 @@ export const CourseButton: FC<TProps & ButtonProps> = ({
   const user = useTypedSelector((state) => state.user);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const buttonInfo = useCourseButtonInfo(id, user.id, onOpen, enrollment);
+  const { buttonInfo, isLoading } = useCourseButtonInfo(
+    id,
+    user.id,
+    onOpen,
+    enrollment,
+  );
 
   return (
     <>
@@ -46,17 +51,18 @@ export const CourseButton: FC<TProps & ButtonProps> = ({
         <DefaultButton
           w={'fit-content'}
           {...props}
-          onClick={buttonInfo?.callback}>
+          onClick={buttonInfo?.callback}
+          isLoading={isLoading}>
           {buttonInfo?.title}
         </DefaultButton>
       )}
-      {certificate && (
+      {certificate ? (
         <CertificateModal
           isOpen={isOpen}
           onClose={onClose}
           selectedCertificate={certificate}
         />
-      )}
+      ) : null}
     </>
   );
 };

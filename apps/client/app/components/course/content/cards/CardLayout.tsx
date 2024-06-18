@@ -9,15 +9,16 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { FaStar } from 'react-icons/fa';
+import { MaterialTypes } from '../../config/constants';
 
 type TProps = {
-  materialName: string;
-  materialType: string;
+  title: string;
+  type: keyof typeof MaterialTypes;
 };
 
 export const CardLayout: FC<PropsWithChildren<TProps>> = ({
-  materialName,
-  materialType,
+  title,
+  type,
   children,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -29,7 +30,7 @@ export const CardLayout: FC<PropsWithChildren<TProps>> = ({
     <Card>
       <CardBody>
         <Box>
-          <Heading size='md'>{materialName}</Heading>
+          <Heading size='md'>{title}</Heading>
           <Flex
             alignItems='center'
             mb='20px'>
@@ -46,7 +47,11 @@ export const CardLayout: FC<PropsWithChildren<TProps>> = ({
           <Heading
             size='18'
             textTransform='uppercase'>
-            {materialType}
+            {type === 'LECTURE'
+              ? 'Лекція'
+              : type === 'VIDEO'
+              ? 'Відео'
+              : 'Тест'}
           </Heading>
           {children}
         </Box>
