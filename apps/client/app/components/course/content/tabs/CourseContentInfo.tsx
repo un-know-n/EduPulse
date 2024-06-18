@@ -56,13 +56,6 @@ type TDateSteps = {
   description: string;
 };
 
-const dateSteps: TDateSteps = [
-  { date: 'ср, 28 лют. 2024 р.', description: 'Курс розпочато' },
-  { date: 'чт, 29 лют. 2024 р.', description: 'Модуль 1 завершено' },
-  { date: 'пт, 1 бер. 2024 р.', description: 'Модуль 2 завершено' },
-  { date: 'пт, 1 бер. 2024 р.', description: 'Курс закінчено' },
-];
-
 export const CourseContentInfo: FC<TProps> = ({
   sections,
   courseId,
@@ -245,16 +238,7 @@ export const CourseContentInfo: FC<TProps> = ({
           </TabPanel>
           <TabPanel>
             <Heading mb='20px'>Важливі дати</Heading>
-            <ProgressDates
-              courseId={courseId}
-              // moduleName={['Модуль 1', 'Модуль 2']}
-              // date={[
-              //   'ср. 28 лют. 2024 р.',
-              //   'чт. 29 лют. 2024 р.',
-              //   'пт. 1 бер. 2024 р.',
-              //   'пт. 1 бер. 2024 р.',
-              // ]}
-            />
+            <ProgressDates courseId={courseId} />
           </TabPanel>
         </TabPanels>
       </Tabs>

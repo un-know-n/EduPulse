@@ -31,7 +31,7 @@ export const ProgressDates: FC<TProps> = ({ courseId }) => {
   useShowError(error, true, `${coursePrefix}/${courseId}`);
 
   const stepIndex = useMemo(() => {
-    const index = data?.dates.findIndex((date) => !date.isActive);
+    const index = data?.dates.findIndex((date) => !date.isActive) ?? 0;
     return index <= 0 ? data?.dates.length ?? 0 : index;
   }, [data]);
 
@@ -44,9 +44,7 @@ export const ProgressDates: FC<TProps> = ({ courseId }) => {
           colorScheme='purple'
           gap='0'>
           {data.dates.map((date, index) => (
-            <Step
-              key={index}
-              minH='75px'>
+            <Step key={index}>
               <StepIndicator>
                 <StepStatus
                   complete={<StepIcon />}
@@ -55,7 +53,9 @@ export const ProgressDates: FC<TProps> = ({ courseId }) => {
                 />
               </StepIndicator>
 
-              <Box flexShrink='0'>
+              <Box
+                flexShrink='0'
+                minH='75px'>
                 <StepTitle>
                   {getTransformedImportantDate(date.date)}{' '}
                   {date.isActive ? (

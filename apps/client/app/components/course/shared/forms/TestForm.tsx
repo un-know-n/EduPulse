@@ -155,7 +155,12 @@ export const TestForm: FC<TProps> = ({
       // console.log('VALUES ARE HERE ------------->: ', values);
       // console.log('HERE IS THE TEST OBJECT: ', test);
 
-      handleTestSubmit(test);
+      handleTestSubmit(
+        test as unknown as Omit<
+          TTestResponse,
+          'id' | 'sectionId' | 'createdAt'
+        >,
+      );
     },
   });
 
