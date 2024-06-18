@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTestDto } from './dto/create-test.dto';
 import { UpdateTestDto } from './dto/update-test.dto';
 import { PrismaService } from '../../prisma.service';
+import { CreateTestResultDto } from './dto/create-test-result.dto';
 
 @Injectable()
 export class TestService {
@@ -72,5 +77,140 @@ export class TestService {
 
   async remove(id: string) {
     return this.prismaService.test.delete({ where: { id } });
+  }
+
+  async passCourseTest(
+    testId: string,
+    userId: string,
+    { answers }: CreateTestResultDto,
+  ) {
+    return this.prismaService.$transaction(async (tx) => {
+      const test = await tx.test.findUnique({
+        where: { id: testId },
+        include: {
+          section: {
+            select: {
+              courseId: true,
+            },
+          },
+          questions: {
+            include: {
+              answers: true,
+            },
+          },
+        },
+      });
+
+      if (!test) {
+        throw new BadRequestException('Немає тесту з даним ідентифікатором');
+      }
+
+      const userEnrollment = await tx.usersAssignedToCourse.findFirst({
+        where: {
+          userId,
+          courseId: test.section.courseId,
+        },
+      });
+
+      if (!userEnrollment) {
+        throw new BadRequestException('Ви не зареєстровані на даний курс');
+      }
+
+      // Fetch or create a TestResult record
+      let testResult = await tx.testResult.findFirst({
+        where: { testId, UsersAssignedToCourse: { userId } },
+      });
+
+      if (!testResult) {
+        testResult = await tx.testResult.create({
+          data: {
+            testId,
+            enrollmentId: userEnrollment.id,
+            // UsersAssignedToCourse: { connectOrCreate: {where:{ id: userId} } },
+
+            currentAttempt: 0,
+          },
+        });
+      }
+
+      // Check if the test can still be passed
+      if (testResult.currentAttempt >= test.totalAttempts) {
+        throw new BadRequestException(
+          'Ви використали всі спроби для складання цього тесту',
+        );
+      }
+
+      // Calculate the score
+      let score = 0;
+      test.questions.forEach((question) => {
+        const userAnswers =
+          answers.find((a) => a.questionId === question.id)?.selectedAnswers ||
+          [];
+        const correctAnswers = question.answers
+          .filter((a) => a.isCorrect)
+          .map((a) => a.text);
+        if (question.isMultipleChoice) {
+          if (
+            userAnswers.length === correctAnswers.length &&
+            userAnswers.every((answer) => correctAnswers.includes(answer))
+          ) {
+            score += question.points;
+          }
+        } else {
+          if (userAnswers[0] === correctAnswers[0]) {
+            score += question.points;
+          }
+        }
+      });
+
+      // Update the TestResult
+      testResult = await tx.testResult.update({
+        where: { id: testResult.id },
+        data: {
+          score,
+          isCompleted: true,
+          currentAttempt: { increment: 1 },
+        },
+      });
+
+      // Check if all tests in the course are completed
+      const allTests = await tx.test.findMany({
+        where: { section: { courseId: test.section.courseId } },
+        include: { testResult: true, questions: true },
+      });
+
+      const completedTests = allTests.filter((t) =>
+        t.testResult.some(
+          (tr) => tr.enrollmentId === testResult.enrollmentId && tr.isCompleted,
+        ),
+      );
+
+      if (completedTests.length === allTests.length) {
+        const totalPoints = allTests.reduce(
+          (sum, t) => sum + t.questions.reduce((sum, q) => sum + q.points, 0),
+          0,
+        );
+        const userPoints = completedTests.reduce(
+          (sum, t) =>
+            sum +
+            t.testResult.find(
+              (tr) => tr.enrollmentId === testResult.enrollmentId,
+            ).score,
+          0,
+        );
+
+        const averageScore = (userPoints / totalPoints) * 100;
+
+        await tx.usersAssignedToCourse.update({
+          where: { id: testResult.enrollmentId },
+          data: {
+            isCompleted: averageScore >= 80,
+            isFailed: averageScore < 80,
+          },
+        });
+      }
+
+      return testResult;
+    });
   }
 }

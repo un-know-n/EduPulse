@@ -133,6 +133,39 @@ export class CourseController {
     return this.courseService.findCreatedCourses(user.id);
   }
 
+  @Get(':id/content')
+  // @Public()
+  getCourseContent(@Param('id') id: string, @User() user: TUser) {
+    return this.courseService.getCourseContent(id, user.id);
+  }
+
+  @Get(':id/material/:sectionId/:materialId')
+  getCourseMaterial(
+    @Param('id') id: string,
+    @Param('sectionId') sectionId: string,
+    @Param('materialId') materialId: string,
+    @User() user: TUser,
+    @Query('type') type: 'TEST' | 'LECTURE',
+  ) {
+    return this.courseService.getCourseMaterialById(
+      id,
+      user.id,
+      sectionId,
+      materialId,
+      type,
+    );
+  }
+
+  @Get(':id/statistics')
+  getCourseStatistics(@Param('id') id: string, @User() user: TUser) {
+    return this.courseService.getCourseStatistics(id, user.id);
+  }
+
+  @Get(':id/dates')
+  getCourseDates(@Param('id') id: string, @User() user: TUser) {
+    return this.courseService.getCourseDates(id, user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @User() user: TUser) {
     return this.courseService.findWithEnrollment(id, user.id);
