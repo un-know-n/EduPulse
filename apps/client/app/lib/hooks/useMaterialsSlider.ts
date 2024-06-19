@@ -5,11 +5,7 @@ import {
 } from '../../components/course/content/list/ContentMaterialList';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTypedDispatch } from './redux';
-import {
-  updateCurrentIndex,
-  updateMaterials,
-} from '../../store/reducers/materials.slice';
-import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
+import { updateMaterials } from '../../store/reducers/materials.slice';
 
 export type TDetailedMaterials = {
   material: TMaterial;

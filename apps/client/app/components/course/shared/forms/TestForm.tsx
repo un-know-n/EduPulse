@@ -21,7 +21,7 @@ import { FC, useState, useEffect } from 'react';
 import { DefaultButton } from '../../../auth/shared/buttons/DefaultButton';
 import { TextFormInput } from '../../../shared/inputs/TextFormInput';
 import { Nullable, TTestResponse } from '../../@types/course';
-import { Step } from 'apps/client/app/store/reducers/test.slice';
+
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
@@ -113,7 +113,7 @@ export const TestForm: FC<TProps> = ({
       ? Number((timeToPass / 1000).toFixed(0))
       : minTimeToPassAmount,
     totalAttempts: totalAttempts ?? minTotalAttempts,
-    steps: (questions?.length
+    steps: questions?.length
       ? questions.map((question, index) => ({
           stepQuestion: question.text,
           answers: question.answers.map((answer) => answer.text),
@@ -125,7 +125,7 @@ export const TestForm: FC<TProps> = ({
           isSingleAnswer: !question.isMultipleChoice,
           pointsPerQuestion: question.points,
         }))
-      : []) as unknown as Step[],
+      : [],
   };
 
   const checkObjectsEquality = useAreObjectsEqual(initialValues);
@@ -145,7 +145,7 @@ export const TestForm: FC<TProps> = ({
           text: question.stepQuestion,
           points: question.pointsPerQuestion,
           isMultipleChoice: !question.isSingleAnswer,
-          answers: question.answers.map((answer) => ({
+          answers: question.answers.map((answer: any) => ({
             text: answer,
             isCorrect: question.correctAnswer.includes(answer),
           })),
