@@ -1,14 +1,17 @@
 'use client';
 
-import { Flex, Spinner } from '@chakra-ui/react';
+import { Flex, FlexProps, Spinner } from '@chakra-ui/react';
 
-export default function Loading() {
+type TProps = FlexProps;
+
+export default function Loading(props: TProps) {
   return (
     <Flex
       w='full'
       h='100vh'
       justifyContent='center'
-      alignItems='center'>
+      alignItems='center'
+      {...props}>
       <Spinner size='xl' />
     </Flex>
   );

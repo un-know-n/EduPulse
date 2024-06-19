@@ -10,6 +10,7 @@ import {
   Badge,
   FormControl,
   FormErrorMessage,
+  Heading,
 } from '@chakra-ui/react';
 import { getUkrainianPluralWord } from 'apps/client/app/lib/utils/getUkrainianPluralWord';
 import useTimer from 'apps/client/app/lib/hooks/useTimer';
@@ -66,10 +67,10 @@ export const CardTest: FC<TProps> = ({ test }) => {
     });
   };
 
-  const { formattedTime, handlePass, handleStart, isRunning } = useTimer(
-    0.2,
+  const { formattedTime, resetTimer, stopTimer, isRunning } = useTimer(
+    Number((timeToPass / 1000).toFixed(0)),
     handleEnd,
-  ); //Number((timeToPass / 1000).toFixed(0))
+  ); //0.2
 
   const handleSubmit = (values: typeof initialValues) => {
     const answers = values.questions.map((question) => ({
@@ -78,6 +79,8 @@ export const CardTest: FC<TProps> = ({ test }) => {
     }));
 
     passCourseTest({ testId: id, answers });
+    stopTimer();
+    formik.resetForm();
 
     console.log(answers);
   };
@@ -93,11 +96,30 @@ export const CardTest: FC<TProps> = ({ test }) => {
     <FormikProvider value={formik}>
       <form onSubmit={formik.handleSubmit}>
         <Stack>
-          <Text
-            mb='10px'
-            fontSize='14'>
-            Імовірні {totalPoints} {getUkrainianPluralWord('бали', totalPoints)}
-          </Text>
+          <Box>
+            <Flex alignItems='center'>
+              <Heading
+                size='18'
+                textTransform='uppercase'>
+                Тест
+              </Heading>
+              <Badge
+                colorScheme={result.isCompleted ? 'green' : 'red'}
+                ml={3}>
+                {result.isCompleted
+                  ? `Пройдено - ${result.score}/${totalPoints}`
+                  : `Непройдено - ${result.score}/${totalPoints}`}
+              </Badge>
+            </Flex>
+
+            <Text
+              mb='10px'
+              fontSize='14'>
+              Імовірні {totalPoints}{' '}
+              {getUkrainianPluralWord('бали', totalPoints)}
+            </Text>
+          </Box>
+
           {questions.map((question, index) => (
             <React.Fragment key={index}>
               <Text
@@ -118,6 +140,7 @@ export const CardTest: FC<TProps> = ({ test }) => {
                   mb='10px'>
                   {question.answers.map((answer, idx) => (
                     <FormControl
+                      isDisabled={!isRunning}
                       isInvalid={Boolean(formik?.errors?.questions?.[index])}
                       key={idx}>
                       <Box
@@ -163,17 +186,6 @@ export const CardTest: FC<TProps> = ({ test }) => {
             </React.Fragment>
           ))}
           <Flex alignItems='center'>
-            {/* <DefaultButton
-              isDisabled={
-                Boolean(formik.errors.questions?.length) ||
-                result.currentAttempt === test.totalAttempts
-              }
-              isLoading={isLoading}
-              w='fit-content'
-              type='submit'
-              variant='outline'>
-              Відправити
-            </DefaultButton> */}
             {isRunning ? (
               <DefaultButton
                 isDisabled={
@@ -187,7 +199,11 @@ export const CardTest: FC<TProps> = ({ test }) => {
               </DefaultButton>
             ) : (
               <DefaultButton
-                onClick={handleStart}
+                isDisabled={
+                  result.currentAttempt === test.totalAttempts ||
+                  result.isCompleted
+                }
+                onClick={resetTimer}
                 w='fit-content'
                 type='button'
                 variant='outline'>

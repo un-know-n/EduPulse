@@ -44,55 +44,33 @@ import {
   TTestResponse,
 } from '../../@types/course';
 import { useMaterials } from 'apps/client/app/lib/hooks/useMaterials';
+import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
 
 type TProps = {
   courseTitle: string;
   courseId: string;
   sections: TSection[];
-};
-
-type TDateSteps = {
-  date: string;
-  description: string;
+  next: () => void;
+  prev: () => void;
+  setMaterialIndex: (index: number) => void;
 };
 
 export const CourseContentInfo: FC<TProps> = ({
   sections,
   courseId,
   courseTitle,
+  next,
+  prev,
+  setMaterialIndex,
 }) => {
-  const {
-    currentMaterials,
-    next,
-    prev,
-    selectedMaterial,
-    selectedSection,
-    setMaterialIndex,
-  } = useMaterials({ sections });
-  // const searchParamsURL = useSearchParams();
-  // const { queryParams, handleChange } = useSyncQueryParams({
-  //   sectionId: searchParamsURL.get('sectionId') ?? sections[0].id,
-  //   materialId:
-  //     searchParamsURL.get('materialId') ?? sections[0].materials[0].id,
-  // });
+  // const { next, prev, setMaterialIndex } = useMaterials({ sections });
 
-  // const {
-  //   currentMaterials,
-  //   next,
-  //   prev,
-  //   selectedMaterial,
-  //   selectedSection,
-  //   setMaterialIndex,
-  // } = useMaterialsSlider(sections, queryParams.materialId);
+  const { currentMaterials, selectedMaterial, selectedSection } =
+    useTypedSelector((state) => state.materials);
 
   const [getCourseMaterialById, { data, error }] =
     useLazyGetCourseMaterialByIdQuery();
   useShowError(error, true, `${coursePrefix}/${courseId}`);
-
-  // const { activeStep } = useSteps({
-  //   index: 1,
-  //   count: steps.length,
-  // });
 
   const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
 
@@ -185,9 +163,7 @@ export const CourseContentInfo: FC<TProps> = ({
             </Flex>
             <Stack spacing='20px'>
               {data ? (
-                <CardLayout
-                  title={data.material.title}
-                  type={data.type}>
+                <CardLayout title={data.material.title}>
                   {data.type === 'LECTURE' ? (
                     <CardLecture
                       materialContent={
@@ -208,7 +184,7 @@ export const CourseContentInfo: FC<TProps> = ({
                   )}
                 </CardLayout>
               ) : (
-                <Loading />
+                <Loading h='50vh' />
               )}
               <Box
                 display='flex'

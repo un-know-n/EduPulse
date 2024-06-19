@@ -290,7 +290,7 @@ export class CourseService {
   }
 
   async getCourseContent(id: string, userId: string) {
-    // await this.checkIfRegisteredOnCourse(id, userId);
+    await this.checkIfRegisteredOnCourse(id, userId);
 
     const courseInfo = await this.prismaService.course.findFirst({
       where: { id },
@@ -349,7 +349,7 @@ export class CourseService {
     materialId: string,
     type: 'LECTURE' | 'TEST',
   ) {
-    // await this.checkIfRegisteredOnCourse(id, userId);
+    await this.checkIfRegisteredOnCourse(courseId, userId);
 
     if (type === 'LECTURE') {
       const lecture = await this.prismaService.section.findFirst({
@@ -440,24 +440,12 @@ export class CourseService {
           },
         },
       };
-
-      //TODO: Also create availability field (check completed tests, take the id of the first one that is not completed)
-      // Get last record from testResult, if none ->
-      // const results = {
-      //   score: 0,
-      //   currentAttempt: 0,
-      //   isCompleted: false,
-      //   correctAnswers: test.tests[0].questions,
-      //   availability: {
-      //     availableTestId: 'asdasdasd',
-      //     isAvailable: true, //availableTestId ===  test.id
-      //   },
-      // };
     }
   }
 
   async getCourseStatistics(courseId: string, userId: string) {
-    // await this.checkIfRegisteredOnCourse(id, userId);
+    await this.checkIfRegisteredOnCourse(courseId, userId);
+
     const course = await this.prismaService.course.findUnique({
       where: { id: courseId },
       include: {
@@ -562,7 +550,7 @@ export class CourseService {
   }
 
   async getCourseDates(courseId: string, userId: string) {
-    // await this.checkIfRegisteredOnCourse(id, userId);
+    await this.checkIfRegisteredOnCourse(courseId, userId);
 
     const course = await this.prismaService.course.findUnique({
       where: { id: courseId },

@@ -60,6 +60,7 @@ import { MdCheckCircle, MdLibraryBooks } from 'react-icons/md';
 import { TUserRoles } from '../../course/@types/course';
 import { GiGraduateCap } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
+import { useHeaderMenuDrawer } from '../../providers/HeaderMenuDrawerProvider';
 
 type TProps = {
   title: string;
@@ -112,7 +113,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({
 }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useHeaderMenuDrawer();
   const {
     isOpen: isModalOpen,
     onOpen: onModalOpen,
