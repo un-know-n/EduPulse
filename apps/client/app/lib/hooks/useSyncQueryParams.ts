@@ -4,45 +4,25 @@ import { useEffect, useState } from 'react';
 type Params = { [key: string]: string };
 
 const useSyncQueryParams = <T extends Params>(initialParams: T) => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [queryParams, setQueryParams] = useState<T>(initialParams);
 
   // Sync state with URL query params on mount
-  useEffect(() => {
-    const query = searchParams.entries() as unknown as T;
+  useEffect(
+    () => {
+      const query: Params[] = [];
 
-    console.log(
-      'WE ARE HERE: ',
-      query,
-      new URLSearchParams(query),
-      new URLSearchParams(searchParams.toString()),
-      searchParams.toString(),
-      searchParams.entries(),
-    );
+      for (const entry of searchParams.entries()) {
+        query.push(Object.fromEntries([entry]));
+      }
 
-    setQueryParams((prevParams) => ({
-      ...prevParams,
-      ...query,
-    }));
-  }, [searchParams]);
-
-  // Update URL query params when state changes
-  useEffect(() => {
-    const currentQuery = searchParams.entries();
-    const newQuery = { ...currentQuery, ...queryParams };
-
-    if (JSON.stringify(newQuery) !== JSON.stringify(currentQuery)) {
-      const params = new URLSearchParams(searchParams);
-
-      //Synchronize URL
-      Object.entries(newQuery).map((searchParamEntry) =>
-        params.set(searchParamEntry[0], `${searchParamEntry[1] ?? ''}`),
-      );
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  }, [queryParams]);
+      setQueryParams((prevParams) => ({
+        ...prevParams,
+        ...query,
+      }));
+    },
+    Object.entries(initialParams).map((entry) => searchParams.get(entry[0])),
+  );
 
   const handleChange = (key: keyof typeof queryParams, value: string) => {
     setQueryParams((prevParams) => ({

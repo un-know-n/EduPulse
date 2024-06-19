@@ -19,10 +19,15 @@ import { MaterialIcon } from '../../shared/icons/MaterialIcon';
 import useMaterialsSlider from 'apps/client/app/lib/hooks/useMaterialsSlider';
 import { useSearchParams } from 'next/navigation';
 import { useMaterials } from 'apps/client/app/lib/hooks/useMaterials';
+import { useTypedSelector } from 'apps/client/app/lib/hooks/redux';
+import { useHeaderMenuDrawer } from '../../../providers/HeaderMenuDrawerProvider';
+import { TDetailedMaterials } from '../../../../lib/hooks/useMaterialsSlider';
 
 type Props = {
   courseId: string;
   sections: TSection[];
+  setMaterialIndex: (index: number) => void;
+  materials: TDetailedMaterials[];
 };
 
 export type TSection = {
@@ -37,18 +42,26 @@ export type TMaterial = {
   id: string;
 };
 
-export const ContentMaterialList: FC<Props> = ({ sections, courseId }) => {
+export const ContentMaterialList: FC<Props> = ({
+  sections,
+  courseId,
+  setMaterialIndex,
+  materials,
+}) => {
   const { colorMode } = useColorMode();
-  const { materials, setMaterialIndex, selectedMaterial } = useMaterials({
-    sections,
-  });
+  // const { materials, setMaterialIndex } = useMaterials({
+  //   sections,
+  // });
+  const { selectedMaterial } = useTypedSelector((state) => state.materials);
+  const { onClose } = useHeaderMenuDrawer();
 
   const handleMaterialClick = (materialId: string) => {
     const materialIndex = materials.find(
-      (material) => material.material.id === materialId,
+      ({ material }) => material.id === materialId,
     )?.materialIndex;
 
     setMaterialIndex(materialIndex ?? 0);
+    onClose();
   };
 
   return (
@@ -82,7 +95,7 @@ export const ContentMaterialList: FC<Props> = ({ sections, courseId }) => {
                         variant='link'
                         whiteSpace='normal'
                         textAlign='left'
-                        maxWidth='100%' // Adjust the max-width as needed
+                        maxWidth='100%'
                         isDisabled={id === selectedMaterial.id}
                         onClick={() => handleMaterialClick(id)}
                         color={
@@ -90,9 +103,7 @@ export const ContentMaterialList: FC<Props> = ({ sections, courseId }) => {
                         }>{`${title}`}</Button>
                     </Flex>
 
-                    <Icon
-                      // boxSize={7}
-                      color={type === 'TEST' ? 'gray' : 'purple.400'}>
+                    <Icon color={type === 'TEST' ? 'gray' : 'purple.400'}>
                       <MaterialIcon
                         type={type}
                         size={'24px'}

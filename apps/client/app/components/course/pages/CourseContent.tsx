@@ -17,48 +17,54 @@ import {
 } from 'apps/client/app/store/services/courses';
 import { Center, Flex } from '@chakra-ui/react';
 import Loading from 'apps/client/app/loading';
+import useMaterialsSlider from 'apps/client/app/lib/hooks/useMaterialsSlider';
+import useSyncQueryParams from 'apps/client/app/lib/hooks/useSyncQueryParams';
+import { useSearchParams } from 'next/navigation';
+import { TCourseContentResponse } from '../@types/course';
+import { useMaterials } from 'apps/client/app/lib/hooks/useMaterials';
 
 type TProps = {
   id: string;
+  data: TCourseContentResponse;
 };
 
-export const CourseContent: FC<TProps> = ({ id }) => {
+export const CourseContent: FC<TProps> = ({ id, data }) => {
   const user = useTypedSelector((state) => state.user);
-  const { data, error } = useGetCourseContentQuery(id);
-  useShowError(error);
+  const { next, prev, setMaterialIndex, materials } = useMaterials({
+    sections: data.sections,
+  });
 
   useEffect(() => {
     console.log('DATAAAAAAAAA: ', data);
   });
 
   return (
-    <>
-      {data ? (
-        <Header
-          title={`Матеріали курсу "${data.title}"`}
-          additionalDrawerContent={
-            <ContentMaterialList
-              courseId={id}
-              sections={data.sections}
-            />
-          }>
-          <Flex
-            justifyContent={'center'}
-            alignItems={'flex-start'}
-            minH={'50vh'}>
-            <CourseContentInfo
-              courseTitle={data.title}
-              courseId={id}
-              sections={data.sections}
-            />
-          </Flex>
-          <CommentsContentLayout
-            imageUrl={user.image ?? ''}
-            quantityComment={0}></CommentsContentLayout>
-        </Header>
-      ) : (
-        <Loading />
-      )}
-    </>
+    <Header
+      title={`Матеріали курсу "${data.title}"`}
+      additionalDrawerContent={
+        <ContentMaterialList
+          courseId={id}
+          sections={data.sections}
+          materials={materials}
+          setMaterialIndex={setMaterialIndex}
+        />
+      }>
+      <Flex
+        justifyContent={'center'}
+        alignItems={'flex-start'}
+        minH={'50vh'}>
+        <CourseContentInfo
+          courseTitle={data.title}
+          courseId={id}
+          sections={data.sections}
+          next={next}
+          prev={prev}
+          setMaterialIndex={setMaterialIndex}
+        />
+      </Flex>
+      <CommentsContentLayout
+        imageUrl={user.image ?? ''}
+        quantityComment={0}></CommentsContentLayout>
+    </Header>
   );
 };

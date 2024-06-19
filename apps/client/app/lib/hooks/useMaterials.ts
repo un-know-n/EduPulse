@@ -1,4 +1,4 @@
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import useMaterialsSlider from './useMaterialsSlider';
 import useSyncQueryParams from './useSyncQueryParams';
@@ -16,27 +16,23 @@ export const useMaterials = ({ sections }: TProps) => {
       searchParamsURL.get('materialId') ?? sections[0].materials[0].id,
   });
 
-  const {
-    currentMaterials,
-    next,
-    prev,
-    selectedMaterial,
-    selectedSection,
-    setMaterialIndex,
-    materials,
-  } = useMaterialsSlider(sections, queryParams.materialId);
+  const { next, prev, setMaterialIndex, materials } = useMaterialsSlider(
+    sections,
+    queryParams.materialId,
+  );
 
-  useEffect(() => {
-    handleChange('materialId', selectedMaterial.id);
-    handleChange('sectionId', selectedSection.id);
-  }, [selectedMaterial.id, selectedSection.id]);
+  // useEffect(() => {
+  //   console.log('PATH NAME: ', pathname);
+  // }, []);
+
+  // useEffect(() => {
+  //   handleChange('materialId', selectedMaterial.id);
+  //   handleChange('sectionId', selectedSection.id);
+  // }, [selectedMaterial.id, selectedSection.id]);
 
   return {
-    currentMaterials,
     next,
     prev,
-    selectedMaterial,
-    selectedSection,
     setMaterialIndex,
     materials,
     queryParams,
