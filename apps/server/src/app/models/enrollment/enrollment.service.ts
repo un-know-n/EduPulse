@@ -58,17 +58,30 @@ export class EnrollmentService {
   }
 
   async reset(id: string) {
-    const enrollment = await this.findOne(id);
-    const expireTime = await this.convertTimeToPass(enrollment.courseId);
+    return await this.prismaService.$transaction(async (tx) => {
+      const hasEnrollment = await tx.usersAssignedToCourse.findUnique({
+        where: { id },
+      });
+      if (!hasEnrollment)
+        throw new BadRequestException('Ви не зареєстровані на даний курс');
 
-    return await this.prismaService.usersAssignedToCourse.update({
-      where: {
-        id,
-      },
-      data: {
-        assignedAt: moment().utc(true).toISOString(),
-        expiresAt: expireTime,
-      },
+      await tx.testResult.deleteMany({
+        where: { enrollmentId: hasEnrollment.id },
+      });
+
+      const expireTime = await this.convertTimeToPass(hasEnrollment.courseId);
+
+      return await tx.usersAssignedToCourse.update({
+        where: {
+          id,
+        },
+        data: {
+          assignedAt: moment().utc(true).toISOString(),
+          expiresAt: expireTime,
+          isCompleted: false,
+          isFailed: false,
+        },
+      });
     });
   }
 

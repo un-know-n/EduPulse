@@ -126,11 +126,6 @@ export class TestService {
           data: {
             testId,
             enrollmentId: userEnrollment.id,
-            // UsersAssignedToCourse: {
-            //   connect: {}
-            //   connectOrCreate: { where: { id: userEnrollment.id, userId } },
-            // },
-
             currentAttempt: 0,
           },
         });
@@ -204,11 +199,6 @@ export class TestService {
         );
 
         const averageScore = (userPoints / totalPoints) * 100;
-
-        console.log('ENROLLMENT: ', {
-          isCompleted: averageScore >= 80,
-          isFailed: averageScore < 80,
-        });
 
         await tx.usersAssignedToCourse.update({
           where: { id: testResult.enrollmentId },

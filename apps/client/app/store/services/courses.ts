@@ -274,7 +274,12 @@ export const coursesApi = createApi({
         url: `${enrollmentPrefix}/${id}`,
         method: 'PATCH',
       }),
-      invalidatesTags: [courseTag, enrollmentTag],
+      invalidatesTags: [
+        courseTag,
+        enrollmentTag,
+        materialTag,
+        courseStatisticsTag,
+      ],
     }),
     getAllCategories: builder.query<TCategoriesResponse[], null>({
       query: () => `${coursePrefix}/categories`,
