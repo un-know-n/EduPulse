@@ -187,7 +187,8 @@ export const CourseContentInfo: FC<TProps> = ({
               {data ? (
                 <CardLayout
                   title={data.material.title}
-                  type={data.type}>
+                  //type={data.type}
+                >
                   {data.type === 'LECTURE' ? (
                     <CardLecture
                       materialContent={
@@ -208,7 +209,7 @@ export const CourseContentInfo: FC<TProps> = ({
                   )}
                 </CardLayout>
               ) : (
-                <Loading />
+                <Loading h='50vh' />
               )}
               <Box
                 display='flex'

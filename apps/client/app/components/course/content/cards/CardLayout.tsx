@@ -13,12 +13,12 @@ import { MaterialTypes } from '../../config/constants';
 
 type TProps = {
   title: string;
-  type: keyof typeof MaterialTypes;
+  //type: keyof typeof MaterialTypes;
 };
 
 export const CardLayout: FC<PropsWithChildren<TProps>> = ({
   title,
-  type,
+  //type,
   children,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -44,7 +44,7 @@ export const CardLayout: FC<PropsWithChildren<TProps>> = ({
             />
             <Text>Додати цю сторінку в закладки</Text>
           </Flex>
-          <Heading
+          {/* <Heading
             size='18'
             textTransform='uppercase'>
             {type === 'LECTURE'
@@ -52,7 +52,7 @@ export const CardLayout: FC<PropsWithChildren<TProps>> = ({
               : type === 'VIDEO'
               ? 'Відео'
               : 'Тест'}
-          </Heading>
+          </Heading> */}
           {children}
         </Box>
       </CardBody>

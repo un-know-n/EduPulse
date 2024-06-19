@@ -126,7 +126,10 @@ export class TestService {
           data: {
             testId,
             enrollmentId: userEnrollment.id,
-            // UsersAssignedToCourse: { connectOrCreate: {where:{ id: userId} } },
+            // UsersAssignedToCourse: {
+            //   connect: {}
+            //   connectOrCreate: { where: { id: userEnrollment.id, userId } },
+            // },
 
             currentAttempt: 0,
           },
@@ -168,7 +171,10 @@ export class TestService {
         where: { id: testResult.id },
         data: {
           score,
-          isCompleted: true,
+          isCompleted:
+            (score / test.questions.reduce((acc, q) => (acc += q.points), 0)) *
+              100 >=
+            80,
           currentAttempt: { increment: 1 },
         },
       });
@@ -180,9 +186,7 @@ export class TestService {
       });
 
       const completedTests = allTests.filter((t) =>
-        t.testResult.some(
-          (tr) => tr.enrollmentId === testResult.enrollmentId && tr.isCompleted,
-        ),
+        t.testResult.some((tr) => tr.enrollmentId === testResult.enrollmentId),
       );
 
       if (completedTests.length === allTests.length) {
@@ -200,6 +204,11 @@ export class TestService {
         );
 
         const averageScore = (userPoints / totalPoints) * 100;
+
+        console.log('ENROLLMENT: ', {
+          isCompleted: averageScore >= 80,
+          isFailed: averageScore < 80,
+        });
 
         await tx.usersAssignedToCourse.update({
           where: { id: testResult.enrollmentId },

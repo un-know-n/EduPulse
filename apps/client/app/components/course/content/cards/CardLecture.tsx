@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text } from '@chakra-ui/react';
+import { Heading, Text } from '@chakra-ui/react';
 
 type TProps = {
   materialContent: string;
@@ -7,10 +7,17 @@ type TProps = {
 
 export const CardLecture: FC<TProps> = ({ materialContent }) => {
   return (
-    <Text
-      pt='2'
-      fontSize='16'>
-      {materialContent}
-    </Text>
+    <>
+      <Heading
+        size='18'
+        textTransform='uppercase'>
+        Лекція
+      </Heading>
+      <Text
+        pt='2'
+        fontSize='16'>
+        {materialContent}
+      </Text>
+    </>
   );
 };

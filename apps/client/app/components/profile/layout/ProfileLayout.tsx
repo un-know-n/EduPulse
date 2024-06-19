@@ -16,8 +16,7 @@ export const ProfileLayout: FC<PropsWithChildren<TProps>> = ({
   hasProfileInfo = true,
 }) => {
   return (
-    <>
-      <LayoutHeader title={headerTitle ?? 'Профіль'} />
+    <LayoutHeader title={headerTitle ?? 'Профіль'}>
       <Center>
         <Flex
           direction={{ base: 'column', md: 'row' }}
@@ -42,6 +41,6 @@ export const ProfileLayout: FC<PropsWithChildren<TProps>> = ({
           {children}
         </Flex>
       </Center>
-    </>
+    </LayoutHeader>
   );
 };

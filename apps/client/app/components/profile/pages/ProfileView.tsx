@@ -21,24 +21,6 @@ import Loading from 'apps/client/app/loading';
 import { CertificateList } from '../certificate/CertificateList';
 
 export const ProfileView: FC = () => {
-  // const [search, setSearch] = useState('');
-  // const [filteredData, setFilteredData] = useState<any[]>([]);
-
-  // const debouncedSearch = useDebounce(search, 500);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     if (debouncedSearch) {
-  //       const filtered = data.filter((course) =>
-  //         course.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
-  //       );
-  //       setFilteredData(filtered);
-  //     } else {
-  //       setFilteredData(data);
-  //     }
-  //   }
-  // }, [debouncedSearch, data]);
-
   const user = useTypedSelector((state) => state.user);
   const {
     data: certificates,

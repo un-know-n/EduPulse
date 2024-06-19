@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 
-const useTimer = (initialTime: number, handleEnd: () => void) => {
+const useTimer = (initialTime: number, timerEndCallback: () => void) => {
   const [time, setTime] = useState(moment.duration(initialTime, 'minutes'));
   const [isRunning, setIsRunning] = useState(false);
 
@@ -12,7 +12,7 @@ const useTimer = (initialTime: number, handleEnd: () => void) => {
         setTime((prevTime) => {
           if (prevTime.asSeconds() <= 0) {
             clearInterval(timer);
-            handlePass();
+            timerEndCallback();
             return moment.duration(0);
           }
           return moment.duration(prevTime.asSeconds() - 1, 'seconds');
@@ -20,24 +20,23 @@ const useTimer = (initialTime: number, handleEnd: () => void) => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isRunning, handleEnd]);
+  }, [isRunning, timerEndCallback]);
 
-  const handleStart = useCallback(() => {
+  const resetTimer = useCallback(() => {
     setTime(moment.duration(initialTime, 'minutes'));
     setIsRunning(true);
   }, []);
 
-  const handlePass = useCallback(() => {
+  const stopTimer = useCallback(() => {
     setIsRunning(false);
-    handleEnd();
-  }, [handleEnd]);
+  }, []);
 
   const formattedTime = `${time.hours().toString().padStart(2, '0')}:${time
     .minutes()
     .toString()
     .padStart(2, '0')}:${time.seconds().toString().padStart(2, '0')}`;
 
-  return { formattedTime, handleStart, handlePass, isRunning };
+  return { formattedTime, resetTimer, stopTimer, isRunning };
 };
 
 export default useTimer;
