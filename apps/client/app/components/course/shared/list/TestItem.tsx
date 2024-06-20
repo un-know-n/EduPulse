@@ -28,18 +28,19 @@ export const TestItem: FC<
           alignItems={'center'}
           gap={3}>
           <MaterialIcon type='TEST' />
-          <Text>{props.title}</Text>
+          <Text
+            noOfLines={1}
+            maxW='80%'>
+            {props.title}
+          </Text>
         </Flex>
-        <Box>
+        <Flex gap={3}>
           <UpdateTestButton
             id={id}
             {...props}
           />
-          <DeleteTestButton
-            testId={id}
-            ml={3}
-          />
-        </Box>
+          <DeleteTestButton testId={id} />
+        </Flex>
       </Flex>
     </Flex>
   );

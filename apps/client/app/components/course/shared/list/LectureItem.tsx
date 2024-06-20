@@ -30,10 +30,14 @@ export const LectureItem: FC<
           ) : (
             <MaterialIcon type='LECTURE' />
           )}
-          <Text>{title}</Text>
+          <Text
+            noOfLines={1}
+            maxW='80%'>
+            {title}
+          </Text>
         </Flex>
 
-        <Box>
+        <Flex gap={3}>
           <UpdateLectureButton
             videoUrl={videoUrl}
             content={content}
@@ -41,11 +45,8 @@ export const LectureItem: FC<
             title={title}
             id={id}
           />
-          <DeleteLectureButton
-            lectureId={id}
-            ml={3}
-          />
-        </Box>
+          <DeleteLectureButton lectureId={id} />
+        </Flex>
       </Flex>
     </Flex>
   );

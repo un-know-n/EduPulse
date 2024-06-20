@@ -173,7 +173,8 @@ export const Header: FC<PropsWithChildren<TProps>> = ({
             />
             <Heading
               noOfLines={2}
-              fontSize={{ base: 'auto', md: 24 }}>
+              maxWidth='fit-content'
+              fontSize={{ base: 14, md: 24 }}>
               {title}
             </Heading>
           </Flex>

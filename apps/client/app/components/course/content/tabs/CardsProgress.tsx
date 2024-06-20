@@ -43,6 +43,7 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
 
   const circularSize = useBreakpointValue({ base: '120px', md: '220px' });
   const iconSize = useBreakpointValue({ base: '40px', md: '20px' });
+  const currentCourseProgress = Number(data?.currentCourseProgress.toFixed(0));
 
   return (
     <>
@@ -64,10 +65,10 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
               <Box>
                 <CircularProgress
                   size={circularSize}
-                  value={data.currentCourseProgress}
+                  value={currentCourseProgress}
                   color='purple.500'>
                   <CircularProgressLabel color='purple.500'>
-                    {data.currentCourseProgress}%
+                    {currentCourseProgress}%
                   </CircularProgressLabel>
                 </CircularProgress>
               </Box>
@@ -101,10 +102,10 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
                     px='8px'
                     py='4px'
                     boxShadow='md'
-                    left={`${data.currentCourseProgress}%`}
+                    left={`${currentCourseProgress}%`}
                     transform='translateX(-50%)'
                     color='white'>
-                    {data.currentCourseProgress}%
+                    {currentCourseProgress}%
                     <Box
                       w='8px'
                       h='8px'
@@ -117,7 +118,7 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
                   </Box>
                 </Tooltip>
                 <Progress
-                  value={data.currentCourseProgress}
+                  value={currentCourseProgress}
                   borderRadius='20px'
                   colorScheme='purple'
                 />
@@ -150,17 +151,17 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
             <CardFooter
               bg={
                 colorMode === 'light'
-                  ? data.currentCourseProgress >= data.minimalCourseProgress
+                  ? currentCourseProgress >= data.minimalCourseProgress
                     ? 'green.100'
                     : 'yellow.100'
-                  : data.currentCourseProgress >= data.minimalCourseProgress
+                  : currentCourseProgress >= data.minimalCourseProgress
                   ? 'green.200'
                   : 'orange.200'
               }
               borderBottomRadius='md'
               display='flex'
               alignItems='center'>
-              {data.currentCourseProgress >= data.minimalCourseProgress ? (
+              {currentCourseProgress >= data.minimalCourseProgress ? (
                 <IoCheckmarkCircleSharp
                   color='#2F855A'
                   size={iconSize}
@@ -175,7 +176,7 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
                 ml='4'
                 color='#1D2734'
                 fontWeight='bold'>
-                {data.currentCourseProgress >= data.minimalCourseProgress
+                {currentCourseProgress >= data.minimalCourseProgress
                   ? `Ви пройшли мінімальні ${data.minimalCourseProgress}% даного курсу!`
                   : `Для проходження даного курсу необхідно набрати ${data.minimalCourseProgress}%!`}
               </Text>
@@ -221,7 +222,7 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
                           <Td>
                             {details.receivedPoints}/{details.totalPoints}
                           </Td>
-                          <Td>{details.progressInPercents.toFixed(2)}%</Td>
+                          <Td>{details.progressInPercents.toFixed(0)}%</Td>
                         </Tr>
                       ))}
                     </Tbody>
@@ -230,13 +231,13 @@ export const CardsProgress: FC<TProps> = ({ courseId }) => {
                         <Th>Підсумок оцінки</Th>
                         <Th>{''}</Th>
                         <Th>{''}</Th>
-                        <Th>{data.currentCourseProgress}%</Th>
+                        <Th>{currentCourseProgress}%</Th>
                       </Tr>
                       <Tr>
                         <Th>Погрішність</Th>
                         <Th>{''}</Th>
                         <Th>{''}</Th>
-                        <Th>{100 - data.currentCourseProgress}%</Th>
+                        <Th>{100 - currentCourseProgress}%</Th>
                       </Tr>
                     </Tfoot>
                   </Table>

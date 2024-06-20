@@ -185,31 +185,36 @@ export const CardTest: FC<TProps> = ({ test }) => {
               </FormControl>
             </React.Fragment>
           ))}
-          <Flex alignItems='center'>
-            {isRunning ? (
-              <DefaultButton
-                isDisabled={
-                  Boolean(formik.errors.questions?.length) ||
-                  result.currentAttempt === test.totalAttempts
-                }
-                w='fit-content'
-                type='submit'
-                variant='outline'>
-                Відправити
-              </DefaultButton>
-            ) : (
-              <DefaultButton
-                isDisabled={
-                  result.currentAttempt === test.totalAttempts ||
-                  result.isCompleted
-                }
-                onClick={resetTimer}
-                w='fit-content'
-                type='button'
-                variant='outline'>
-                Розпочати
-              </DefaultButton>
-            )}
+          <Flex
+            alignItems='center'
+            flexDirection={{ base: 'column', md: 'row' }}>
+            <Box my={{ base: 3, md: 0 }}>
+              {isRunning ? (
+                <DefaultButton
+                  isDisabled={
+                    Boolean(formik.errors.questions?.length) ||
+                    result.currentAttempt === test.totalAttempts
+                  }
+                  w='fit-content'
+                  type='submit'
+                  variant='outline'>
+                  Відправити
+                </DefaultButton>
+              ) : (
+                <DefaultButton
+                  isDisabled={
+                    result.currentAttempt === test.totalAttempts ||
+                    result.isCompleted
+                  }
+                  onClick={resetTimer}
+                  w='fit-content'
+                  type='button'
+                  variant='outline'>
+                  Розпочати
+                </DefaultButton>
+              )}
+            </Box>
+
             <Flex
               w={'full'}
               justifyContent={'space-between'}
