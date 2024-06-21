@@ -53,9 +53,9 @@ export const CardTest: FC<TProps> = ({ test }) => {
     })),
   };
 
-  useEffect(() => {
-    console.log('TEST PROPS: ', test);
-  }, []);
+  // useEffect(() => {
+  //   console.log('TEST PROPS: ', test);
+  // }, []);
 
   const handleEnd = () => {
     passCourseTest({
@@ -82,7 +82,7 @@ export const CardTest: FC<TProps> = ({ test }) => {
     stopTimer();
     formik.resetForm();
 
-    console.log(answers);
+    // console.log(answers);
   };
 
   const formik = useFormik({

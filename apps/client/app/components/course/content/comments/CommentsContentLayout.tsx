@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   Center,
   useColorModeValue,
@@ -9,64 +9,126 @@ import {
   Select,
   Avatar,
   Divider,
-  Input,
-  Button,
-  FormErrorMessage,
-  FormControl,
 } from '@chakra-ui/react';
 import { useTypedSelector } from '../../../../lib/hooks/redux';
 import { CommentsContent } from './CommentsContent';
-import { FaChevronRight } from 'react-icons/fa';
-import { FaChevronLeft } from 'react-icons/fa';
-import { Formik, Form, Field } from 'formik';
-import { z, ZodError } from 'zod';
+
+import { Formik, Form, Field, useFormik, FormikProvider } from 'formik';
+import { object, string, z, ZodError } from 'zod';
 import { getUkrainianPluralWord } from 'apps/client/app/lib/utils/getUkrainianPluralWord';
 
-const userCommentSchema = z
-  .string()
-  .min(1, 'Коментар повинен містити мінімум 1 символ')
-  .max(300, 'Коментар повинен містити максимум 300 символів');
+import moment from 'moment';
+import NoCourseCommentsPoster from '../../../shared/posters/NoCourseCommentsPoster';
+import { DefaultButton } from '../../../auth/shared/buttons/DefaultButton';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { TextareaFormInput } from '../../shared/inputs/TextareaFormInput';
+import { io } from 'socket.io-client';
+import { TCourseCommentResponse } from '../../@types/course';
+import { FaArrowRight } from 'react-icons/fa6';
 
-const validateUserComment = (value: string) => {
-  try {
-    userCommentSchema.parse(value);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return error.errors[0].message;
-    }
-    return 'Помилка валідації';
-  }
-};
+const [minCommentLength, maxCommentLength] = [1, 512];
+const orderDictionary: { order: TSortOrder; title: string }[] = [
+  {
+    order: 'desc',
+    title: 'Нові спочатку',
+  },
+  {
+    order: 'asc',
+    title: 'Старі спочатку',
+  },
+];
 
+const userCommentSchema = object({
+  text: string({ required_error: 'Коментар не може бути порожнім' })
+    .min(
+      minCommentLength,
+      `Коментар повинен містити мінімум ${minCommentLength} ${getUkrainianPluralWord(
+        'символи',
+        minCommentLength,
+      )}`,
+    )
+    .max(
+      maxCommentLength,
+      `Коментар повинен містити максимум ${maxCommentLength} ${getUkrainianPluralWord(
+        'символи',
+        maxCommentLength,
+      )}`,
+    ),
+});
 type TProps = {
-  imageUrl: string;
-  quantityComment: number;
+  courseId: string;
+  isEnrolled?: boolean;
 };
 
-type TComment = {
-  userName: string;
-  userComment: string;
-  likesComment: number;
-  dislikesComment: number;
-};
+type TSortOrder = 'asc' | 'desc';
+
+const initialValues = { text: '' };
+
+const socket = io(
+  `${process.env.NEXT_PUBLIC_SERVER_URL_WEBSOCKETS}/course-comments`,
+);
 
 export const CommentsContentLayout: FC<TProps> = ({
-  imageUrl,
-  quantityComment,
+  courseId,
+  isEnrolled = false,
 }) => {
   const backgroundColor = useColorModeValue('#F3F4FD', '#2B2C45');
   const user = useTypedSelector((state) => state.user);
-  const [comments, setComments] = useState<TComment[]>([]);
+  const seenIds = new Set();
 
-  const handleCommentSubmit = (commentInput: string) => {
-    const newComment: TComment = {
-      userName: user.name || 'User',
-      userComment: commentInput,
-      likesComment: 0,
-      dislikesComment: 0,
-    };
-    setComments([...comments, newComment]);
+  const [comments, setComments] = useState<TCourseCommentResponse[]>([]);
+  const [sortOrder, setSortOrder] = useState<TSortOrder>('asc');
+
+  const sortedComments = useMemo(() => {
+    return comments?.sort((a, b) =>
+      sortOrder === 'asc'
+        ? moment(b.createdAt).diff(moment(a.createdAt))
+        : moment(a.createdAt).diff(moment(b.createdAt)),
+    );
+  }, [comments, sortOrder]);
+
+  const handleAddComment = async (text: string) => {
+    socket.emit('createCourseComment', { text, userId: user.id, courseId });
   };
+
+  const handleSubmit = (values: typeof initialValues) => {
+    // console.log('FORM VALUES: ', values);
+    handleAddComment(values.text);
+    formik.resetForm();
+  };
+
+  const formik = useFormik({
+    initialValues,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(userCommentSchema),
+    onSubmit: handleSubmit,
+  });
+
+  useEffect(() => {
+    socket.emit('findAllSortedCourseComments', { courseId, sortOrder });
+
+    socket.on('receiveCourseComment', (newComments) => {
+      // console.log('COMMENTS: ', comments);
+      seenIds.clear();
+
+      setComments((prev) => {
+        const combinedComments = [...prev, ...newComments];
+        const uniqueComments = combinedComments
+          .filter((item) => {
+            const isDuplicate = seenIds.has(item.id);
+            seenIds.add(item.id);
+            return !isDuplicate;
+          })
+          .slice(-15);
+        return uniqueComments;
+      });
+    });
+
+    // Clean up the socket listener on component unmount
+    return () => {
+      socket.off('receiveCourseComment');
+    };
+  }, []);
 
   return (
     <>
@@ -84,103 +146,86 @@ export const CommentsContentLayout: FC<TProps> = ({
               fontSize={{ base: '16', md: '24' }}
               mb={{ base: '2', md: '0' }}
               fontWeight='bold'>
-              {quantityComment}{' '}
-              {getUkrainianPluralWord('коментарі', quantityComment)}
+              {comments.length}{' '}
+              {getUkrainianPluralWord('коментарі', comments.length)}
             </Text>
-            <Select w='fiil-content'>
-              <option value='option1'>Найпопулярніші</option>
-              <option value='option2'>Спочатку нові</option>
-              <option value='option3'>Спочатку старі</option>
+            <Select
+              w='fit-content'
+              onChange={(value) =>
+                setSortOrder(value.target.value as TSortOrder)
+              }>
+              {orderDictionary.map((sort) => (
+                <option
+                  value={sort.order}
+                  key={sort.order}>
+                  {sort.title}
+                </option>
+              ))}
             </Select>
           </Flex>
           <Divider
             mb='20px'
             borderWidth='2px'
           />
-          <Flex mb='20px'>
-            <Avatar
-              boxSize='50px'
-              src={imageUrl}
-              mr='10px'
-              borderRadius='10px'
-            />
-            <Formik
-              initialValues={{ comment: '' }}
-              validate={(values) => {
-                try {
-                  userCommentSchema.parse(values.comment);
-                  return {};
-                } catch (error) {
-                  return {
-                    comment:
-                      error instanceof ZodError
-                        ? error.errors[0].message
-                        : 'Помилка валідації',
-                  };
-                }
-              }}
-              onSubmit={(values, { setSubmitting, resetForm }) => {
-                handleCommentSubmit(values.comment);
-                setSubmitting(false);
-                resetForm();
-              }}>
-              {({ isSubmitting }) => (
-                <Form>
-                  <Field
-                    name='comment'
-                    validate={validateUserComment}>
-                    {({ field, form }: any) => (
-                      <FormControl
-                        isInvalid={form.errors.comment && form.touched.comment}>
-                        <Input
-                          {...field}
-                          placeholder='Напишіть коментар...'
-                          w={{ base: 'auto', md: '400px' }}
-                        />
-                        <FormErrorMessage mb='10px'>
-                          {form.errors.comment}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-                  <Button
+          {isEnrolled ? (
+            <Flex
+              mb='20px'
+              gap={5}>
+              <Avatar
+                boxSize={{ base: '50px', md: '90px' }}
+                src={user.image ?? ''}
+                borderRadius={10}
+              />
+              <FormikProvider value={formik}>
+                <form onSubmit={formik.handleSubmit}>
+                  <Flex
+                    gap={3}
+                    flexDirection={'row'}>
+                    <TextareaFormInput
+                      isInvalid={Boolean(
+                        !!formik.errors.text && formik.touched.text,
+                      )}
+                      errorMessage={formik.errors.text ?? ''}
+                      fieldName='text'
+                      placeholder='Ваш коментар...'
+                      w='50vw'
+                    />
+                    <IconButton
+                      aria-label='Send comment'
+                      type='submit'
+                      icon={<FaArrowRight />}
+                      isDisabled={Object.keys(formik.errors).length > 0}
+                      colorScheme='purple'></IconButton>
+                    {/* <DefaultButton
                     mt='10px'
                     type='submit'
-                    bg='purple.600'
-                    color='white'
-                    _hover={{
-                      bg: 'purple.800',
-                      transitionDuration: '.4s',
-                    }}
                     variant='outline'
-                    disabled={isSubmitting}>
+                    disabled={Object.keys(formik.errors).length > 0}>
                     Залишити коментар
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </Flex>
-          {comments.length === 0 && (
-            <Box
-              textAlign='center'
-              py={10}>
-              <Text
-                fontSize='xl'
-                fontWeight='bold'>
-                Залиште перший коментар!
-              </Text>
-            </Box>
+                  </DefaultButton> */}
+                  </Flex>
+                </form>
+              </FormikProvider>
+            </Flex>
+          ) : null}
+
+          {sortedComments.length ? (
+            sortedComments.map((comment, index) => (
+              <CommentsContent
+                key={index}
+                imageUrl={comment.user.image ?? ''}
+                userName={comment.user.name}
+                userComment={comment.text}
+                courseCreatorId={comment?.course?.creatorId ?? ''}
+                commentUserId={comment.userId}
+                userId={user.id}
+                likesComment={0}
+                dislikesComment={0}
+              />
+            ))
+          ) : (
+            <NoCourseCommentsPoster />
           )}
-          {comments.map((comment, index) => (
-            <CommentsContent
-              key={index}
-              imageUrl=''
-              userName={comment.userName}
-              userComment={comment.userComment}
-              likesComment={comment.likesComment}
-              dislikesComment={comment.dislikesComment}
-            />
-          ))}
         </Box>
       </Center>
     </>

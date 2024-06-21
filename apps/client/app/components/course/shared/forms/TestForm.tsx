@@ -54,6 +54,8 @@ type TProps = Nullable<
     onClose: () => void;
   };
 
+type TSubmitValues = Omit<TTestResponse, 'id' | 'sectionId' | 'createdAt'>;
+
 export const TestForm: FC<TProps> = ({
   sectionId,
   id,
@@ -82,20 +84,18 @@ export const TestForm: FC<TProps> = ({
   const { notify } = useShowError(isUpdateError, false);
   useShowError(isCreateError, false);
 
-  const handleTestSubmit = async (
-    values: Omit<TTestResponse, 'id' | 'sectionId' | 'createdAt'>,
-  ) => {
-    console.log('FINAL VALUES: ', values);
-    // if (id) {
-    //   return updateTest({
-    //     id,
-    //     ...values,
-    //   });
-    // }
-    // createTest({
-    //   sectionId,
-    //   ...values,
-    // });
+  const handleTestSubmit = async (values: TSubmitValues) => {
+    // console.log('FINAL VALUES: ', values);
+    if (id) {
+      return updateTest({
+        id,
+        ...values,
+      });
+    }
+    createTest({
+      sectionId,
+      ...values,
+    });
   };
 
   const { colorMode } = useColorMode();
@@ -159,7 +159,7 @@ export const TestForm: FC<TProps> = ({
       // console.log('VALUES ARE HERE ------------->: ', values);
       // console.log('HERE IS THE TEST OBJECT: ', test);
 
-      handleTestSubmit(test);
+      handleTestSubmit(test as TSubmitValues);
     },
   });
 
@@ -190,7 +190,7 @@ export const TestForm: FC<TProps> = ({
     const updatedSteps = [...formik.values.steps];
     updatedSteps.splice(index, 1);
 
-    console.log('UPDATED STEPS: ', updatedSteps);
+    // console.log('UPDATED STEPS: ', updatedSteps);
 
     formik.setValues({
       ...formik.values,
@@ -227,7 +227,9 @@ export const TestForm: FC<TProps> = ({
         (_: any, index: number) => index !== answerIndex,
       );
       formik.setFieldValue(`steps.${activeStep}.answers`, newAnswers);
-      if (currentStep.correctAnswer === currentStep.answers[answerIndex]) {
+      if (
+        (currentStep.correctAnswer as any) === currentStep.answers[answerIndex]
+      ) {
         formik.setFieldValue(`steps.${activeStep}.correctAnswer`, '');
       } else {
         const correctAnswerIndex = currentStep.correctAnswer.indexOf(
@@ -256,7 +258,9 @@ export const TestForm: FC<TProps> = ({
   };
 
   useEffect(() => {
-    const noChange = checkObjectsEquality(formik.values);
+    const noChange = checkObjectsEquality(
+      formik.values as typeof initialValues,
+    );
     setDisabledSubmitButton(noChange);
   }, [JSON.stringify(formik.values), JSON.stringify(initialValues)]);
 
@@ -273,9 +277,9 @@ export const TestForm: FC<TProps> = ({
     }
   }, [isSuccessCreate, isSuccessUpdate]);
 
-  useEffect(() => {
-    console.log('FORMIK ERRORS: ', formik.errors);
-  }, [formik.errors]);
+  // useEffect(() => {
+  //   console.log('FORMIK ERRORS: ', formik.errors);
+  // }, [formik.errors]);
 
   return (
     <FormikProvider value={formik}>

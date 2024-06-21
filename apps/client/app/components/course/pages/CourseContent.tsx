@@ -29,14 +29,13 @@ type TProps = {
 };
 
 export const CourseContent: FC<TProps> = ({ id, data }) => {
-  const user = useTypedSelector((state) => state.user);
   const { next, prev, setMaterialIndex, materials } = useMaterials({
     sections: data.sections,
   });
 
-  useEffect(() => {
-    console.log('DATAAAAAAAAA: ', data);
-  });
+  // useEffect(() => {
+  //   console.log('DATAAAAAAAAA: ', data);
+  // });
 
   return (
     <Header
@@ -63,8 +62,9 @@ export const CourseContent: FC<TProps> = ({ id, data }) => {
         />
       </Flex>
       <CommentsContentLayout
-        imageUrl={user.image ?? ''}
-        quantityComment={0}></CommentsContentLayout>
+        courseId={id}
+        isEnrolled
+      />
     </Header>
   );
 };

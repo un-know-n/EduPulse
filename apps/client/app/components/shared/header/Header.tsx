@@ -288,6 +288,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({
                 <DefaultMenuLink
                   key={link.title}
                   href={link.href}
+                  onClick={onClose}
                   leftIcon={link.icon}
                   w={'full'}
                   my={2}>
