@@ -13,6 +13,7 @@ import {
   Input,
   Radio,
   Stack,
+  Text,
   Textarea,
   useColorMode,
 } from '@chakra-ui/react';
@@ -29,6 +30,7 @@ import {
   maxTimeToPassAmount,
   maxTotalAttempts,
   minPointsPerQuestion,
+  minStepsAmount,
   minTimeToPassAmount,
   minTotalAttempts,
   testSchema,
@@ -40,6 +42,7 @@ import {
 } from 'apps/client/app/store/services/courses';
 import { useShowError } from 'apps/client/app/lib/hooks/useShowError';
 import { useAreObjectsEqual } from 'apps/client/app/lib/hooks/useAreObjectsEqual';
+import { getUkrainianPluralWord } from 'apps/client/app/lib/utils/getUkrainianPluralWord';
 
 type TProps = Nullable<
   Pick<
@@ -50,6 +53,8 @@ type TProps = Nullable<
   Pick<TTestResponse, 'sectionId'> & {
     onClose: () => void;
   };
+
+type TSubmitValues = Omit<TTestResponse, 'id' | 'sectionId' | 'createdAt'>;
 
 export const TestForm: FC<TProps> = ({
   sectionId,
@@ -79,9 +84,8 @@ export const TestForm: FC<TProps> = ({
   const { notify } = useShowError(isUpdateError, false);
   useShowError(isCreateError, false);
 
-  const handleTestSubmit = async (
-    values: Omit<TTestResponse, 'id' | 'sectionId' | 'createdAt'>,
-  ) => {
+  const handleTestSubmit = async (values: TSubmitValues) => {
+    // console.log('FINAL VALUES: ', values);
     if (id) {
       return updateTest({
         id,
@@ -140,7 +144,7 @@ export const TestForm: FC<TProps> = ({
         title: values.testName,
         timeToPass: values.timeToPass * 1000,
         totalAttempts: values.totalAttempts,
-        sectionId,
+
         questions: values.steps.map((question) => ({
           text: question.stepQuestion,
           points: question.pointsPerQuestion,
@@ -155,12 +159,7 @@ export const TestForm: FC<TProps> = ({
       // console.log('VALUES ARE HERE ------------->: ', values);
       // console.log('HERE IS THE TEST OBJECT: ', test);
 
-      handleTestSubmit(
-        test as unknown as Omit<
-          TTestResponse,
-          'id' | 'sectionId' | 'createdAt'
-        >,
-      );
+      handleTestSubmit(test as TSubmitValues);
     },
   });
 
@@ -180,7 +179,7 @@ export const TestForm: FC<TProps> = ({
           pointsPerQuestion: minPointsPerQuestion,
           isSingleAnswer: true,
           answers,
-          correctAnswer: '',
+          correctAnswer: [],
         },
       ],
     });
@@ -190,15 +189,21 @@ export const TestForm: FC<TProps> = ({
   const removeStepField = (index: number) => {
     const updatedSteps = [...formik.values.steps];
     updatedSteps.splice(index, 1);
+
+    // console.log('UPDATED STEPS: ', updatedSteps);
+
     formik.setValues({
       ...formik.values,
-      steps: updatedSteps.map((step, idx) => ({
-        ...step,
-        stepNumber: idx + 1,
-        answers: step.answers.map(
-          (_: any, ansIdx: number) => `Варіант ${ansIdx + 1}`,
-        ),
-      })),
+      steps: updatedSteps.length
+        ? updatedSteps.map((step, idx) => ({
+            ...step,
+            stepNumber: idx + 1,
+            answers: step.answers.map(
+              (answer: string, ansIdx: number) =>
+                answer || `Варіант ${ansIdx + 1}`,
+            ),
+          }))
+        : [],
     });
 
     let updatedActiveStep = activeStep;
@@ -222,7 +227,9 @@ export const TestForm: FC<TProps> = ({
         (_: any, index: number) => index !== answerIndex,
       );
       formik.setFieldValue(`steps.${activeStep}.answers`, newAnswers);
-      if (currentStep.correctAnswer === currentStep.answers[answerIndex]) {
+      if (
+        (currentStep.correctAnswer as any) === currentStep.answers[answerIndex]
+      ) {
         formik.setFieldValue(`steps.${activeStep}.correctAnswer`, '');
       } else {
         const correctAnswerIndex = currentStep.correctAnswer.indexOf(
@@ -251,7 +258,9 @@ export const TestForm: FC<TProps> = ({
   };
 
   useEffect(() => {
-    const noChange = checkObjectsEquality(formik.values);
+    const noChange = checkObjectsEquality(
+      formik.values as typeof initialValues,
+    );
     setDisabledSubmitButton(noChange);
   }, [JSON.stringify(formik.values), JSON.stringify(initialValues)]);
 
@@ -267,6 +276,10 @@ export const TestForm: FC<TProps> = ({
       onClose();
     }
   }, [isSuccessCreate, isSuccessUpdate]);
+
+  // useEffect(() => {
+  //   console.log('FORMIK ERRORS: ', formik.errors);
+  // }, [formik.errors]);
 
   return (
     <FormikProvider value={formik}>
@@ -323,7 +336,10 @@ export const TestForm: FC<TProps> = ({
             onClick={addStepField}
           />
         </HStack>
-        {activeStep !== null && formik.values.steps[activeStep] && (
+        {activeStep != null &&
+        activeStep >= 0 &&
+        formik.values.steps.length >= 0 &&
+        formik.values.steps[activeStep] ? (
           <Stack mt='20px'>
             <FormControl
               isInvalid={Boolean(
@@ -528,8 +544,17 @@ export const TestForm: FC<TProps> = ({
               Видалити крок
             </Button>
           </Stack>
-        )}
-
+        ) : null}
+        {formik.values.steps.length === 0 ? (
+          <Text
+            my={3}
+            color='#fc8181'>
+            {`Має бути щонайменше ${minStepsAmount} ${getUkrainianPluralWord(
+              'кроки',
+              minStepsAmount,
+            )}`}
+          </Text>
+        ) : null}
         <Flex
           mt={3}
           justifyContent={'flex-end'}>
@@ -537,7 +562,9 @@ export const TestForm: FC<TProps> = ({
             w={'fit-content'}
             type={'submit'}
             mr={3}
-            isDisabled={isDisabledSubmitButton}
+            isDisabled={
+              isDisabledSubmitButton || Object.keys(formik.errors).length > 0
+            }
             isLoading={isLoadingCreate || isLoadingUpdate}>
             Зберегти
           </DefaultButton>

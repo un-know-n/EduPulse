@@ -164,6 +164,16 @@ export type TTestMaterialRequest = {
   }[];
 };
 
+export type TCourseCommentResponse = {
+  id: string;
+  text: string;
+  createdAt: string;
+  userId: string;
+  courseId: string;
+  user: { name: string; image: string };
+  course: { creatorId: string };
+};
+
 export type TUserRoles = 'student' | 'teacher';
 
 export type Nullable<T> = { [K in keyof T]?: T[K] };

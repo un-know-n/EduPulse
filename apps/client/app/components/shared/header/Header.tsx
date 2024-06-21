@@ -173,7 +173,8 @@ export const Header: FC<PropsWithChildren<TProps>> = ({
             />
             <Heading
               noOfLines={2}
-              fontSize={{ base: 'auto', md: 24 }}>
+              maxWidth='fit-content'
+              fontSize={{ base: 14, md: 24 }}>
               {title}
             </Heading>
           </Flex>
@@ -287,6 +288,7 @@ export const Header: FC<PropsWithChildren<TProps>> = ({
                 <DefaultMenuLink
                   key={link.title}
                   href={link.href}
+                  onClick={onClose}
                   leftIcon={link.icon}
                   w={'full'}
                   my={2}>

@@ -38,6 +38,8 @@
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/mapped-types": "^2.0.2",
     "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/platform-socket.io": "^10.3.9",
+    "@nestjs/websockets": "^10.3.9",
     "@prisma/client": "^5.4.2",
     "@reduxjs/toolkit": "^1.9.6",
     "axios": "^1.0.0",
@@ -64,6 +66,8 @@
     "react-redux": "^8.1.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "streamifier": "^0.1.1",
     "tslib": "^2.3.0",
     "zod": "^3.22.2",
@@ -125,6 +129,7 @@
     "@nx/nx-darwin-x64": "16.9.1",
     "@nx/nx-linux-x64-gnu": "16.9.1",
     "@nx/nx-linux-x64-musl": "16.9.1",
-    "@nx/nx-win32-x64-msvc": "16.9.1"
+    "@nx/nx-win32-x64-msvc": "16.9.1",
+    "bufferutil": "^4.0.8"
   }
 }

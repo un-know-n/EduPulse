@@ -9,21 +9,17 @@ import NoEnrollmentsPoster from '../components/shared/posters/NoEnrollmentsPoste
 import { Header } from '../components/shared/header/Header';
 
 export default function Page() {
-  const user = useTypedSelector((state) => state.user);
-  const { data, error, isSuccess, isLoading } = useGetEnrollmentsByIdQuery(
-    user.id,
-  );
-  useShowError(error);
+  // const user = useTypedSelector((state) => state.user);
+  // const { data, error, isSuccess, isLoading } = useGetEnrollmentsByIdQuery(
+  //   user.id,
+  // );
+  // useShowError(error);
 
-  if (isLoading) return <Loading />;
+  // if (isLoading) return <Loading />;
 
   return (
     <Header title={'Мої курси'}>
-      {data?.length ? (
-        <DefaultDashboard enrollments={data} />
-      ) : (
-        <NoEnrollmentsPoster />
-      )}
+      <DefaultDashboard />
     </Header>
   );
 }

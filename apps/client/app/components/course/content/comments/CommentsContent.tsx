@@ -8,6 +8,7 @@ import {
   Stack,
   IconButton,
   useBoolean,
+  Badge,
 } from '@chakra-ui/react';
 import { BiSolidLike } from 'react-icons/bi';
 import { BiSolidDislike } from 'react-icons/bi';
@@ -18,12 +19,18 @@ type TProps = {
   userComment: string;
   likesComment: number;
   dislikesComment: number;
+  courseCreatorId: string;
+  commentUserId: string;
+  userId: string;
 };
 
 export const CommentsContent: FC<TProps> = ({
   imageUrl,
   userName,
   userComment,
+  commentUserId,
+  courseCreatorId,
+  userId,
   likesComment,
   dislikesComment,
 }) => {
@@ -40,6 +47,13 @@ export const CommentsContent: FC<TProps> = ({
     setIsLikeClicked.off();
   };
 
+  const badgeText =
+    commentUserId === userId
+      ? 'Ви'
+      : courseCreatorId === userId
+      ? 'Автор курсу'
+      : '';
+
   return (
     <Stack mb='20px'>
       <Flex>
@@ -50,11 +64,21 @@ export const CommentsContent: FC<TProps> = ({
           mr='10px'
         />
         <Flex direction='column'>
-          <Heading
-            size='sm'
-            mb='5px'>
-            {userName}
-          </Heading>
+          <Flex alignItems={'center'}>
+            <Heading
+              size='sm'
+              mb='5px'>
+              {userName}
+            </Heading>
+            {badgeText.length ? (
+              <Badge
+                colorScheme={'purple'}
+                ml={3}>
+                {badgeText}
+              </Badge>
+            ) : null}
+          </Flex>
+
           <Text
             w='50%'
             mb='5px'

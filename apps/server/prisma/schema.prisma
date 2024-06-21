@@ -43,6 +43,7 @@ model User {
 
   UsersAssignedToCourse UsersAssignedToCourse[]
   FavoriteCourses       FavoriteCourses[]
+  CourseComments        CourseComments[]
 }
 
 model VerificationToken {
@@ -70,7 +71,7 @@ model Course {
   creatorId              String
   categoryId             Int?
   createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt @default(now())
+  updatedAt              DateTime  @default(now()) @updatedAt
   timeToPass             Int
   image                  String?
   difficultyLevel        Int
@@ -81,6 +82,7 @@ model Course {
   category              Category?               @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   UsersAssignedToCourse UsersAssignedToCourse[]
   FavoriteCourses       FavoriteCourses[]
+  CourseComments        CourseComments[]
 }
 
 model Section {
@@ -147,7 +149,7 @@ model TestResult {
   testId         String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   UsersAssignedToCourse UsersAssignedToCourse @relation(fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -159,7 +161,7 @@ model UsersAssignedToCourse {
   userId      String
   courseId    String
   assignedAt  DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
   expiresAt   DateTime
   isCompleted Boolean      @default(false)
   isFailed    Boolean      @default(false)
@@ -173,6 +175,18 @@ model FavoriteCourses {
   id       String @id @default(cuid())
   userId   String
   courseId String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model CourseComments {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+  userId    String
+  courseId  String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

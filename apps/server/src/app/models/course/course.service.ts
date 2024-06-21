@@ -560,11 +560,20 @@ export class CourseService {
             tests: {
               include: {
                 testResult: {
-                  where: { UsersAssignedToCourse: { userId } },
+                  where: { UsersAssignedToCourse: { userId, courseId } },
                 },
               },
             },
           },
+        },
+        UsersAssignedToCourse: {
+          select: {
+            assignedAt: true,
+            expiresAt: true,
+            isCompleted: true,
+            isFailed: true,
+          },
+          where: { userId, courseId },
         },
       },
     });
@@ -573,11 +582,13 @@ export class CourseService {
       throw new Error('Немає курсу з даним ідентифікатором');
     }
 
+    // console.log('COURSE: ', course);
+
     const dates = [];
 
     // Course start time
     dates.push({
-      date: course.createdAt.toISOString(),
+      date: course.UsersAssignedToCourse[0].assignedAt.toISOString(),
       description: 'Початок курсу',
       isActive: false,
     });
@@ -596,17 +607,17 @@ export class CourseService {
       });
     });
 
+    const completeCondition =
+      course.UsersAssignedToCourse[0].isCompleted ||
+      course.UsersAssignedToCourse[0].isFailed;
     // Course end time
     dates.push({
-      date: course.updatedAt.toISOString(),
+      date: completeCondition
+        ? dates[dates.length - 1].date
+        : course.UsersAssignedToCourse[0].expiresAt.toISOString(),
       description: 'Закінчення курсу',
       isActive: false,
     });
-
-    // Sort dateSteps by date
-    dates.sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    );
 
     // Determine if the current date object is in progress
     const currentDate = new Date();

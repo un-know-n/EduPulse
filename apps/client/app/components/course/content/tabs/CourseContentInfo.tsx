@@ -180,7 +180,10 @@ export const CourseContentInfo: FC<TProps> = ({
                       }
                     />
                   ) : (
-                    <CardTest test={data.material as TTestMaterial} />
+                    <CardTest
+                      test={data.material as TTestMaterial}
+                      key={data.material.id}
+                    />
                   )}
                 </CardLayout>
               ) : (

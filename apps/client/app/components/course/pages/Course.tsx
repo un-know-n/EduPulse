@@ -43,9 +43,10 @@ import { getSortedMaterialItems } from 'apps/client/app/lib/utils/getSortedMater
 import { MaterialIcon } from '../shared/icons/MaterialIcon';
 import { MaterialTypes } from '../config/constants';
 import { coursePrefix } from 'apps/client/app/config/routing/routes';
+import { CommentsContentLayout } from '../content/comments/CommentsContentLayout';
 
 export const Course: FC<TCourseResponse> = (props) => {
-  console.log('COURSE PROPS: ', props);
+  // console.log('COURSE PROPS: ', props);
 
   return (
     <LayoutHeader title={props.title}>
@@ -204,161 +205,164 @@ const CourseDescription: FC<TCourseDescriptionProps> = ({
     colorMode === 'light' ? headingStyleLight : headingStyleDark;
 
   return (
-    <Center>
-      <Flex
-        p='5'
-        direction={{ base: 'column-reverse', md: 'row' }}
-        justifyContent={'space-between'}
-        {...ContainerOptions}>
-        <Box
-          w='full'
-          mr={10}>
-          <Heading
-            {...headingStyles}
-            mb={5}>
-            Про курс
-          </Heading>
-          <Text
-            {...textStyles}
-            mb={5}>
-            {description}
-          </Text>
-          <Heading
-            {...headingStyles}
-            mb={5}>
-            Програма курсу
-          </Heading>
-          <Accordion
-            defaultIndex={[0]}
-            allowMultiple
+    <>
+      <Center>
+        <Flex
+          p='5'
+          direction={{ base: 'column-reverse', md: 'row' }}
+          justifyContent={'space-between'}
+          {...ContainerOptions}>
+          <Box
             w='full'
-            mb={10}>
-            {sections.map((section, i) => (
-              <AccordionItem
-                key={section.id}
-                w='full'>
-                <AccordionButton
-                  backdropFilter='auto'
-                  backdropBrightness='95%'>
-                  <Flex
-                    w={'full'}
-                    justifyContent={'space-between'}>
-                    <Box
-                      {...textStyles}
-                      as='span'
-                      flex='1'
-                      maxW={'60%'}
-                      textAlign='left'>
-                      <Text isTruncated>{section.title}</Text>
-                    </Box>
-                    <Flex>
-                      <Flex display={{ base: 'none', md: 'flex' }}>
-                        <Text>{`${
-                          section.lectures.length
-                        } ${getUkrainianPluralWord(
-                          'лекції',
-                          section.lectures.length,
-                        )}`}</Text>
+            mr={10}>
+            <Heading
+              {...headingStyles}
+              mb={5}>
+              Про курс
+            </Heading>
+            <Text
+              {...textStyles}
+              mb={5}>
+              {description}
+            </Text>
+            <Heading
+              {...headingStyles}
+              mb={5}>
+              Програма курсу
+            </Heading>
+            <Accordion
+              defaultIndex={[0]}
+              allowMultiple
+              w='full'
+              mb={10}>
+              {sections.map((section, i) => (
+                <AccordionItem
+                  key={section.id}
+                  w='full'>
+                  <AccordionButton
+                    backdropFilter='auto'
+                    backdropBrightness='95%'>
+                    <Flex
+                      w={'full'}
+                      justifyContent={'space-between'}>
+                      <Box
+                        {...textStyles}
+                        as='span'
+                        flex='1'
+                        maxW={'60%'}
+                        textAlign='left'>
+                        <Text isTruncated>{section.title}</Text>
+                      </Box>
+                      <Flex>
+                        <Flex display={{ base: 'none', md: 'flex' }}>
+                          <Text>{`${
+                            section.lectures.length
+                          } ${getUkrainianPluralWord(
+                            'лекції',
+                            section.lectures.length,
+                          )}`}</Text>
 
-                        <Text mx={2}>•</Text>
-                        <Text>{`${
-                          section.tests.length
-                        } ${getUkrainianPluralWord(
-                          'тести',
-                          section.tests.length,
-                        )}`}</Text>
+                          <Text mx={2}>•</Text>
+                          <Text>{`${
+                            section.tests.length
+                          } ${getUkrainianPluralWord(
+                            'тести',
+                            section.tests.length,
+                          )}`}</Text>
+                        </Flex>
+                        <AccordionIcon />
                       </Flex>
-                      <AccordionIcon />
                     </Flex>
-                  </Flex>
-                </AccordionButton>
+                  </AccordionButton>
 
-                <AccordionPanel pb={4}>
-                  <List spacing={3}>
-                    {getSortedMaterialItems(
-                      section.lectures,
-                      section.tests,
-                    ).map((material) => (
-                      <ListItem
-                        display={'flex'}
-                        alignItems={'center'}
-                        key={material.id}>
-                        <ListIcon
-                          color={
-                            material.type === MaterialTypes.TEST
-                              ? 'gray.500'
-                              : 'purple.500'
-                          }>
-                          <MaterialIcon
-                            type={material.type}
-                            size={'24px'}
-                          />
-                        </ListIcon>
-                        {enrollment ? (
-                          <Link
-                            as={NextLink}
-                            href={`${coursePrefix}/${id}/content?sectionId=${section.id}&materialId=${material.id}`}
-                            color='#9872EA'>
-                            {material.title}
-                          </Link>
-                        ) : (
-                          <Text
-                            as='h4'
-                            size='md'>
-                            {material.title}
-                          </Text>
-                        )}
-                      </ListItem>
-                    ))}
-                  </List>
-                </AccordionPanel>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </Box>
-        <Box textAlign={{ base: 'center', md: 'left' }}>
-          <Flex
-            flexDirection='column'
-            alignItems={{ base: 'center', md: 'flex-start' }}>
-            <CourseButton
-              id={id}
-              creatorId={creatorId}
-              enrollment={enrollment}
-              certificate={{
-                author: author.name,
-                mark: 100,
-                title,
-              }}
-              mb={3}
-            />
-            {user.id === creatorId ? (
-              <DeleteCourseButton
-                courseId={id}
-                mb={5}
+                  <AccordionPanel pb={4}>
+                    <List spacing={3}>
+                      {getSortedMaterialItems(
+                        section.lectures,
+                        section.tests,
+                      ).map((material) => (
+                        <ListItem
+                          display={'flex'}
+                          alignItems={'center'}
+                          key={material.id}>
+                          <ListIcon
+                            color={
+                              material.type === MaterialTypes.TEST
+                                ? 'gray.500'
+                                : 'purple.500'
+                            }>
+                            <MaterialIcon
+                              type={material.type}
+                              size={'24px'}
+                            />
+                          </ListIcon>
+                          {enrollment ? (
+                            <Link
+                              as={NextLink}
+                              href={`${coursePrefix}/${id}/content?sectionId=${section.id}&materialId=${material.id}`}
+                              color='#9872EA'>
+                              {material.title}
+                            </Link>
+                          ) : (
+                            <Text
+                              as='h4'
+                              size='md'>
+                              {material.title}
+                            </Text>
+                          )}
+                        </ListItem>
+                      ))}
+                    </List>
+                  </AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Box>
+          <Box textAlign={{ base: 'center', md: 'left' }}>
+            <Flex
+              flexDirection='column'
+              alignItems={{ base: 'center', md: 'flex-start' }}>
+              <CourseButton
+                id={id}
+                creatorId={creatorId}
+                enrollment={enrollment}
+                certificate={{
+                  author: author.name,
+                  mark: 100,
+                  title,
+                }}
+                mb={3}
               />
-            ) : null}
-          </Flex>
+              {user.id === creatorId ? (
+                <DeleteCourseButton
+                  courseId={id}
+                  mb={5}
+                />
+              ) : null}
+            </Flex>
 
-          <Text
-            {...textStyles}
-            mb={2}>
-            У програму входять
-          </Text>
-          <Text
-            {...textStyles}
-            mb={2}>
-            {`${totalLectures} ${getUkrainianPluralWord(
-              'лекції',
-              totalLectures,
-            )}`}
-          </Text>
-          <Text
-            {...textStyles}
-            mb={2}>
-            {`${totalTests} ${getUkrainianPluralWord('тести', totalTests)}`}
-          </Text>
-        </Box>
-      </Flex>
-    </Center>
+            <Text
+              {...textStyles}
+              mb={2}>
+              У програму входять
+            </Text>
+            <Text
+              {...textStyles}
+              mb={2}>
+              {`${totalLectures} ${getUkrainianPluralWord(
+                'лекції',
+                totalLectures,
+              )}`}
+            </Text>
+            <Text
+              {...textStyles}
+              mb={2}>
+              {`${totalTests} ${getUkrainianPluralWord('тести', totalTests)}`}
+            </Text>
+          </Box>
+        </Flex>
+      </Center>
+      <CommentsContentLayout courseId={id} />
+    </>
   );
 };

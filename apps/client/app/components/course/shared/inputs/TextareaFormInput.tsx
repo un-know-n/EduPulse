@@ -5,12 +5,17 @@ import {
   FormErrorMessage,
   FormLabel,
   Textarea,
+  TextareaProps,
 } from '@chakra-ui/react';
 import { Field } from 'formik';
 
 export const TextareaFormInput: FC<
-  IInputFormProps & { fieldName: string; placeholder?: string; label?: string }
-> = ({ isInvalid, errorMessage, fieldName, placeholder, label }) => {
+  IInputFormProps & {
+    fieldName: string;
+    placeholder?: string;
+    label?: string;
+  } & TextareaProps
+> = ({ isInvalid, errorMessage, fieldName, placeholder, label, ...props }) => {
   return (
     <FormControl isInvalid={isInvalid}>
       {label ? <FormLabel htmlFor={fieldName}>{label}</FormLabel> : null}
@@ -21,6 +26,7 @@ export const TextareaFormInput: FC<
         type='text'
         variant='outline'
         placeholder={placeholder ?? ''}
+        {...props}
       />
       <FormErrorMessage>{errorMessage}</FormErrorMessage>
     </FormControl>

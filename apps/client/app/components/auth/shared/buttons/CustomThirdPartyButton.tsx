@@ -9,7 +9,6 @@ export const CustomThirdPartyButton: FC<PropsWithChildren<ButtonProps>> = ({
     <Button
       borderColor='black'
       color='black'
-      borderRadius='15'
       _hover={{
         bg: 'gray.700',
         color: 'white',

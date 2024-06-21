@@ -18,15 +18,16 @@ import { EnrollmentModule } from './models/enrollment/enrollment.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { EXPIRE_TIME } from './models/auth/auth.service';
 import { TestModule } from './models/test/test.module';
+import { CourseCommentsModule } from './models/course-comments/course-comments.module';
 
 @Module({
   imports: [
-    MailerModule.forRoot({
-      transport: process.env.EMAIL_SERVER,
-      defaults: {
-        from: process.env.EMAIL_FROM,
-      },
-    }),
+    // MailerModule.forRoot({
+    //   transport: process.env.EMAIL_SERVER,
+    //   defaults: {
+    //     from: process.env.EMAIL_FROM,
+    //   },
+    // }),
 
     ConfigModule.forRoot(),
     JwtModule.register({
@@ -41,6 +42,7 @@ import { TestModule } from './models/test/test.module';
     VerificationModule,
     AccountModule,
     CourseModule,
+    CourseCommentsModule,
     SectionModule,
     LectureModule,
     TestModule,

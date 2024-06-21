@@ -83,7 +83,7 @@ export const CheckUser: FC<PropsWithChildren> = ({ children }) => {
   }, [categoriesError, isSuccessCategories]);
 
   useEffect(() => {
-    console.log(session, status);
+    // console.log(session, status);
     if (status === 'unauthenticated') router.push(Routes.SignIn);
     else if (status === 'authenticated' && !session?.user.role)
       onRoleModalOpen();

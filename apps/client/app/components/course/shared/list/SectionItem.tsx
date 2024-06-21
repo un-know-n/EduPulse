@@ -75,7 +75,8 @@ export const SectionItem: FC<TSectionResponse & { index: string | number }> = ({
           <Box
             as='span'
             flex='1'
-            textAlign='left'>
+            textAlign='left'
+            noOfLines={2}>
             {index}. {title}
           </Box>
           <Flex
